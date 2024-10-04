@@ -23,7 +23,7 @@ module ApplicationHelper
                  else
                      { title: 'Contracts', subpaths: [
                          { name: 'View Contracts', path: contracts_path, icon: 'file-contract' },
-                         { name: 'Create a Contract', path: new_contract_path, icon: 'pencil' }
+                         { name: 'Add a Contract', path: new_contract_path, icon: 'pencil' }
                      ] }
                  end
         # All users can view reports
