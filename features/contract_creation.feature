@@ -72,4 +72,23 @@ Scenario: Create a contract with an inactive point of contract who does not have
 	And I select "day" from the "Initial term duration" select box
 	And I press "Create Contract"
 	Then I should see "Inactive User is not active"
-	
+
+
+Scenario: Add "Amendment" to contract type dropdown
+	Given I am on the new contract page
+	When I select "Amendment" from the contract types dropdown
+	And I fill in "Title" with "AmendmentContract"
+	And I fill in "Number" with "99"
+	And I fill in the vendor field with vendor value "new"
+	And I fill in the "contract[new_vendor_name]" field with "Test Vendor"
+	And I select "Example User" from the point of contact dropdown
+	And I select "Program 1" from the program dropdown
+	And I select "Entity 1" from the entity dropdown
+	And I select "Continuous" from the end trigger dropdown
+	And I fill in the "contract_starts_at" field with "2023-04-01"
+	And I fill in "contract[amount_dollar]" with "150"
+	And I select "month" from the amount duration dropdown
+	And I fill in "contract[initial_term_amount]" with "50"
+	And I select "month" from the "Initial term duration" select box
+	And I press "Create Contract"
+	Then I should see "Contract was successfully created."
