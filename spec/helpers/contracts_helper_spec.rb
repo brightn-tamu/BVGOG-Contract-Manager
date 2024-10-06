@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-
+require 'auth_helper'
 # Specs in this file have access to a helper object that includes
 # the ContractsHelper. For example:
 #
@@ -28,4 +28,35 @@ RSpec.describe ContractsHelper, type: :helper do
             expect(JSON.parse(helper.send(:vendor_select_options_json))).to eq(expected_options)
         end
     end
+
+    describe '#contract_status_icon' do
+        let(:contract_created) { FactoryBot.build(:contract, contract_status: ContractStatus::CREATED)}
+        let(:contract_in_progress) { FactoryBot.build(:contract, contract_status: ContractStatus::IN_PROGRESS)}
+        let(:contract_in_review) { FactoryBot.build(:contract, contract_status: ContractStatus::IN_REVIEW)}
+        let(:contract_approved) { FactoryBot.build(:contract, contract_status: ContractStatus::APPROVED)}
+        let(:contract_rejected) { FactoryBot.build(:contract, contract_status: ContractStatus::REJECTED)}
+
+        it 'returns the created status tag for a contract in created' do
+            expect(helper.contract_status_icon(contract_created)).to include('Created')
+            expect(helper.contract_status_icon(contract_created)).to include('is-warning')
+        end
+        it 'returns the in_progress status tag for a contract in progress' do
+            expect(helper.contract_status_icon(contract_in_progress)).to include('In Progress')
+            expect(helper.contract_status_icon(contract_in_progress)).to include('is-warning')
+        end
+
+        it 'returns the in_review status tag for a contract in review' do
+            expect(helper.contract_status_icon(contract_in_review)).to include('In Review')
+            expect(helper.contract_status_icon(contract_in_review)).to include('is-warning')
+        end
+        it 'returns the approved status tag for an approved contract' do
+            expect(helper.contract_status_icon(contract_approved)).to include('Approved')
+            expect(helper.contract_status_icon(contract_approved)).to include('is-success')
+        end
+        it 'returns the rejected status tag for an rejected contract' do
+            expect(helper.contract_status_icon(contract_rejected)).to include('Rejected')
+            expect(helper.contract_status_icon(contract_rejected)).to include('is-danger')
+        end
+    end
+
 end
