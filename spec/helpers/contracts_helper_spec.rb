@@ -59,4 +59,77 @@ RSpec.describe ContractsHelper, type: :helper do
         end
     end
 
+    describe '#file_type_icon' do
+        it 'returns the PDF icon for a PDF file' do
+            expect(helper.file_type_icon('file.pdf')).to include('fa-file-pdf')
+            expect(helper.file_type_icon('file.pdf')).to include('has-text-danger')
+        end
+
+        it 'returns the Word icon for a DOCX file' do
+            expect(helper.file_type_icon('file.docx')).to include('fa-file-word')
+            expect(helper.file_type_icon('file.docx')).to include('has-text-primary')
+        end
+
+        it 'returns the Excel icon for an XLSX file' do
+            expect(helper.file_type_icon('file.xlsx')).to include('fa-file-excel')
+            expect(helper.file_type_icon('file.xlsx')).to include('has-text-success')
+        end
+
+        it 'returns the PowerPoint icon for a PPTX file' do
+            expect(helper.file_type_icon('file.pptx')).to include('fa-file-powerpoint')
+            expect(helper.file_type_icon('file.pptx')).to include('has-text-warning')
+        end
+
+        it 'returns the Text icon for a TXT file' do
+            expect(helper.file_type_icon('file.txt')).to include('fa-file-alt')
+            expect(helper.file_type_icon('file.txt')).to include('has-text-info')
+        end
+
+        it 'returns the audio icon for a MP3 file' do
+            expect(helper.file_type_icon('file.mp3')).to include('fa-file-audio')
+            expect(helper.file_type_icon('file.mp3')).to include('has-text-info')
+        end
+
+        it 'returns the video icon for a MP4 file' do
+            expect(helper.file_type_icon('file.mp4')).to include('fa-file-video')
+            expect(helper.file_type_icon('file.mp4')).to include('has-text-info')
+        end
+
+        it 'returns the archive icon for a ZIP file' do
+            expect(helper.file_type_icon('file.zip')).to include('fa-file-archive')
+            expect(helper.file_type_icon('file.zip')).to include('has-text-info')
+        end
+        it 'returns the code icon for a HTML file' do
+            expect(helper.file_type_icon('file.html')).to include('fa-file-code')
+            expect(helper.file_type_icon('file.html')).to include('has-text-info')
+        end
+
+        it 'returns the image icon for a JPG file' do
+            expect(helper.file_type_icon('file.jpg')).to include('fa-file-image')
+            expect(helper.file_type_icon('file.jpg')).to include('has-text-info')
+        end
+
+        it 'returns the file icon for a OTHER file' do
+            expect(helper.file_type_icon('file.other')).to include('fa-file')
+            expect(helper.file_type_icon('file.other')).to include('has-text-warning')
+        end
+    end
+
+    describe '#user_select_options' do
+        it 'returns an array of users with full name and IDs' do
+            user1 = FactoryBot.create(:user, first_name: 'John', last_name: 'Doe', id: 1)
+            user2 = FactoryBot.create(:user, first_name: 'Smith', last_name: 'Cap', id: 2)
+            allow(User).to receive(:all).and_return([user1, user2])
+            expect(helper.send(:user_select_options)).to eq([[user1.full_name, user1.id], [user2.full_name, user2.id]])
+        end
+    end
+
+    describe '#program_select_options' do
+        it 'returns an array of programs with name and id' do
+            program1 = FactoryBot.create(:program, name: 'program1', id: 1)
+            program2 = FactoryBot.create(:vendor, name: 'program2', id: 2)
+            allow(Program).to receive(:all).and_return([program1, program2])
+            expect(helper.send(:program_select_options)).to eq([[program1.name, program1.id], [program2.name, program2.id]])
+        end
+    end
 end
