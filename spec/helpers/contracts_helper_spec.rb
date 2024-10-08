@@ -132,4 +132,44 @@ RSpec.describe ContractsHelper, type: :helper do
             expect(helper.send(:program_select_options)).to eq([[program1.name, program1.id], [program2.name, program2.id]])
         end
     end
+    describe '#entity_select_options' do
+        include Devise::Test::IntegrationHelpers
+        include FactoryBot::Syntax::Methods
+        include Devise::Test::ControllerHelpers
+
+        let(:entityone) { FactoryBot.create(:entity, name: 'EntityOne', id: 1) }
+        let(:entitytwo) { FactoryBot.create(:entity, name: 'EntityTwo', id: 22) }
+        let(:program) {FactoryBot.create(:program)}
+        it 'returns an empty array when no user is logged in' do
+            # before any user is signed in
+            expect(helper.send(:entity_select_options)).to eq([])
+        end
+        it 'returns an array of entities with name and ids of current user a user of level three is logged in' do
+
+            # after user level three is signed in
+            userone = FactoryBot.create(
+              :user,
+              level: UserLevel::THREE,
+              program:,
+              entities: [entityone]
+            )
+            allow(Entity).to receive(:all).and_return([entityone, entitytwo])
+            sign_in userone
+            expect(helper.send(:entity_select_options)).to eq([[entityone.name, entityone.id]])
+            sign_out userone
+        end
+        it 'returns an array of all entities with name and ids when a user of any level other than level 3 is logged in' do
+            usertwo = FactoryBot.create(
+              :user,
+              level: UserLevel::ONE,
+              program:,
+              entities: [entityone]
+            )
+            # after user level one is signed in
+            allow(Entity).to receive(:all).and_return([entityone, entitytwo])
+            sign_in usertwo
+            expect(helper.send(:entity_select_options)).to eq([[entityone.name, entityone.id],[entitytwo.name, entitytwo.id]])
+
+        end
+    end
 end
