@@ -172,4 +172,18 @@ RSpec.describe ContractsHelper, type: :helper do
 
         end
     end
+
+    describe '#contract_document_filename' do
+        let(:entityone) { FactoryBot.create(:entity, name: 'ABCDEFG', id: 22) }
+        let(:program) {FactoryBot.create(:program, name: 'PQRSTUV')}
+        let(:contractone) {FactoryBot.create(:contract, entity: entityone, program: program)}
+        it 'returns a filename given a contract' do
+            expect(helper.send(:contract_document_filename, contractone, 'pdf')).to match(/^abcde-pqr-#{contractone.number.slice(-5, 5).downcase}-[a-zA-Z0-9]{5}pdf$/)
+        end
+        it 'ensures no two files of contract are same' do
+            fileOneName = helper.send(:contract_document_filename, contractone, 'pdf')
+            fileTwoName = helper.send(:contract_document_filename, contractone, 'pdf')
+            expect(fileOneName).not_to eq(fileTwoName   )
+        end
+    end
 end
