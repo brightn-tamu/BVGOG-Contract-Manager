@@ -81,14 +81,14 @@ Rails.application.configure do
     # Use default logging formatter so that PID and timestamp are not suppressed.
     config.log_formatter = ::Logger::Formatter.new
 
-    ActionMailer::Base.default from: 'postmaster@sandbox5ebc872c9d754b459881415c9d0f9831.mailgun.org'
+    ActionMailer::Base.default from: ENV['MAIL_DEFAULT_FROM']
     ActionMailer::Base.smtp_settings = {
-        user_name: 'postmaster@sandbox5ebc872c9d754b459881415c9d0f9831.mailgun.org',
-        password: 'b97e724ba1f2710240038cffdaa88d3b-d010bdaf-5279a812',
-        domain: 'sandbox5ebc872c9d754b459881415c9d0f9831.mailgun.org',
-        address: 'smtp.mailgun.org',
+        user_name: ENV['MAIL_USERNAME'],
+        password: ENV['MAIL_PASSWORD'],
+        domain: 'sandbox7d62494957a2401396124ef699302c04.mailgun.org',
+        address: ENV['MAIL_ADDRESS'],
         port: 587,
-        authentication: :login,
+        authentication: 'plain',
         enable_starttls_auto: true
     }
     ActionMailer::Base.delivery_method = :smtp
