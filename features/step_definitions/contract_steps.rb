@@ -81,3 +81,11 @@ end
 When('I follow \/contract_documents\/{int}"') do |int|
     visit "/contract_documents/#{int}"
 end
+
+Then('I should see {string} field') do |field_name|
+    expect(page).to have_field(field_name)
+end
+
+Then('I should not see {string} field') do |field_name|
+    expect(page).to have_no_field(field_name)
+end

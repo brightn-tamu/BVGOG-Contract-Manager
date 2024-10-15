@@ -76,3 +76,16 @@ Scenario: Add "Amendment" to contract type dropdown
 	And I fill in the "contract_starts_at" field with "2023-04-01"
 	And I press "Create Contract"
 	Then I should see "Contract was successfully created."
+
+Scenario: Specified fields are removed from the new contract windows
+	Given I am on the new contract page
+	Then I should not see "Interim Amount" field
+	And I should not see "Initial Term" field
+	And I should not see "Initial term duration" field
+	And I should not see "Value Type" field
+
+Scenario: Add Contract Value field 
+	Given I am on the new contract page
+	Then I should see "Contract Value" field
+	And "Contract Value" field should have a maximum of $99 million
+	And "Contract Value" should be optional
