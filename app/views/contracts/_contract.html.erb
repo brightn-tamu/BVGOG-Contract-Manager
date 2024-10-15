@@ -25,10 +25,6 @@
                                 <td><strong>Contract Type:</strong></td>
                                 <td><%= @contract.contract_type_humanize %></td>
                             </tr>
-                            <tr>
-                                <td><strong>Initial Term:</strong></td>
-                                <td><%= @contract.initial_term_amount %> <%= @contract.initial_term_duration %><%= @contract.initial_term_amount > 1 ? "s" : "" %></td>
-                            </tr>
 
                             <% if @contract.extension_count && @contract.end_trigger == "limited_term"%>
                                 <tr>
@@ -85,18 +81,6 @@
                                     <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
                                 </tr>
                             <% end %>
-                            <tr>
-                                <td><strong>Amount:</strong></td>
-                                <td><%= number_to_currency(@contract.amount_dollar) %> per <%= @contract.amount_duration %></td>
-                            </tr>
-                             <tr>
-                                <td><strong>Total Amount:</strong></td>
-                                <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
-                                    <td>Not Applicable</td>
-                                <% else %>
-                                    <td><%= number_to_currency(@contract.total_amount) %></td>
-                                <% end %>
-                            </tr>
                             <tr>
                                 <td><strong>Status:</strong></td>
                                 <td><%= contract_status_icon(@contract) %></td>

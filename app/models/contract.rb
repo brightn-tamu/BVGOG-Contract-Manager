@@ -14,12 +14,8 @@ class Contract < ApplicationRecord
     validates :ends_at_final, comparison: { greater_than_or_equal_to: :ends_at }, if: lambda {
                                                                     end_trigger == 'limited_term' && ends_at_final.present?
                                                             }
-    validates :amount_dollar, numericality: { greater_than_or_equal_to: 0 }
-    validates :initial_term_amount, numericality: { greater_than_or_equal_to: 0 }
     validates :contract_type, presence: true, inclusion: { in: ContractType.list }
     validates :contract_status, inclusion: { in: ContractStatus.list }
-    validates :amount_duration, inclusion: { in: TimePeriod.list }
-    validates :initial_term_duration, inclusion: { in: TimePeriod.list }
 
     validates :end_trigger, inclusion: { in: EndTrigger.list }
 
@@ -33,8 +29,6 @@ class Contract < ApplicationRecord
     # Enums
     has_enumeration_for :contract_type, with: ContractType, create_helpers: true
     has_enumeration_for :contract_status, with: ContractStatus, create_helpers: true
-    has_enumeration_for :amount_duration, with: TimePeriod, create_helpers: true
-    has_enumeration_for :initial_term_duration, with: TimePeriod, create_helpers: true
     has_enumeration_for :end_trigger, with: EndTrigger, create_helpers: true
 
     # Methods
