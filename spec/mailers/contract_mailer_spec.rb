@@ -31,4 +31,37 @@ RSpec.describe ContractMailer, type: :mailer do
         end
     end
 
+    describe '#expiration_report' do
+        let(:user1) { create(:user, email: 'user1@example.com') }
+        let(:user2) { create(:user, email: 'user2@example.com') }
+        let(:report) { create(:report, file_name: 'report.pdf', user_id: user1.id, full_path: '/path/to/report.pdf') }
+        let(:config) { create(:bvcog_config, users: [user1]) }
+
+        before do
+            allow(BvcogConfig).to receive_message_chain(:last, :users).and_return([user1])
+            allow(File).to receive(:read).with("#{Rails.root}/app/assets/images/bvcog-logo.png").and_return('file contents')
+            allow(File).to receive(:read).with(report.full_path).and_return('file contents')
+            @mail = described_class.expiration_report(report).deliver_now
+        end
+
+        it 'sends emails' do
+            expect(described_class.deliveries.count).to eq(1)
+        end
+
+        it 'sends emails to the correct recipients' do
+            expect(@mail.to).to contain_exactly(user1.email)
+        end
+
+        it 'sends emails with the subject' do
+            expect(@mail.subject).to eq("Contract Expiration Report - #{Date.today.strftime('%m/%d/%Y')}")
+        end
+
+        it 'sends emails and attaches the report file' do
+            expect(@mail.attachments[report.file_name].body.raw_source).to eq('file contents')
+        end
+
+        it 'sends email with the correct template ' do
+            expect(@mail.html_part.decoded).to match(/You have been assigned to receive a monthly report of upcoming expiring contracts for the Brazos Valley Council of Governments./)
+        end
+    end
 end
