@@ -98,8 +98,6 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_documents_attributes)
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
-
-        params[:contract][:total_amount] = handle_total_amount_value(params[:contract], value_type_selected)
         
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_vendor_name)
@@ -234,8 +232,6 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
 
-        params[:contract][:total_amount] = handle_total_amount_value(params[:contract], value_type_selected)
-
         respond_to do |format|
             ActiveRecord::Base.transaction do
                 OSO.authorize(current_user, 'edit', @contract)
@@ -329,65 +325,6 @@ class ContractsController < ApplicationController
             format.html { redirect_to contract_url(@contract), alert: message }
             # :nocov:
         end
-    end
-
-    def handle_total_amount_value(contract_params, value_type)
-        if value_type == "Not Applicable"
-          contract_params[:total_amount] = 0
-          contract_params[:value_type] = "Not Applicable"
-        elsif value_type == "Calculated Value"
-            contract_params[:total_amount]= get_calculated_value(contract_params) 
-            contract_params[:value_type] = "Calculated Value"
-        end
-      
-        contract_params[:total_amount]
-    end
-      
-    def get_calculated_value(contract_params)
-        amount_dollar = contract_params[:amount_dollar].to_i       # the value of the contract for the amount_duration (days, weeks, months, years)
-        initial_term = contract_params[:initial_term_amount].to_i  # no. of days, weeks, months, years the contract is for
-        amount_duration_value = contract_params[:amount_duration]  # the amount of the contract for {days, weeks, months, years}
-        initial_term_duration_value = contract_params[:initial_term_duration] # the number of {days, weeks, months, years} the contract is for
-        
-        case amount_duration_value
-        when 'day'
-            case initial_term_duration_value
-            when 'week'
-                contract_params[:total_amount] = amount_dollar * initial_term * 7
-            when 'month'
-                contract_params[:total_amount] = amount_dollar * initial_term * 30
-            when 'year'
-                contract_params[:total_amount] = amount_dollar * initial_term * 365
-            end
-        when 'week'
-            case initial_term_duration_value
-            when 'day'
-                contract_params[:total_amount] = amount_dollar * initial_term / 7
-            when 'month'
-                contract_params[:total_amount] = amount_dollar * initial_term * 4
-            when 'year'
-                contract_params[:total_amount] = amount_dollar * initial_term * 52
-            end
-        when 'month'
-            case initial_term_duration_value
-            when 'day'
-                contract_params[:total_amount] = amount_dollar * initial_term / 30
-            when 'week'
-                contract_params[:total_amount] = amount_dollar * initial_term / 4
-            when 'year'
-                contract_params[:total_amount] = amount_dollar * initial_term * 12
-            end
-        when 'year'
-            case initial_term_duration_value
-            when 'day'
-                contract_params[:total_amount] = amount_dollar * initial_term / 365
-            when 'week'
-                contract_params[:total_amount] = amount_dollar * initial_term / 52
-            when 'month'
-                contract_params[:total_amount] = amount_dollar * initial_term / 12
-            end
-        end
-        return contract_params[:total_amount]
     end
 
     def get_file
@@ -505,6 +442,7 @@ class ContractsController < ApplicationController
             extension_duration_units
             value_type
             vendor_visible_id
+            contract_value
         ]
         params.require(:contract).permit(allowed)
     end

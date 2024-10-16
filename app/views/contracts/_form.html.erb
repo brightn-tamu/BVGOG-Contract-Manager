@@ -342,6 +342,21 @@
                         <%= form.text_field :total_amount, id: "total_amount", class: "input"  %>
                     </div>
 
+                    <div class="field">
+                    <%= form.label :contract_value, 'Contract Value' do %>
+                        <div class="icon-text">
+                        <span class="icon has-text-info" id="contract-value-modal-open-btn">
+                            <i class="fas fa-circle-info"></i>
+                        </span>
+                        <span>Contract Value</span>
+                        </div>
+                    <% end %>
+                    <div class="control">
+                        <%= form.number_field :contract_value, class: "input", step: "0.01", max: 99_000_000 %>
+                    </div>
+                    </div>
+
+
                     <%# Contract Documents %>
                     <div class="field">
                         <%= form.label :contract_documents do %>
@@ -613,6 +628,25 @@
     </div>
 </div>
 
+<div class="modal" id="contract-value-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <div class="icon-text">
+            <p class="modal-card-title">Contract Value</p>
+            </div>
+        </header>
+        <section class="modal-card-body">
+        <div class="content">
+            The value of contract.
+        </div>
+        </section>
+        <footer class="modal-card-foot">
+        <button class="button modal-close-btn">Close</button>
+        </footer>
+    </div>
+</div>
+
 <div class="modal" id="contract-documents-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -671,3 +705,18 @@
         </footer>
     </div>
 </div>
+
+<% if @contract.errors.any? %>
+  <article class="message is-danger">
+    <div class="message-header">
+      <p><%= pluralize(@contract.errors.count, "error") %> prohibited this contract from being saved:</p>
+    </div>
+    <div class="message-body">
+      <ul>
+        <% @contract.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  </article>
+<% end %>

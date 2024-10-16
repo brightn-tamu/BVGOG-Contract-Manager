@@ -19,6 +19,12 @@ class Contract < ApplicationRecord
 
     validates :end_trigger, inclusion: { in: EndTrigger.list }
 
+    validates :contract_value,
+            numericality: { less_than_or_equal_to: 99_000_000, allow_nil: true }
+
+    validates :contract_value,
+            numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+
     belongs_to :entity, class_name: 'Entity'
     belongs_to :program, class_name: 'Program'
     belongs_to :point_of_contact, class_name: 'User'
