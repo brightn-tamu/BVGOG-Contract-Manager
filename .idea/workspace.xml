@@ -4,7 +4,167 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="" />
+    <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/channels/application_cable/channel.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/channels/application_cable/channel.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/channels/application_cable/connection.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/channels/application_cable/connection.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/contract_documents_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contract_documents_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/invitations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/invitations_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/pages_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/pages_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/reports_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/reports_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/users_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/users_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/vendor_reviews_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/vendor_reviews_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/vendors_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/vendors_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/contract_document_type.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/contract_document_type.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/contract_status.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/contract_status.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/contract_type.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/contract_type.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/end_trigger.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/end_trigger.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/report_type.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/report_type.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/time_period.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/time_period.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/user_level.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/user_level.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/application_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/application_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/contract_documents_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/contract_documents_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/contracts_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/contracts_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/pages_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/pages_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/reports_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/reports_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/users_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/users_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers/vendors_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/vendors_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/jobs/application_job.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/jobs/application_job.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/mailers/application_mailer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/mailers/application_mailer.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/mailers/contract_mailer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/mailers/contract_mailer.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/mailers/devise_custom_mailer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/mailers/devise_custom_mailer.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/application_record.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/application_record.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/bvcog_config.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/bvcog_config.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/contract.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/contract.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/contract_decision.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/contract_decision.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/contract_document.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/contract_document.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/entity.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/entity.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/program.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/program.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/report.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/report.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/vendor.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/vendor.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/vendor_review.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/vendor_review.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/rails" beforeDir="false" afterPath="$PROJECT_DIR$/bin/rails" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/application.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/application.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/boot.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/boot.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/environment.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environment.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/environments/development.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environments/development.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/environments/production.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environments/production.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/environments/test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environments/test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/importmap.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/importmap.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/assets.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/assets.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/content_security_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/content_security_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/devise.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/devise.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/filter_parameter_logging.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/filter_parameter_logging.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/inflections.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/inflections.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/kaminari_config.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/kaminari_config.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/oso.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/oso.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/permissions_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/permissions_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/puma.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/puma.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/schedule.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/schedule.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221170952_create_vendors.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221170952_create_vendors.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221171922_create_users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221171922_create_users.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221172437_create_bvcog_configs.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221172437_create_bvcog_configs.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221172950_create_vendor_reviews.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221172950_create_vendor_reviews.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221173300_create_entities.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221173300_create_entities.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221173307_create_programs.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221173307_create_programs.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221174315_create_contracts.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221174315_create_contracts.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230221175315_create_contract_documents.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230221175315_create_contract_documents.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230301203131_add_orig_file_name_to_contract_documents.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230301203131_add_orig_file_name_to_contract_documents.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230301204329_remove_email_and_password_from_users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230301204329_remove_email_and_password_from_users.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230301204716_add_devise_to_users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230301204716_add_devise_to_users.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230321162017_add_program_to_users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230321162017_add_program_to_users.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230328011615_create_reports.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230328011615_create_reports.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230328173948_add_user_to_reports.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230328173948_add_user_to_reports.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230420021745_create_entities_users_join_table.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230420021745_create_entities_users_join_table.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230425203435_devise_invitable_add_to_users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230425203435_devise_invitable_add_to_users.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230429030056_add_show_expired_contracts_to_reports.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230429030056_add_show_expired_contracts_to_reports.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230429193846_add_document_type_to_contract_documents.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230429193846_add_document_type_to_contract_documents.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230430003137_create_bvcog_configs_users_join_table.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230430003137_create_bvcog_configs_users_join_table.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20230507223210_add_renewal_count_to_contracts.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20230507223210_add_renewal_count_to_contracts.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20231106210807_add_extensions_to_contracts.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20231106210807_add_extensions_to_contracts.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20231107163604_add_total_amount_to_contracts.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20231107163604_add_total_amount_to_contracts.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20231108185332_create_contract_status_table.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20231108185332_create_contract_status_table.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate/20231129173405_add_contract_type_to_reports.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate/20231129173405_add_contract_type_to_reports.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/seeds.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/seeds.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/admin_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/admin_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/contract_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/contract_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/db_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/db_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/http_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/http_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/user_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/user_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/vendor_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/vendor_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/web_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/web_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/support/env.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/support/env.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/support/hooks.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/support/hooks.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/support/paths.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/support/paths.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/support/rspec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/support/rspec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/support/selectors.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/support/selectors.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/auth_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/auth_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/contract_document_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/contract_document_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/contract_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/contract_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/entity_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/entity_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/program_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/program_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/reports.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/reports.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/user_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/user_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/vendor_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/vendor_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/vendor_review_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/vendor_review_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/helpers/contract_documents_helper_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/helpers/contract_documents_helper_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/helpers/contracts_helper_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/helpers/contracts_helper_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/helpers/reports_helper_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/helpers/reports_helper_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/helpers/users_helper_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/helpers/users_helper_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/helpers/vendors_helper_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/helpers/vendors_helper_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/mailers/contract_mailer_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/mailers/contract_mailer_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/mailers/previews/contract_mailer_preview.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/mailers/previews/contract_mailer_preview.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/contract_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/contract_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/entity_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/entity_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/program_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/program_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/report_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/report_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/user_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/user_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/vendor_review_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/vendor_review_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/vendor_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/vendor_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/rails_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/rails_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/requests/contract_documents_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/requests/contract_documents_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/requests/contracts_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/requests/contracts_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/requests/reports_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/requests/reports_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/requests/users_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/requests/users_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/requests/vendors_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/requests/vendors_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/routing/contracts_routing_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/routing/contracts_routing_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/routing/reports_routing_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/routing/reports_routing_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/routing/users_routing_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/routing/users_routing_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/routing/vendors_routing_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/routing/vendors_routing_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/spec_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/spec_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/contracts/edit.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/contracts/edit.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/contracts/index.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/contracts/index.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/contracts/new.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/contracts/new.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/contracts/show.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/contracts/show.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/reports/new.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/reports/new.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/reports/show.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/reports/show.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/users/edit.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/users/edit.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/users/index.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/users/index.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/users/show.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/users/show.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/vendors/edit.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/vendors/edit.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/vendors/index.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/vendors/index.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/vendors/new.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/vendors/new.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/views/vendors/show.html.erb_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/views/vendors/show.html.erb_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/application_system_test_case.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/application_system_test_case.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/channels/application_cable/connection_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/channels/application_cable/connection_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/controllers/pages_controller_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/controllers/pages_controller_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/bvcog_config_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/bvcog_config_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/contract_document_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/contract_document_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/contract_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/contract_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/entity_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/entity_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/program_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/program_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/user_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/user_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/vendor_review_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/vendor_review_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/vendor_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/vendor_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_helper.rb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,6 +184,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;sprint-2-NB-RSpec&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/config&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -276,10 +437,25 @@
       <updated>1728929579030</updated>
       <workItem from="1728929580069" duration="6521000" />
       <workItem from="1729085702299" duration="1235000" />
+      <workItem from="1729086958775" duration="6201000" />
+      <workItem from="1729124106849" duration="2889000" />
     </task>
+    <task id="LOCAL-00001" summary="start">
+      <option name="closed" value="true" />
+      <created>1729086989592</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1729086989592</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="start" />
+    <option name="LAST_COMMIT_MESSAGE" value="start" />
   </component>
 </project>
