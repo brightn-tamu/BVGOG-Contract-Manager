@@ -84,11 +84,11 @@ Rails.application.configure do
     ActionMailer::Base.default from: ENV['MAIL_DEFAULT_FROM']
     ActionMailer::Base.smtp_settings = {
         user_name: ENV['MAIL_USERNAME'],
-        password: Rails.application.credentials.mail_password,
-        domain: ENV['MAIL_DOMAIN'],
+        password: ENV['MAIL_PASSWORD'],
+        domain: 'sandbox7d62494957a2401396124ef699302c04.mailgun.org',
         address: ENV['MAIL_ADDRESS'],
         port: 587,
-        authentication: :login,
+        authentication: 'plain',
         enable_starttls_auto: true
     }
     ActionMailer::Base.delivery_method = :smtp
