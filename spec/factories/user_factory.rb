@@ -11,9 +11,8 @@ FactoryBot.define do
         is_program_manager { false }
         is_active { true }
         level { UserLevel::THREE }
+        program { Program.all.any? ? Program.all.sample : FactoryBot.create(:program) }
 
-        # Ensure that a Program is created if one doesn't exist, or associates with an existing one
-        association :program, factory: :program
     end
 end
 
