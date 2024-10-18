@@ -145,7 +145,6 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                "$#{contract.amount_dollar.round(2)} per #{contract.amount_duration_humanize}",
                 contract.ends_at.nil? ? '' : contract.ends_at.strftime('%m/%d/%Y')
             ]
         end

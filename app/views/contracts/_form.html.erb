@@ -337,100 +337,25 @@
                         </div>
                     </div>
 
-                    <%# Dollar Amount and Amount Duration %>
-                    <div class="columns">
-                        <div class="column is-6">
-                            <div class="field">
-                                <%= form.label :amount_dollar do %>
-                                    <div class="icon-text">
-                                        <span class="icon has-text-info" id="contract-interim-amount-modal-open-btn">
-                                            <i class="fas fa-circle-info"></i>
-                                        </span>
-                                        <span>Interim Amount</span>
-                                    </div>
-                                <% end %>
-                                <p class="control has-icons-left">
-                                    <%= form.number_field :amount_dollar, class: "input", id: "contract-form-dollar-amount" %>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-dollar"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column is-1">
-                            <div class="icon-text">
-                                <span>&nbsp;</span>
-                            </div>
-                            <p class="is-size-4 has-text-centered">per</p>
-                        </div>
-                        <div class="column is-5">
-                            <div class="icon-text">
-                                <span>&nbsp;</span>
-                            </div>
-                            <div class="field">
-                            <div class="control has-icons-right">
-                                <%= form.select :amount_duration, TimePeriod.to_a, {:include_blank => true}, class: "input" %>
-                                    <span class="icon is-small is-right">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </span>
-                            </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <%# Initial Term Amount, Initial Term Duration%>
-                    <div class="columns">
-                        <div class="column is-6">
-                            <div class="field">
-                                <%= form.label :initial_term_amount do %>
-                                    <div class="icon-text">
-                                        <span class="icon has-text-info" id="contract-initial-term-modal-open-btn">
-                                            <i class="fas fa-circle-info"></i>
-                                        </span>
-                                        <span>Initial Term</span>
-                                    </div>
-                                <% end %>
-                                <p class="control has-icons-left">
-                                    <%= form.number_field :initial_term_amount, class: "input" %>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-clock"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column is-6">
-                            <div class="field">
-                                <%= form.label :initial_term_duration %>
-                                <div class="control has-icons-right">
-                                <%= form.select :initial_term_duration, TimePeriod.to_a, {:include_blank => true}, class: "input" %>
-                                    <span class="icon is-small is-right">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <%= form.label :value_type, 'Value Type' %>
-                        <div class="control has-icons-right">
-                            <%= form.select :value_type,
-                                options_for_select(["Not Applicable", "Total Value", "Calculated Value"], @value_type),
-                                { include_blank: true },
-                                { id: "value_type", class: "input", onchange: "showhideTotalValueField()"} %>
-                                <span class="icon is-small is-right">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                        </div>
-
-                    </div>
-
                     <div class="field" id="total_value_field" style="display: none;" >
                         <%= form.label :total_amount, 'Total Value' %>
                         <%= form.text_field :total_amount, id: "total_amount", class: "input"  %>
                     </div>
+
+                    <div class="field">
+                    <%= form.label :contract_value, 'Contract Value' do %>
+                        <div class="icon-text">
+                        <span class="icon has-text-info" id="contract-value-modal-open-btn">
+                            <i class="fas fa-circle-info"></i>
+                        </span>
+                        <span>Contract Value</span>
+                        </div>
+                    <% end %>
+                    <div class="control">
+                        <%= form.number_field :contract_value, class: "input", step: "0.01", max: 99_000_000 %>
+                    </div>
+                    </div>
+
 
                     <%# Contract Documents %>
                     <div class="field">
@@ -682,25 +607,6 @@
     </div>
 </div>
 
-<div class="modal" id="contract-initial-term-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <div class="icon-text">
-            <p class="modal-card-title">Initial Term</p>
-            </div>
-        </header>
-        <section class="modal-card-body">
-        <div class="content">
-            The beginning length of the contract.
-        </div>
-        </section>
-        <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-        </footer>
-    </div>
-</div>
-
 <div class="modal" id="contract-effective-date-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -722,17 +628,17 @@
     </div>
 </div>
 
-<div class="modal" id="contract-interim-amount-modal">
+<div class="modal" id="contract-value-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <div class="icon-text">
-            <p class="modal-card-title">Interim Amount</p>
+            <p class="modal-card-title">Contract Value</p>
             </div>
         </header>
         <section class="modal-card-body">
         <div class="content">
-            Enter the Interim Amount if the contract has a limited value that occurs each year/quarter/month.
+            The value of contract.
         </div>
         </section>
         <footer class="modal-card-foot">
@@ -799,6 +705,21 @@
         </footer>
     </div>
 </div>
+
+<% if @contract.errors.any? %>
+  <article class="message is-danger">
+    <div class="message-header">
+      <p><%= pluralize(@contract.errors.count, "error") %> prohibited this contract from being saved:</p>
+    </div>
+    <div class="message-body">
+      <ul>
+        <% @contract.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  </article>
+<% end %>
 
 <style>
 .modal-card-foot {
