@@ -401,25 +401,25 @@ class ContractsController < ApplicationController
             starts_at
             ends_at
             ends_at_final
-			contract_status
-			entity_id
-			program_id
-			point_of_contact_id
-			vendor_id
-			amount_dollar
-			total_amount
-			amount_duration
-			initial_term_amount
-			initial_term_duration
-			end_trigger
-			contract_type
-			requires_rebid
-			number
-			new_vendor_name
-			contract_documents
-			contract_documents_attributes
-			contract_document_type_hidden
-			renewal_count
+			      contract_status
+			      entity_id
+			      program_id
+			      point_of_contact_id
+			      vendor_id
+			      amount_dollar
+			      total_amount
+			      amount_duration
+			      initial_term_amount
+			      initial_term_duration
+			      end_trigger
+			      contract_type
+			      requires_rebid
+			      number
+			      new_vendor_name
+			      contract_documents
+			      contract_documents_attributes
+			      contract_document_type_hidden
+			      renewal_count
             contract_status
             entity_id
             program_id
@@ -464,8 +464,10 @@ class ContractsController < ApplicationController
         when 'point_of_contact'
             # Sort by the name of the point of contact
             Contract.joins(:point_of_contact).order("users.last_name #{asc}").order("users.first_name #{asc}")
+
         when 'vendor'
             Contract.joins(:vendor).order("vendors.name #{asc}")
+
         else
             begin
                 # Sort by the specified column and direction

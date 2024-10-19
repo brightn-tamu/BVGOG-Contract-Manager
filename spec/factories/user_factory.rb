@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # User Factory
-
+#
 FactoryBot.define do
     factory :user do
         email { Faker::Internet.email }
@@ -12,5 +12,7 @@ FactoryBot.define do
         is_active { true }
         level { UserLevel::THREE }
         program { Program.all.any? ? Program.all.sample : FactoryBot.create(:program) }
+
     end
 end
+
