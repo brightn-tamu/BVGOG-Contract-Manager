@@ -94,52 +94,52 @@ if Rails.env.production?
         invitation_accepted_at: Time.zone.now
     )
 
-    # Create multiple contracts
-    # (1..50).each do |i|
-    #     FactoryBot.create(
-    #         :vendor,
-    #         id: i,
-    #         name: "Vendor #{i}"
-    #     )
+    Create multiple contracts
+    (1..50).each do |i|
+        FactoryBot.create(
+            :vendor,
+            id: i,
+            name: "Vendor #{i}"
+        )
 
-    #     d = Time.zone.today + 1.day * i
-    #     FactoryBot.create(
-    #         :contract,
-    #         id: i,
-    #         title: "Contract #{i}",
-    #         entity: Entity.all.sample,
-    #         program: Program.all.sample,
-    #         point_of_contact: User.all.sample,
-    #         vendor: Vendor.all.sample,
-    #         ends_at: d,
-    #         ends_at_final: d + 1.day * i,
-    #         extension_count: i,
-    #         extension_duration: i,
-    #         extension_duration_units: TimePeriod::MONTH
-    #     )
-    # end
+        d = Time.zone.today + 1.day * i
+        FactoryBot.create(
+            :contract,
+            id: i,
+            title: "Contract #{i}",
+            entity: Entity.all.sample,
+            program: Program.all.sample,
+            point_of_contact: User.all.sample,
+            vendor: Vendor.all.sample,
+            ends_at: d,
+            ends_at_final: d + 1.day * i,
+            extension_count: i,
+            extension_duration: i,
+            extension_duration_units: TimePeriod::MONTH
+        )
+    end
 
     # contact_person = User.find_by(email: 'user@example.com')
     # Create some documents with nearby expiries to test expiring docs mailer
     statuses = ContractStatus.list.reject { |status| status == :created }
-    # (1..100).each do |i|
-    #     d = Time.zone.today + 1.day * i
-    #     FactoryBot.create(
-    #         :contract,
-    #         id: 50 + i,
-    #         point_of_contact: contact_person,
-    #         title: "Expiry Contract #{i}",
-    #         program: Program.all.sample,
-    #         vendor: Vendor.all.sample,
-    #         entity: Entity.all.sample,
-    #         ends_at: d,
-    #         ends_at_final: d + 1.day * i,
-    #         extension_count: i,
-    #         extension_duration: i,
-    #         extension_duration_units: TimePeriod::MONTH,
-    #         contract_status: statuses.sample
-    #     )
-    # end
+    (1..100).each do |i|
+        d = Time.zone.today + 1.day * i
+        FactoryBot.create(
+            :contract,
+            id: 50 + i,
+            point_of_contact: contact_person,
+            title: "Expiry Contract #{i}",
+            program: Program.all.sample,
+            vendor: Vendor.all.sample,
+            entity: Entity.all.sample,
+            ends_at: d,
+            ends_at_final: d + 1.day * i,
+            extension_count: i,
+            extension_duration: i,
+            extension_duration_units: TimePeriod::MONTH,
+            contract_status: statuses.sample
+        )
+    end
 
     BvcogConfig.create(
         contracts_path: Rails.root.join('public/contracts'),
