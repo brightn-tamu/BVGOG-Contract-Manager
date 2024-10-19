@@ -139,7 +139,7 @@ if Rails.env.production?
         FactoryBot.create(
             :contract,
             id: 50 + i,
-            point_of_contact: contact_person,    
+            point_of_contact: contact_person,
             title: "Expiry Contract #{i}",
             program: Program.all.sample,
             vendor: Vendor.all.sample,

@@ -3,13 +3,11 @@
 namespace :contracts do
     desc 'Send expiry reminders for contracts'
     task send_expiration_reminders: :environment do
-    	[10, 30, 60, 90].each do |days_to_expiration|
-    		# Get contracts that are due to expire in exactly days_to_expiration days
-    		contracts = Contract.where('DATE(ends_at) = ?', Date.today + days_to_expiration.days)
-    		contracts.each do |contract|
-    			contract.send_expiry_reminder
-    		end
-    	end
+        [10, 30, 60, 90].each do |days_to_expiration|
+            # Get contracts that are due to expire in exactly days_to_expiration days
+            contracts = Contract.where('DATE(ends_at) = ?', Date.today + days_to_expiration.days)
+            contracts.each(&:send_expiry_reminder)
+        end
     end
 
     desc 'Send automated expiration reports for contracts'

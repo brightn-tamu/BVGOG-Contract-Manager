@@ -12,7 +12,5 @@ FactoryBot.define do
         is_active { true }
         level { UserLevel::THREE }
         program { Program.all.any? ? Program.all.sample : FactoryBot.create(:program) }
-
     end
 end
-

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class AddContractValueToContracts < ActiveRecord::Migration[6.1]
-  def change
-    add_column :contracts, :contract_value, :decimal, precision: 15, scale: 2
-  end
+    def change
+        add_column :contracts, :contract_value, :decimal, precision: 15, scale: 2
+    end
 end

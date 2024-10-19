@@ -163,8 +163,6 @@ class Report < ApplicationRecord
     def generate_contract_expiration_report
         report = self
 
-
-
         report.file_name = "bvcog-auto-contract-expiration-report-#{Date.today.strftime('%Y-%m-%d')}.pdf"
         report.full_path = File.join(BvcogConfig.last.reports_path, report.file_name).to_s
 

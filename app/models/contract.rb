@@ -12,18 +12,18 @@ class Contract < ApplicationRecord
     validates :starts_at, presence: true
     validates :ends_at, comparison: { greater_than_or_equal_to: :starts_at }, if: -> { end_trigger == 'limited_term' }
     validates :ends_at_final, comparison: { greater_than_or_equal_to: :ends_at }, if: lambda {
-                                                                    end_trigger == 'limited_term' && ends_at_final.present?
-                                                            }
+                                                                                          end_trigger == 'limited_term' && ends_at_final.present?
+                                                                                      }
     validates :contract_type, presence: true, inclusion: { in: ContractType.list }
     validates :contract_status, inclusion: { in: ContractStatus.list }
 
     validates :end_trigger, inclusion: { in: EndTrigger.list }
 
     validates :contract_value,
-            numericality: { less_than_or_equal_to: 99_000_000, allow_nil: true }
+              numericality: { less_than_or_equal_to: 99_000_000, allow_nil: true }
 
     validates :contract_value,
-            numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+              numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
     belongs_to :entity, class_name: 'Entity'
     belongs_to :program, class_name: 'Program'

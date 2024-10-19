@@ -40,7 +40,7 @@ FIRST_OF_EACH_MONTH = '0 0 1 * *'
 
 # Send expiry reminders for contracts every day
 every EVERY_DAY_AT_5_AM do
-    rake "contracts:send_expiration_reminders"
+    rake 'contracts:send_expiration_reminders'
 end
 
 # Send expiration reports once a month

@@ -22,7 +22,7 @@ RSpec.describe VendorsHelper, type: :helper do
         end
 
         it 'returns the correct number of full, half, and empty stars' do
-            create(:vendor_review, vendor: vendor, rating: 3.5)
+            create(:vendor_review, vendor:, rating: 3.5)
             expect(helper.average_rating_stars(vendor)).to include("<span class=\"icon\"><i class='fas fa-star has-text-warning'></i></span>" * 3)
             expect(helper.average_rating_stars(vendor)).to include("<span class=\"icon\"><i class='fas fa-star-half-alt has-text-warning'></i></span>")
             expect(helper.average_rating_stars(vendor)).to include("<span class=\"icon\"><i class='far fa-star'></i></span>")
@@ -39,12 +39,10 @@ RSpec.describe VendorsHelper, type: :helper do
         end
 
         it 'returns correct percentage bar chart when there are reviews' do
-            create(:vendor_review, vendor: vendor, rating: 5)
-            create(:vendor_review, vendor: vendor, rating: 4)
+            create(:vendor_review, vendor:, rating: 5)
+            create(:vendor_review, vendor:, rating: 4)
             expect(helper.bar_chart_reviews_html(vendor)).to include('width: 50%')
             expect(helper.bar_chart_reviews_html(vendor)).to include('width: 50%')
         end
     end
 end
-
-
