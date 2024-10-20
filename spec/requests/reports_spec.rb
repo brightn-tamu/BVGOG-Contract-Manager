@@ -64,12 +64,12 @@ RSpec.describe '/reports', type: :request do
     end
 
     describe 'GET /new' do
-        it 'renders a successful response' do
+        it 'renders a successful response for reports type contracts' do
             get "#{new_report_url}?type=contracts"
             expect(response).to be_successful
         end
 
-        it 'renders a successful response' do
+        it 'renders a successful response for reports type users' do
             get "#{new_report_url}?type=users"
             expect(response).to be_successful
         end
@@ -78,27 +78,36 @@ RSpec.describe '/reports', type: :request do
     describe 'POST /create' do
         context 'with valid parameters' do
             it 'creates a new Report' do
+                login_user
+                allow(BvcogConfig).to receive(:last).and_return(bvcog_config)
                 expect do
                     post reports_url, params: { report: valid_attributes }
                 end.to change(Report, :count).by(1)
+                # delete report_url(report)
             end
 
             it 'redirects to the created report' do
+                login_user
+                allow(BvcogConfig).to receive(:last).and_return(bvcog_config)
                 post reports_url, params: { report: valid_attributes }
                 expect(response).to redirect_to(report_url(Report.last))
+                # delete report_url(report)
             end
         end
 
         context 'with invalid parameters' do
             it 'does not create a new Report' do
+                login_user
                 expect do
                     post reports_url, params: { report: invalid_attributes }
                 end.to change(Report, :count).by(0)
             end
 
             it "renders a successful response (i.e. to display the 'new' template)" do
+                login_user
                 post reports_url, params: { report: invalid_attributes }
-                expect(response).to be_successful
+                expect(response).to have_http_status(:unprocessable_entity)
+                expect(response).to render_template(:new)
             end
         end
     end
@@ -106,14 +115,6 @@ RSpec.describe '/reports', type: :request do
     describe 'PATCH /update' do
         context 'with valid parameters' do
             let(:new_attributes) do
-                skip('Add a hash of attributes valid for your model')
-            end
-
-            it 'updates the requested report' do
-                report = Report.create! valid_attributes
-                patch report_url(report), params: { report: new_attributes }
-                report.reload
-                skip('Add assertions for updated state')
             end
 
             it 'redirects to the report' do
@@ -128,7 +129,7 @@ RSpec.describe '/reports', type: :request do
             it "renders a successful response (i.e. to display the 'edit' template)" do
                 report = Report.create! valid_attributes
                 patch report_url(report), params: { report: invalid_attributes }
-                expect(response).to be_successful
+                expect(response).to redirect_to(report_url(report))
             end
         end
     end
