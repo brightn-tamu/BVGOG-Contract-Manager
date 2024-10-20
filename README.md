@@ -195,3 +195,6 @@ Please contact the most recent team.
 | Matan Broner     | matanbroner@gmail.com |
 | Chrysanthos Pepi | cpepi001@outlook.com  |
 | Hanrui Chen      | No Email Given        |
+
+### Sprint 2 Code Climate (Fall 2024)
+![image](https://github.com/user-attachments/assets/cce02b2a-4fcb-4c80-8752-c1ad3c01e93c)
