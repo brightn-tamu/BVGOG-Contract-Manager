@@ -216,18 +216,6 @@
 
                     </div>
 
-                    <%# Search Key Words %>
-                    <div class="field">
-                        <%= form.label :search_key_words do %>
-                            <div class="icon-text">
-                                <span class="icon has-text-info" id="contract-key-words-modal-open-btn">
-                                    <i class="fas fa-circle-info"></i>
-                                </span>
-                                <span>Key Words</span>
-                            </div>
-                        <% end %>
-                        <%= form.text_field :key_words, placeholder: "Separate key words with a comma", class: "input" %>
-                    </div>
                 </div>
 
                 <div class="column is-6">
@@ -560,25 +548,6 @@
         <section class="modal-card-body">
         <div class="content">
             The organization the contract belongs to i.e. BVCOG or BVCAP
-        </div>
-        </section>
-        <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="contract-key-words-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <div class="icon-text">
-            <p class="modal-card-title">Key Words</p>
-            </div>
-        </header>
-        <section class="modal-card-body">
-        <div class="content">
-            Words that can be used to search for the contract
         </div>
         </section>
         <footer class="modal-card-foot">
