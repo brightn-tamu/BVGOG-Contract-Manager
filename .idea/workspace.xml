@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/factories/user_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/user_factory.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/factories/vendor_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/vendor_factory.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/factories/vendor_review_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/vendor_review_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +27,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;sprint-2-NB-RSpec&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/config&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -285,6 +283,7 @@
       <workItem from="1729086958775" duration="6201000" />
       <workItem from="1729124106849" duration="2889000" />
       <workItem from="1729261321756" duration="702000" />
+      <workItem from="1729627473517" duration="49000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />
