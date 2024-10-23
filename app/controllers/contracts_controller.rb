@@ -99,8 +99,6 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
 
-        params[:contract][:total_amount] = handle_total_amount_value(params[:contract], value_type_selected)
-        
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_vendor_name)
 
@@ -234,8 +232,6 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
 
-        params[:contract][:total_amount] = handle_total_amount_value(params[:contract], value_type_selected)
-
         respond_to do |format|
             ActiveRecord::Base.transaction do
                 OSO.authorize(current_user, 'edit', @contract)
@@ -331,67 +327,6 @@ class ContractsController < ApplicationController
         end
     end
 
-    def handle_total_amount_value(contract_params, value_type)
-        if value_type == "Not Applicable"
-          contract_params[:total_amount] = 0
-          contract_params[:value_type] = "Not Applicable"
-        elsif value_type == "Calculated Value"
-            contract_params[:total_amount]= get_calculated_value(contract_params) 
-            contract_params[:value_type] = "Calculated Value"
-        end
-      
-        contract_params[:total_amount]
-    end
-      
-    def get_calculated_value(contract_params)
-        amount_dollar = contract_params[:amount_dollar].to_i       # the value of the contract for the amount_duration (days, weeks, months, years)
-        initial_term = contract_params[:initial_term_amount].to_i  # no. of days, weeks, months, years the contract is for
-        amount_duration_value = contract_params[:amount_duration]  # the amount of the contract for {days, weeks, months, years}
-        initial_term_duration_value = contract_params[:initial_term_duration] # the number of {days, weeks, months, years} the contract is for
-        
-        case amount_duration_value
-        when 'day'
-            case initial_term_duration_value
-            when 'week'
-                contract_params[:total_amount] = amount_dollar * initial_term * 7
-            when 'month'
-                contract_params[:total_amount] = amount_dollar * initial_term * 30
-            when 'year'
-                contract_params[:total_amount] = amount_dollar * initial_term * 365
-            end
-        when 'week'
-            case initial_term_duration_value
-            when 'day'
-                contract_params[:total_amount] = amount_dollar * initial_term / 7
-            when 'month'
-                contract_params[:total_amount] = amount_dollar * initial_term * 4
-            when 'year'
-                contract_params[:total_amount] = amount_dollar * initial_term * 52
-            end
-        when 'month'
-            case initial_term_duration_value
-            when 'day'
-                contract_params[:total_amount] = amount_dollar * initial_term / 30
-            when 'week'
-                contract_params[:total_amount] = amount_dollar * initial_term / 4
-            when 'year'
-                contract_params[:total_amount] = amount_dollar * initial_term * 12
-            end
-        when 'year'
-            case initial_term_duration_value
-            when 'day'
-                contract_params[:total_amount] = amount_dollar * initial_term / 365
-            when 'week'
-                contract_params[:total_amount] = amount_dollar * initial_term / 52
-            when 'month'
-                contract_params[:total_amount] = amount_dollar * initial_term / 12
-            end
-        end
-        return contract_params[:total_amount]
-    end
-
-    def get_file
-    end
     # :nocov:
     def contract_files
         contract_document = ContractDocument.find(params[:id])
@@ -456,53 +391,28 @@ class ContractsController < ApplicationController
     end
 
     # Only allow a list of trusted parameters through.
+    # removing: amount_dollar, amount_duration,initial_term_amount, initial_term_duration, requires_rebid
+    # contract_documents_attributes, renewal_count, contract_status, extension_count, extension_duration, extension_duration_units
     def contract_params
         allowed = %i[
             title
             description
-            key_words
             starts_at
             ends_at
-            ends_at_final
-			contract_status
-			entity_id
-			program_id
-			point_of_contact_id
-			vendor_id
-			amount_dollar
-			total_amount
-			amount_duration
-			initial_term_amount
-			initial_term_duration
-			end_trigger
-			contract_type
-			requires_rebid
-			number
-			new_vendor_name
-			contract_documents
-			contract_documents_attributes
-			contract_document_type_hidden
-			renewal_count
+			      contract_status
+			      entity_id
+			      program_id
+			      point_of_contact_id
+			      vendor_id
+			      total_amount
+			      end_trigger
+			      contract_type
+			      number
+			      new_vendor_name
+			      contract_documents
+			      contract_document_type_hidden
+			      contract_documents_attributes
             contract_status
-            entity_id
-            program_id
-            point_of_contact_id
-            vendor_id
-            amount_dollar
-            amount_duration
-            initial_term_amount
-            initial_term_duration
-            end_trigger
-            contract_type
-            requires_rebid
-            number
-            new_vendor_name
-            contract_documents
-            contract_documents_attributes
-            contract_document_type_hidden
-            extension_count
-            extension_duration
-            extension_duration_units
             value_type
             vendor_visible_id
         ]
@@ -603,3 +513,19 @@ class ContractsController < ApplicationController
         # :nocov:
     end
 end
+
+__END__
+def get_file
+
+    def handle_total_amount_value(contract_params, value_type)
+        if value_type == "Not Applicable"
+          contract_params[:total_amount] = 0
+          contract_params[:value_type] = "Not Applicable"
+        elsif value_type == "Calculated Value"
+            contract_params[:total_amount]= get_calculated_value(contract_params)
+            contract_params[:value_type] = "Calculated Value"
+        end
+
+        contract_params[:total_amount]
+    end
+

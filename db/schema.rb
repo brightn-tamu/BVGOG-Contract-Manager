@@ -68,12 +68,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_29_173405) do
     t.text "end_trigger"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "extension_count", default: 1
     t.date "ends_at_final"
-    t.integer "extension_count"
-    t.integer "max_extension_count"
     t.integer "extension_duration"
     t.string "extension_duration_units"
-    t.float "totalamount"
+    t.float "total_amount"
+    t.string "value_type"
     t.index ["entity_id"], name: "index_contracts_on_entity_id"
     t.index ["point_of_contact_id"], name: "index_contracts_on_point_of_contact_id"
     t.index ["program_id"], name: "index_contracts_on_program_id"

@@ -75,10 +75,6 @@ Given('{int} example contracts exist') do |num_contracts|
             point_of_contact: User.all.sample,
             vendor: Vendor.all.sample,
             ends_at: d,
-            ends_at_final: d + 1.day * i,
-            extension_count: i,
-            max_extension_count: i,
-            extension_duration: i,
             extension_duration_units: TimePeriod::MONTH,
             contract_status: statuses[i % statuses.length]
         )

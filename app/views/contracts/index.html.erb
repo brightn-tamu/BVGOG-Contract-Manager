@@ -32,7 +32,7 @@
         <table class="table table is-striped is-hoverable is-fullwidth">
             <thead>
             <tr>
-                <% columns = [["Title", "title"], ["Number", "number"], ["Point of Contact", "point_of_contact"], ["Start Date", "starts_at"], ["End Date", "ends_at"], ["Amount", "amount_dollar"], ["Status", "contract_status"], ["Contract Type", "contract_type"]] %>
+                <% columns = [["Title", "title"], ["Number", "number"], ["Point of Contact", "point_of_contact"], ["Start Date", "starts_at"], ["End Date", "ends_at"], ["Total Amount", "total_amount"], ["Status", "contract_status"], ["Contract Type", "contract_type"]] %>
                 <% columns.each do |col| %>
                 <th>
                     <%= link_to col[0], sort: col[1], order: (params[:order] == "asc" ? "desc" : "asc") %>
@@ -66,7 +66,7 @@
                     N/A
                     <% end %>
                 </td>
-                <td><%= number_to_currency(contract.amount_dollar) %> per <%= contract.amount_duration %></td>
+                <td><%= number_to_currency(contract.total_amount) %></td>
                 <td><%= contract_status_icon(contract) %></td>
                 <td><%= contract.contract_type_humanize %></td>
                 </tr>
