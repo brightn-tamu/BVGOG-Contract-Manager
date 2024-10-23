@@ -63,4 +63,32 @@ Scenario: Create a contract with an inactive point of contract who does not have
 	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
 	Then I should see "Inactive User is not active"
-	
+
+
+Scenario: Add "Amendment" to contract type dropdown
+	Given I am on the new contract page
+	When I select "Amendment" from the contract types dropdown
+	And I fill in "Title" with "AmendmentContract"
+	And I fill in "Number" with "99"
+	And I fill in the vendor field with vendor value "new"
+	And I fill in the "contract[new_vendor_name]" field with "Test Vendor"
+	And I select "Example User" from the point of contact dropdown
+	And I select "Program 1" from the program dropdown
+	And I select "Entity 1" from the entity dropdown
+	And I select "Continuous" from the end trigger dropdown
+	And I fill in the "contract_starts_at" field with "2023-04-01"
+	And I press "Create Contract"
+	Then I should see "Contract was successfully created."
+
+Scenario: Specified fields are removed from the new contract windows
+	Given I am on the new contract page
+	Then I should not see "Interim Amount" field
+	And I should not see "Initial Term" field
+	And I should not see "Initial term duration" field
+	And I should not see "Value Type" field
+
+Scenario: Add Contract Value field
+	Given I am on the new contract page
+	Then I should see "Contract Value" field
+	And "Contract Value" field should have a maximum of $99 million
+	And "Contract Value" should be optional

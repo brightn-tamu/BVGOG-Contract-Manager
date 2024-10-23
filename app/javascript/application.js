@@ -172,7 +172,13 @@ document.addEventListener('turbo:load', () => {
                         file.name}</strong>
                     </td>
                     <td>
-                        ${documentTypeSelectNew.outerHTML}
+                        <div class="control has-icons-right">
+                            ${documentTypeSelectNew.outerHTML}
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-chevron-down"></i>
+                            </span>
+                        </div>
+                    </td>
                     <td>
                         <button type="button" class="button is-danger is-small" data-file-name="${file.name} class="${file.name}">
                             <span class="icon is-small">

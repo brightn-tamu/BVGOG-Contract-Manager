@@ -47,6 +47,7 @@
     <orderEntry type="library" scope="PROVIDED" name="webrick (v1.8.1, ruby-3.3.4-p94) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket-extensions (v0.1.5, ruby-3.3.4-p94) [gem]" level="application" />
   </component>
+<module version="4">
   <component name="RModuleSettingsStorage">
     <LOAD_PATH number="0" />
     <I18N_FOLDERS number="1" string0="$MODULE_DIR$/config/locales" />

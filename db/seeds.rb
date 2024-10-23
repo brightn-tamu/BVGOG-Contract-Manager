@@ -119,6 +119,18 @@ if Rails.env.production?
         )
     end
 
+    # Create a user to test expiry reminder email
+    contact_person = FactoryBot.create(
+        :user,
+        email: 's794613820@gmail.com',
+        password: 'password',
+        first_name: 'Test Email',
+        last_name: 'Expiry reminder',
+        level: UserLevel::THREE,
+        program: Program.first,
+        invitation_accepted_at: Time.zone.now
+    )
+
     # contact_person = User.find_by(email: 'user@example.com')
     # Create some documents with nearby expiries to test expiring docs mailer
     statuses = ContractStatus.list.reject { |status| status == :created }
