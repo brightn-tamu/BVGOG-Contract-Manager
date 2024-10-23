@@ -74,8 +74,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_17_130430) do
     t.string "extension_duration_units"
     t.float "total_amount"
     t.string "value_type"
-    t.float "total_amount"
-    t.string "value_type"
     t.decimal "contract_value", precision: 15, scale: 2
     t.index ["entity_id"], name: "index_contracts_on_entity_id"
     t.index ["point_of_contact_id"], name: "index_contracts_on_point_of_contact_id"
