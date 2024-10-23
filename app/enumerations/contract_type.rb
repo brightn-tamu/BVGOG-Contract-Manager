@@ -9,7 +9,6 @@ class ContractType < EnumerateIt::Base
         :ila,
         :mou_moa,
         :letter_of_intent,
-        :amendment,
         :other
     )
 
@@ -20,7 +19,6 @@ class ContractType < EnumerateIt::Base
         ila: 'ILA',
         mou_moa: 'MOU/MOA',
         letter_of_intent: 'Letter of Intent',
-        amendment: 'Amendment',
         other: 'Other'
     }.freeze
 end

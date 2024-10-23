@@ -77,4 +77,3 @@ Scenario: Add Contract Value field
 	Then I should see "Contract Value" field
 	And "Contract Value" field should have a maximum of $99 million
 	And "Contract Value" should be optional
-	
