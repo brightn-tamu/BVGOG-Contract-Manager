@@ -17,6 +17,12 @@
         setupDateFields();
     });
 
+    document.addEventListener("turbo:load", function() {
+        console.log('turbo:load event triggered');
+        setupDateFields();
+    });
+
+
     function showVendorField() {
         var selectField = document.getElementById("vendor_visible_id");
         var newvendorselectfield = document.getElementById("new_vendor_field");
