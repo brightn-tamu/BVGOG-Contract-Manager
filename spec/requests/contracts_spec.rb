@@ -114,7 +114,7 @@ RSpec.describe '/contracts', type: :request do
 
     describe 'PATCH /update' do
         context 'with valid parameters' do
-            let(:new_attributes) { { title: 'Updated Title', amount_dollar: 1500 } }
+            let(:new_attributes) { { title: 'Updated Title', total_amount: 1500 } }
         
             it 'updates the requested contract' do
               contract = Contract.create! valid_attributes
@@ -122,7 +122,7 @@ RSpec.describe '/contracts', type: :request do
               contract.reload
     
               expect(contract.title).to eq('Updated Title')
-              expect(contract.amount_dollar).to eq(1500)
+              expect(contract.total_amount).to eq(1500)
               
             end
 

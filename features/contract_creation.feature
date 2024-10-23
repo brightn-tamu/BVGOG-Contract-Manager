@@ -14,7 +14,7 @@ Scenario: Fail to create a contract
 	And I press "Create Contract"
 	Then I should see "Point of contact is required"
 
-Scenario: Sucessfully create a contract
+Scenario: Successfully create a contract
 	Given I am on the new contract page
 	When I fill in "Title" with "TestContract"
 	And I select "Contract" from the contract types dropdown
@@ -26,10 +26,7 @@ Scenario: Sucessfully create a contract
 	And I select "Entity 1" from the entity dropdown
 	And I select "Continuous" from the end trigger dropdown
 	And I fill in the "contract_starts_at" field with "2023-03-30"
-	And I fill in "contract[amount_dollar]" with "100"
-	And I select "day" from the amount duration dropdown
-	And I fill in "contract[initial_term_amount]" with "100"
-	And I select "day" from the "Initial term duration" select box
+	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
 	Then I should see "Contract was successfully created."
 
@@ -46,10 +43,7 @@ Scenario: Create a contract with an inactive point of contract who has a redirec
 	And I select "Entity 1" from the entity dropdown
 	And I select "Continuous" from the end trigger dropdown
 	And I fill in the "contract_starts_at" field with "2023-03-30"
-	And I fill in "contract[amount_dollar]" with "100"
-	And I select "day" from the amount duration dropdown
-	And I fill in "contract[initial_term_amount]" with "100"
-	And I select "day" from the "Initial term duration" select box
+	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
 	Then I should see "Inactive User is not active"
 
@@ -66,10 +60,7 @@ Scenario: Create a contract with an inactive point of contract who does not have
 	And I select "Entity 1" from the entity dropdown
 	And I select "Continuous" from the end trigger dropdown
 	And I fill in the "contract_starts_at" field with "2023-03-30"
-	And I fill in "contract[amount_dollar]" with "100"
-	And I select "day" from the amount duration dropdown
-	And I fill in "contract[initial_term_amount]" with "100"
-	And I select "day" from the "Initial term duration" select box
+	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
 	Then I should see "Inactive User is not active"
 	
