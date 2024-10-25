@@ -28,7 +28,7 @@
             textField.style.display = "none";
             textField.value = ""; 
         }
-           
+
     } 
 
     function showhideTotalValueField() {
@@ -42,7 +42,7 @@
             textField.style.display = "none";
             textField.value = ""; 
         }
-        
+
 
     }
     function updateForm() {
@@ -96,18 +96,17 @@
                     </div>
                 </article>
             <% end %>
-
             <%# Form starts here %>
             <div class="columns">
                 <div class="column is-6">
-                    <%# Title %>
+                    <%# Contract Title %>
                     <div class="field">
                         <%= form.label :title do %>
                             <div class="icon-text">
                                 <span class="icon has-text-info" id="contract-title-modal-open-btn">
                                     <i class="fas fa-circle-info"></i>
                                 </span>
-                                <span>Title</span>
+                                <span>Contract Title</span>
                             </div>
                         <% end %>
                         <%= form.text_field :title, class: "input" %>
@@ -147,19 +146,6 @@
                     <div id="new_vendor_field" class="field is-hidden">
                         <%= form.label :new_vendor_name %>
                         <%= form.text_field :new_vendor_name, class: "input", id:"new_vendor_name" %>
-                    </div>
-
-                    <%# Description %>
-                    <div class="field">
-                        <%= form.label :description do %>
-                            <div class="icon-text">
-                                <span class="icon has-text-info" id="contract-description-modal-open-btn">
-                                    <i class="fas fa-circle-info"></i>
-                                </span>
-                                <span>Description</span>
-                            </div>      
-                        <% end %>
-                        <%= form.text_area :description, class: "textarea" %>
                     </div>
 
                     <%# Contract Type %>
@@ -229,18 +215,6 @@
 
                     </div>
 
-                    <%# Search Key Words %>
-                    <div class="field">
-                        <%= form.label :search_key_words do %>
-                            <div class="icon-text">
-                                <span class="icon has-text-info" id="contract-key-words-modal-open-btn">
-                                    <i class="fas fa-circle-info"></i>
-                                </span>
-                                <span>Key Words</span>
-                            </div>
-                        <% end %>
-                        <%= form.text_field :key_words, placeholder: "Separate key words with a comma", class: "input" %>
-                    </div>
                 </div>
 
                 <div class="column is-6">
@@ -337,100 +311,38 @@
                         </div>
                     </div>
 
-                    <%# Dollar Amount and Amount Duration %>
-                    <div class="columns">
-                        <div class="column is-6">
-                            <div class="field">
-                                <%= form.label :amount_dollar do %>
-                                    <div class="icon-text">
-                                        <span class="icon has-text-info" id="contract-interim-amount-modal-open-btn">
-                                            <i class="fas fa-circle-info"></i>
-                                        </span>
-                                        <span>Interim Amount</span>
-                                    </div>
-                                <% end %>
-                                <p class="control has-icons-left">
-                                    <%= form.number_field :amount_dollar, class: "input", id: "contract-form-dollar-amount" %>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-dollar"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column is-1">
-                            <div class="icon-text">
-                                <span>&nbsp;</span>
-                            </div>
-                            <p class="is-size-4 has-text-centered">per</p>
-                        </div>
-                        <div class="column is-5">
-                            <div class="icon-text">
-                                <span>&nbsp;</span>
-                            </div>
-                            <div class="field">
-                            <div class="control has-icons-right">
-                                <%= form.select :amount_duration, TimePeriod.to_a, {:include_blank => true}, class: "input" %>
-                                    <span class="icon is-small is-right">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </span>
-                            </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <%# Initial Term Amount, Initial Term Duration%>
-                    <div class="columns">
-                        <div class="column is-6">
-                            <div class="field">
-                                <%= form.label :initial_term_amount do %>
-                                    <div class="icon-text">
-                                        <span class="icon has-text-info" id="contract-initial-term-modal-open-btn">
-                                            <i class="fas fa-circle-info"></i>
-                                        </span>
-                                        <span>Initial Term</span>
-                                    </div>
-                                <% end %>
-                                <p class="control has-icons-left">
-                                    <%= form.number_field :initial_term_amount, class: "input" %>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-clock"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column is-6">
-                            <div class="field">
-                                <%= form.label :initial_term_duration %>
-                                <div class="control has-icons-right">
-                                <%= form.select :initial_term_duration, TimePeriod.to_a, {:include_blank => true}, class: "input" %>
-                                    <span class="icon is-small is-right">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <%= form.label :value_type, 'Value Type' %>
-                        <div class="control has-icons-right">
-                            <%= form.select :value_type,
-                                options_for_select(["Not Applicable", "Total Value", "Calculated Value"], @value_type),
-                                { include_blank: true },
-                                { id: "value_type", class: "input", onchange: "showhideTotalValueField()"} %>
-                                <span class="icon is-small is-right">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                        </div>
-
-                    </div>
-
                     <div class="field" id="total_value_field" style="display: none;" >
                         <%= form.label :total_amount, 'Total Value' %>
                         <%= form.text_field :total_amount, id: "total_amount", class: "input"  %>
                     </div>
+
+                    <div class="field">
+                    <%= form.label :contract_value, 'Contract Value' do %>
+                        <div class="icon-text">
+                        <span class="icon has-text-info" id="contract-value-modal-open-btn">
+                            <i class="fas fa-circle-info"></i>
+                        </span>
+                        <span>Contract Value</span>
+                        </div>
+                    <% end %>
+                    <div class="control">
+                        <%= form.number_field :contract_value, class: "input", step: "0.01", max: 99_000_000 %>
+                    </div>
+                    </div>
+
+                  <%# Summary %>
+                  <div class="field">
+                    <%= form.label :description do %>
+                      <div class="icon-text">
+                                <span class="icon has-text-info" id="contract-description-modal-open-btn">
+                                    <i class="fas fa-circle-info"></i>
+                                </span>
+                        <span>Summary</span>
+                      </div>
+                    <% end %>
+                    <%= form.text_area :description, class: "textarea" %>
+                  </div>
+
 
                     <%# Contract Documents %>
                     <div class="field">
@@ -459,13 +371,11 @@
 
                     <%# Use a hidden select tag that JS can copy over for each uploaded file %>
                     <%= form.select :contract_document_type_hidden, ContractDocumentType.to_a, {:selected => ContractDocumentType::OTHER}, class: "input is-small is-hidden", id: "contract_document_type_hidden" %>
-
                     <%# Display the uploaded contract documents %>
                     <table id="uploaded-contract-documents-table" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <tbody>
                         <%# JavaScript adds to this table as files are uploaded %>
                         <%# Ruby is annoying and doesn't do this nicely... %>
-
                         <%# Files that are already uploaded are not removable %>
                         <% @contract.contract_documents.each do |contract_document| %>
                             <tr class="is-disabled" id="contract-document-<%= contract_document.id %>">
@@ -564,26 +474,6 @@
     </div>
 </div>
 
-<div class="modal" id="contract-description-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <div class="icon-text">
-            <p class="modal-card-title">Description</p>
-            </div>
-        </header>
-        <section class="modal-card-body">
-        <div class="content">
-            Enter a summary of the contract, including any information that might be of interest to management.<br>
-            This description will be visible when people select the contract in Reports.
-        </div>
-        </section>
-        <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-        </footer>
-    </div>
-</div>
-
 <div class="modal" id="contract-length-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -614,8 +504,7 @@
         </header>
         <section class="modal-card-body">
         <div class="content">
-            The primary person responsible for this contract.<br>
-            This person will be notified when the contract is due to expire.
+          This is the Program Manager over the contract.
         </div>
         </section>
         <footer class="modal-card-foot">
@@ -663,44 +552,6 @@
     </div>
 </div>
 
-<div class="modal" id="contract-key-words-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <div class="icon-text">
-            <p class="modal-card-title">Key Words</p>
-            </div>
-        </header>
-        <section class="modal-card-body">
-        <div class="content">
-            Words that can be used to search for the contract
-        </div>
-        </section>
-        <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="contract-initial-term-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <div class="icon-text">
-            <p class="modal-card-title">Initial Term</p>
-            </div>
-        </header>
-        <section class="modal-card-body">
-        <div class="content">
-            The beginning length of the contract.
-        </div>
-        </section>
-        <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-        </footer>
-    </div>
-</div>
-
 <div class="modal" id="contract-effective-date-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -722,17 +573,17 @@
     </div>
 </div>
 
-<div class="modal" id="contract-interim-amount-modal">
+<div class="modal" id="contract-value-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <div class="icon-text">
-            <p class="modal-card-title">Interim Amount</p>
+            <p class="modal-card-title">Contract Value</p>
             </div>
         </header>
         <section class="modal-card-body">
         <div class="content">
-            Enter the Interim Amount if the contract has a limited value that occurs each year/quarter/month.
+            The value of contract.
         </div>
         </section>
         <footer class="modal-card-foot">
@@ -760,6 +611,25 @@
     </div>
 </div>
 
+  <div class="modal" id="contract-description-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <div class="icon-text">
+          <p class="modal-card-title">Description</p>
+        </div>
+      </header>
+      <section class="modal-card-body">
+        <div class="content">
+          Enter a summary of the contract, including any information that might be of interest to management.<br>
+          This description will be visible when people select the contract in Reports.
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button modal-close-btn">Close</button>
+      </footer>
+    </div>
+  </div>
 <div class="modal" id="contract-current-end-date-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -798,4 +668,30 @@
         <button class="button modal-close-btn">Close</button>
         </footer>
     </div>
+  </div>
 </div>
+<% if @contract.errors.any? %>
+  <article class="message is-danger">
+    <div class="message-header">
+      <p><%= pluralize(@contract.errors.count, "error") %> prohibited this contract from being saved:</p>
+    </div>
+    <div class="message-body">
+      <ul>
+        <% @contract.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  </article>
+<% end %>
+<style>
+.modal-card-foot {
+    display: flex;
+    justify-content: flex-end;
+}
+.modal-close-btn {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+</style>
