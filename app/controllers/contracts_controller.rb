@@ -229,7 +229,7 @@ class ContractsController < ApplicationController
     def amend
         # 添加处理 amend 逻辑
         @contract = Contract.find(params[:id]) # 实际数据查询
-        # 这里可以放置修改合同的逻辑
+        # 这里可以放置修改合同的逻辑1232
     end
     
     def renew
