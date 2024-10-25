@@ -136,7 +136,7 @@ class Report < ApplicationRecord
         report_pdf.move_down 10
         table_data = []
         table_data << ['Entity', 'Program', 'Contract Title', 'Contract Number', 'Vendor', 'Contract Type',
-                       'Contract Amount', 'Expiration Date']
+                       'Contract Value', 'Expiration Date']
         contracts.each do |contract|
             table_data << [
                 contract.entity.name,
@@ -145,6 +145,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
+                contract.contract_value,
                 contract.ends_at.nil? ? '' : contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
