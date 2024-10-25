@@ -20,17 +20,17 @@ RSpec.describe '/vendors', type: :request do
     # adjust the attributes here as well.
     let(:valid_attributes) do
         {
-          name: "Vendor 1"
-          # Add other attributes as needed
+            name: 'Vendor 1'
+            # Add other attributes as needed
         }
-      end
-      
-      let(:invalid_attributes) do
+    end
+
+    let(:invalid_attributes) do
         {
-          name: nil
-          # Add other attributes as needed
+            name: nil
+            # Add other attributes as needed
         }
-      end
+    end
 
     describe 'GET /index' do
         it 'renders a successful response' do

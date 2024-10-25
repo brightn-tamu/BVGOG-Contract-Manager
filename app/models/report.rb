@@ -145,7 +145,6 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                "$#{contract.amount_dollar.round(2)} per #{contract.amount_duration_humanize}",
                 contract.ends_at.nil? ? '' : contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
@@ -163,8 +162,6 @@ class Report < ApplicationRecord
 
     def generate_contract_expiration_report
         report = self
-
-
 
         report.file_name = "bvcog-auto-contract-expiration-report-#{Date.today.strftime('%Y-%m-%d')}.pdf"
         report.full_path = File.join(BvcogConfig.last.reports_path, report.file_name).to_s

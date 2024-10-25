@@ -6,7 +6,7 @@ Rails.application.configure do
     # Settings specified here will take precedence over those in config/application.rb.
 
     # Default host
-    Rails.application.routes.default_url_options[:host] = ENV.fetch("HOST")
+    Rails.application.routes.default_url_options[:host] = ENV.fetch('HOST')
 
     # Code is not reloaded between requests.
     config.cache_classes = true
@@ -84,11 +84,11 @@ Rails.application.configure do
     ActionMailer::Base.default from: ENV['MAIL_DEFAULT_FROM']
     ActionMailer::Base.smtp_settings = {
         user_name: ENV['MAIL_USERNAME'],
-        password: ENV['MAIL_PASSWORD'],
-        domain: 'sandbox7d62494957a2401396124ef699302c04.mailgun.org',
+        password: Rails.application.credentials.mail_password,
+        domain: ENV['MAIL_DOMAIN'],
         address: ENV['MAIL_ADDRESS'],
         port: 587,
-        authentication: 'plain',
+        authentication: :login,
         enable_starttls_auto: true
     }
     ActionMailer::Base.delivery_method = :smtp

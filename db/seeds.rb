@@ -134,6 +134,7 @@ if Rails.env.production?
     # contact_person = User.find_by(email: 'user@example.com')
     # Create some documents with nearby expiries to test expiring docs mailer
     statuses = ContractStatus.list.reject { |status| status == :created }
+<<<<<<< HEAD
     # (1..100).each do |i|
     #     d = Time.zone.today + 1.day * i
     #     FactoryBot.create(
@@ -152,6 +153,26 @@ if Rails.env.production?
     #         contract_status: statuses.sample
     #     )
     # end
+=======
+    # (1..100).each do |i|
+    #     d = Time.zone.today + 1.day * i
+    #     FactoryBot.create(
+    #         :contract,
+    #         id: 50 + i,
+    #         point_of_contact: contact_person,
+    #         title: "Expiry Contract #{i}",
+    #         program: Program.all.sample,
+    #         vendor: Vendor.all.sample,
+    #         entity: Entity.all.sample,
+    #         ends_at: d,
+    #         ends_at_final: d + 1.day * i,
+    #         extension_count: i,
+    #         extension_duration: i,
+    #         extension_duration_units: TimePeriod::MONTH,
+    #         contract_status: statuses.sample
+    #     )
+    # end
+>>>>>>> ac9e03cba4f1405c7a9ea55a09ac5643b5870148
 
     BvcogConfig.create(
         contracts_path: Rails.root.join('public/contracts'),

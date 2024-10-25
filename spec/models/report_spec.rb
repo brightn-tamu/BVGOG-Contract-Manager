@@ -61,7 +61,7 @@ RSpec.describe Report, type: :model do
             contract_two = create(:contract, entity: create(:entity), program: program_two, vendor: create(:vendor), point_of_contact: user)
 
             # Invoke the method being tested
-            report = described_class.new(program_id: program_one.id, created_by: user.id, title: "Test_report")
+            report = described_class.new(program_id: program_one.id, created_by: user.id, title: 'Test_report')
             filtered_contracts = report.query_filtered_report_contracts
 
             # Assertion to check if the contracts are filtered based on entity_id
@@ -69,7 +69,7 @@ RSpec.describe Report, type: :model do
             expect(filtered_contracts).not_to include(contract_two)
 
             report.generate_standard_users_report
-            expect(File.exist?(report.full_path)).to be_truthy
+            expect(File).to exist(report.full_path)
 
             File.delete(report.full_path) if File.exist?(report.full_path)
         end
@@ -85,7 +85,7 @@ RSpec.describe Report, type: :model do
             contract_two = create(:contract, entity: create(:entity), program: program_two, vendor: create(:vendor), point_of_contact: user)
 
             # Invoke the method being tested
-            report = described_class.new(program_id: program_one.id, created_by: user.id, title: "Test_report")
+            report = described_class.new(program_id: program_one.id, created_by: user.id, title: 'Test_report')
             filtered_contracts = report.query_filtered_report_contracts
 
             # Assertion to check if the contracts are filtered based on entity_id
@@ -93,7 +93,7 @@ RSpec.describe Report, type: :model do
             expect(filtered_contracts).not_to include(contract_two)
 
             report.generate_standard_contracts_report
-            expect(File.exist?(report.full_path)).to be_truthy
+            expect(File).to exist(report.full_path)
 
             File.delete(report.full_path) if File.exist?(report.full_path)
         end

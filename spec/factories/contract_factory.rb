@@ -12,7 +12,6 @@ FactoryBot.define do
         id { Faker::Number.positive }
         title { Faker::Lorem.sentence }
         description { Faker::Lorem.paragraph(sentence_count: 15) }
-        key_words { Faker::Lorem.words }
         amount_dollar { Faker::Number.positive }
         amount_duration { TimePeriod::MONTH }
         initial_term_amount { Faker::Number.positive }
