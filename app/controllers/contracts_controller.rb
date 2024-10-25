@@ -212,6 +212,32 @@ class ContractsController < ApplicationController
         end
     end
 
+    def amend_and_renew
+        # 硬编码的合同数据
+        @contract = {
+            title: "Contract 1",
+            number: "i6zal0mei3",
+            point_of_contact: "Sabrina Gibson",
+            start_date: "October 25, 2023",
+            end_date: "N/A",
+            amount: "$3,283.31 per month",
+            status: "In Review",
+            contract_type: "ILA"
+        }
+    end
+
+    def amend
+        # 添加处理 amend 逻辑
+        @contract = Contract.find(params[:id]) # 实际数据查询
+        # 这里可以放置修改合同的逻辑
+    end
+    
+    def renew
+        # 添加处理 renew 逻辑
+        @contract = Contract.find(params[:id]) # 实际数据查询
+        # 这里可以放置续约合同的逻辑
+    end
+
     # PATCH/PUT /contracts/1 or /contracts/1.json
     def update
         add_breadcrumb 'Contracts', contracts_path

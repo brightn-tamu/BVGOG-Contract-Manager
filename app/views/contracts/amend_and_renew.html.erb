@@ -1,0 +1,33 @@
+<h1>Amend and Renew Contract</h1>
+
+<table class="table is-striped is-fullwidth">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Number</th>
+      <th>Point of Contact</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Contract Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @contract[:title] %></td>
+      <td><%= @contract[:number] %></td>
+      <td><%= @contract[:point_of_contact] %></td>
+      <td><%= @contract[:start_date] %></td>
+      <td><%= @contract[:end_date] %></td>
+      <td><%= @contract[:amount] %></td>
+      <td><span class="tag is-warning"><%= @contract[:status] %></span></td>
+      <td><%= @contract[:contract_type] %></td>
+      <td>
+        <%= button_to 'Amend', amend_contract_path(@contract[:number]), method: :get, class: 'button is-link is-small' %>
+        <%= button_to 'Renew', renew_contract_path(@contract[:number]), method: :get, class: 'button is-success is-small' %>
+      </td>
+    </tr>
+  </tbody>
+</table>
