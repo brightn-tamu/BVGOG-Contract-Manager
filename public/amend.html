@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amend and Renew Contract</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <style>
+        /* 将readonly字段的背景变灰 */
+        input[readonly] {
+            background-color: #f0f0f0;
+        }
+        .table-container {
+            background-color: white;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Amend Contract</h1>
+            
+            <!-- 表格样式 -->
+            <div class="table-container">
+                <table class="table is-striped is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Number</th>
+                            <th>Point of Contact</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Contract Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="input" type="text" value="Contract 1" readonly>
+                            </td>
+                            <td>
+                                <input class="input" type="text" value="i6zal0mei3" readonly>
+                            </td>
+                            <td>
+                                <input class="input" type="text" value="Sabrina Gibson" readonly>
+                            </td>
+                            <td>
+                                <input class="input" type="date" value="2023-10-25">
+                            </td>
+                            <td>
+                                <input class="input" type="date" value="">
+                            </td>
+                            <td>
+                                <input class="input" type="text" value="$3,283.31 per month">
+                            </td>
+                            <td>
+                                <input class="input" type="text" value="In Review" readonly>
+                            </td>
+                            <td>
+                                <input class="input" type="text" value="ILA" readonly>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 底部按钮 -->
+            <div class="buttons is-right mt-5">
+                <button class="button is-link">Amend</button>
+                <button class="button is-light">Back</button>
+            </div>
+
+        </div>
+    </section>
+</body>
+</html>

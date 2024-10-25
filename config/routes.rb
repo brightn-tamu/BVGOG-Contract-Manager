@@ -50,8 +50,9 @@ Rails.application.routes.draw do
     get '/reports/:id/download', to: 'reports#download', as: 'download_report'
 
     get 'amend_and_renew', to: 'contracts#amend_and_renew'
-    get 'contracts/:id/amend', to: 'contracts#amend', as: 'amend_contract'
-    get 'contracts/:id/renew', to: 'contracts#renew', as: 'renew_contract'
+    get 'contracts/:number/amend', to: 'contracts#amend', as: 'amend_contract'
+    get 'contracts/:number/renew', to: 'contracts#renew', as: 'renew_contract'
+    
 
 
     # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

@@ -227,15 +227,14 @@ class ContractsController < ApplicationController
     end
 
     def amend
-        # 添加处理 amend 逻辑
-        @contract = Contract.find(params[:id]) # 实际数据查询
-        # 这里可以放置修改合同的逻辑1232
+        @contract = Contract.find_by(number: params[:number])
+        # 如果你使用的是 Hash 数据而不是数据库模型：
+        # @contract = YOUR_CONTRACT_DATA.find { |c| c[:number] == params[:number] }
     end
     
     def renew
-        # 添加处理 renew 逻辑
-        @contract = Contract.find(params[:id]) # 实际数据查询
-        # 这里可以放置续约合同的逻辑
+        @contract = Contract.find_by(number: params[:number])
+        # 同样可以使用 Hash 数据替代数据库查询
     end
 
     # PATCH/PUT /contracts/1 or /contracts/1.json

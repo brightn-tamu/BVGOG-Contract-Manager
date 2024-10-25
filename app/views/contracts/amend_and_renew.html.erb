@@ -25,7 +25,7 @@
       <td><span class="tag is-warning"><%= @contract[:status] %></span></td>
       <td><%= @contract[:contract_type] %></td>
       <td>
-        <%= button_to 'Amend', amend_contract_path(@contract[:number]), method: :get, class: 'button is-link is-small' %>
+        <a href="/amend.html" class="button is-link is-small">Amend</a>
         <%= button_to 'Renew', renew_contract_path(@contract[:number]), method: :get, class: 'button is-success is-small' %>
       </td>
     </tr>
