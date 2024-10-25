@@ -187,7 +187,7 @@ class Report < ApplicationRecord
         # Create table
         table_data = []
         table_data << ['Entity', 'Program', 'Contract Title', 'Contract Number', 'Vendor', 'Contract Type',
-                       'Contract Amount', 'Expiration Date']
+                       'Contract Value', 'Expiration Date']
         contracts_30_days.each do |contract|
             table_data << [
                 contract.entity.name,
@@ -196,7 +196,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                "$#{contract.amount_dollar.round(2)} per #{contract.amount_duration_humanize}",
+                contract.contract_value,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
