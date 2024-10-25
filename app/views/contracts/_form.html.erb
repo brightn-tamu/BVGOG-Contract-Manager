@@ -120,7 +120,7 @@
                                 <span class="icon has-text-info" id="contract-id-modal-open-btn">
                                     <i class="fas fa-circle-info"></i>
                                 </span>
-                                <span>Number</span>
+                                <span>Contract ID</span>
                             </div>
                         <% end %>
                         <%= form.text_field :number, class: "input" %>
@@ -331,20 +331,6 @@
                     </div>
                     </div>
 
-                  <%# Summary %>
-                  <div class="field">
-                    <%= form.label :description do %>
-                      <div class="icon-text">
-                                <span class="icon has-text-info" id="contract-description-modal-open-btn">
-                                    <i class="fas fa-circle-info"></i>
-                                </span>
-                        <span>Summary</span>
-                      </div>
-                    <% end %>
-                    <%= form.text_area :description, class: "textarea" %>
-                  </div>
-
-
                     <%# Contract Documents %>
                     <div class="field">
                         <%= form.label :contract_documents do %>
@@ -370,6 +356,18 @@
                         </div>
                     </div>
 
+                    <%# Summary %>
+                    <div class="field">
+                      <%= form.label :description do %>
+                        <div class="icon-text">
+                                  <span class="icon has-text-info" id="contract-description-modal-open-btn">
+                                      <i class="fas fa-circle-info"></i>
+                                  </span>
+                          <span>Summary</span>
+                        </div>
+                      <% end %>
+                      <%= form.text_area :description, class: "textarea" %>
+                    </div>
 
                     <%# Use a hidden select tag that JS can copy over for each uploaded file %>
                     <%= form.select :contract_document_type_hidden, ContractDocumentType.to_a, {:selected => ContractDocumentType::OTHER}, class: "input is-small is-hidden", id: "contract_document_type_hidden" %>
