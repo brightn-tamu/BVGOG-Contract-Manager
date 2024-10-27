@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_26_000322) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_27_022811) do
   create_table "bvcog_configs", force: :cascade do |t|
     t.text "contracts_path", null: false
     t.text "reports_path", null: false
@@ -95,6 +95,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_26_000322) do
     t.index ["entity_id", "user_id"], name: "index_entities_users_on_entity_id_and_user_id", unique: true
     t.index ["entity_id"], name: "index_entities_users_on_entity_id"
     t.index ["user_id"], name: "index_entities_users_on_user_id"
+  end
+
+  create_table "modification_logs", force: :cascade do |t|
+    t.integer "contract_id", null: false
+    t.string "modified_by", null: false
+    t.string "approved_by"
+    t.string "modification_type", null: false
+    t.text "changes_made", null: false
+    t.string "status", default: "pending", null: false
+    t.text "remarks"
+    t.datetime "modified_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_id"], name: "index_modification_logs_on_contract_id"
   end
 
   create_table "programs", force: :cascade do |t|
@@ -182,6 +196,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_26_000322) do
   add_foreign_key "contracts", "programs"
   add_foreign_key "contracts", "users", column: "point_of_contact_id"
   add_foreign_key "contracts", "vendors"
+  add_foreign_key "modification_logs", "contracts"
   add_foreign_key "reports", "entities"
   add_foreign_key "reports", "programs"
   add_foreign_key "reports", "users"
