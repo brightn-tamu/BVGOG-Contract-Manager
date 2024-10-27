@@ -15,8 +15,6 @@ class Contract < ApplicationRecord
     validates :contract_type, presence: true, inclusion: { in: ContractType.list }
     validates :contract_status, inclusion: { in: ContractStatus.list }
 
-    validates :end_trigger, inclusion: { in: EndTrigger.list }
-
     validates :contract_value,
               numericality: { less_than_or_equal_to: 99_000_000, allow_nil: true }
 

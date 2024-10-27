@@ -23,6 +23,5 @@ FactoryBot.define do
 
         contract_type { ContractType.list.sample }
         contract_status { ContractStatus.list.sample }
-        end_trigger { EndTrigger.list.sample }
     end
 end
