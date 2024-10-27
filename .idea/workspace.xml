@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
-      <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/requests/pages_controller_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/pages_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/pages_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/contract.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/contract.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/factories/contract_factory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/contract_factory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/pages/home.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/pages/home.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/controllers/pages_controller_test.rb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

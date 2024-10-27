@@ -4,13 +4,21 @@
 class PagesController < ApplicationController
     def home
         add_breadcrumb 'Home', root_path
-        @contracts = if current_user.level == UserLevel::THREE
-                         # Get last 10 contracts associated with entities user is a member of
-                         Contract.where(entity_id: current_user.entity_ids).order(created_at: :desc).limit(10)
-                     else
-                         # Get all contracts with status in review
-                         Contract.where(contract_status: ContractStatus::IN_PROGRESS).order(created_at: :desc)
-                     end
+        # Fetch contracts using the new method for the home page
+        @contracts = home_contracts
+    end
+
+    # Method to retrieve contracts for the home page based on the user's level and entities
+    def home_contracts
+        contracts = Contract.where(entity_id: current_user.entity_ids)
+
+        if current_user.level == UserLevel::THREE
+            # Get contracts in progress for level 3 users
+            contracts.where(contract_status: ContractStatus::IN_PROGRESS).order(created_at: :desc)
+        else
+            # Get contracts in review for all other users
+            contracts.where(contract_status: ContractStatus::IN_REVIEW).order(created_at: :desc)
+        end
     end
 
     def admin
@@ -136,7 +144,7 @@ class PagesController < ApplicationController
             end
 
             # Automated Expiration Report Users
-            # Alsways clear, if param not present, no users will be added
+            # Always clear, if param not present, no users will be added
             @bvcog_config.users.clear
             if bvcog_config_params[:user_ids].present? && bvcog_config_params[:user_ids].any?
                 bvcog_config_params[:user_ids].each do |id|
