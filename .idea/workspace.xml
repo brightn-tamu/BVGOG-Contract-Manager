@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
-      <change afterPath="$PROJECT_DIR$/spec/requests/pages_controller_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/features/home_page.feature" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/features/step_definitions/pages_steps.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/pages_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/pages_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/contract.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/contract.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/pages/home.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/pages/home.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/controllers/pages_controller_test.rb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +31,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "sprint3__home__page",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/config",
+    "last_opened_file_path": "C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/features/step_definitions",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -45,7 +43,12 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\brigh\RubymineProjects\BVGOG-Contract-Manager\features\step_definitions" />
+      <recent name="C:\Users\brigh\RubymineProjects\BVGOG-Contract-Manager\features" />
       <recent name="C:\Users\brigh\RubymineProjects\BVGOG-Contract-Manager\config" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\brigh\RubymineProjects\BVGOG-Contract-Manager\spec\requests" />
     </key>
   </component>
   <component name="RubyModuleManagerSettings">

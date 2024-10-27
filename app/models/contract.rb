@@ -2,11 +2,6 @@
 
 # Contracts
 class Contract < ApplicationRecord
-    # Define scope for contracts in progress
-    scope :in_progress, -> { where(contract_status: ContractStatus::IN_PROGRESS) }
-
-    # Define scope for contracts in review
-    scope :in_review, -> { where(contract_status: ContractStatus::IN_REVIEW) }
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :description, length: { maximum: 2048 }
