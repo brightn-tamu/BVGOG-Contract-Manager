@@ -28,10 +28,7 @@ RSpec.describe VendorsHelper, type: :helper do
             expect(helper.average_rating_stars(vendor)).to include("<span class=\"icon\"><i class='far fa-star'></i></span>")
         end
     end
-end
 
-RSpec.describe VendorsHelper, type: :helper do
-    let(:vendor) { create(:vendor) }
 
     describe '#bar_chart_reviews_html' do
         it 'returns empty bar chart when there are no reviews' do
@@ -41,8 +38,14 @@ RSpec.describe VendorsHelper, type: :helper do
         it 'returns correct percentage bar chart when there are reviews' do
             create(:vendor_review, vendor:, rating: 5)
             create(:vendor_review, vendor:, rating: 4)
+            create(:vendor_review, vendor:, rating: 4)
+            create(:vendor_review, vendor:, rating: 3)
+            expect(helper.bar_chart_reviews_html(vendor)).to include('5 star')
+            expect(helper.bar_chart_reviews_html(vendor)).to include('width: 25%')
+            expect(helper.bar_chart_reviews_html(vendor)).to include('4 star')
             expect(helper.bar_chart_reviews_html(vendor)).to include('width: 50%')
-            expect(helper.bar_chart_reviews_html(vendor)).to include('width: 50%')
+            expect(helper.bar_chart_reviews_html(vendor)).to include('3 star')
+            expect(helper.bar_chart_reviews_html(vendor)).to include('width: 25%')
         end
     end
 end
