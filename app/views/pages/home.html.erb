@@ -52,42 +52,98 @@
     </div>
   </div>
 
-  <!-- Latest contracts, show based on user's level, users  see contracts in progress, others see contracts in review -->
-  <div class="column is-8">
-    <div class="card">
-      <div class="card-header">
-        <p class="card-header-title">
-                    <span class="icon">
-                        <i class="fas fa-file-contract"></i>
-                    </span>
-          <% if current_user.level == UserLevel::THREE %>
-            Contracts in Progress
-          <% else %>
-            Contracts in Review
-          <% end %>
-        </p>
-      </div>
-      <div class="card-content is-paddingless" id="home-page-contracts-table-container">
-        <table class="table is-striped is-hoverable is-fullwidth">
-          <thead>
-          <tr>
-            <th>Title</th>
-            <th>Number</th>
-            <th>Point of Contact</th>
-            <th>Created At</th>
-          </tr>
-          </thead>
-          <tbody>
-          <% @contracts.each do |contract| %>
+  <!-- Single column containing both tables stacked vertically -->
+  <div class="columns">
+    <div class="column is-12">
+      <!-- Table for Contracts -->
+      <div class="card">
+        <div class="card-header">
+          <p class="card-header-title">
+          <span class="icon">
+            <i class="fas fa-file-contract"></i>
+          </span>
+            <% if current_user.level == UserLevel::THREE %>
+              Contracts in Progress
+            <% else %>
+              Contracts in Review
+            <% end %>
+          </p>
+        </div>
+        <div class="card-content is-paddingless" id="home-page-contracts-table-container">
+          <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
             <tr>
-              <td><%= link_to contract.title, contract_path(contract) %></td>
-              <td><%= contract.number %></td>
-              <td><%= contract.point_of_contact.full_name %></td>
-              <td><%= contract.created_at.strftime("%B %d, %Y") %></td>
+              <th>Title</th>
+              <th>Number</th>
+              <th>Point of Contact</th>
+              <th>Created At</th>
             </tr>
-          <% end %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+            <% if @contracts.present? %>
+              <% @contracts.each do |contract| %>
+                <tr>
+                  <td><%= link_to contract.title, contract_path(contract) %></td>
+                  <td><%= contract.number %></td>
+                  <td><%= contract.point_of_contact.full_name %></td>
+                  <td><%= contract.created_at.strftime("%B %d, %Y") %></td>
+                </tr>
+            <% end %>
+            <% else %>
+              <tr>
+                <td colspan="4" class="has-text-centered">No Contracts Available</td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Spacer between the two tables, optional for visual separation -->
+      <br/>
+
+      <!-- Table for Amendments/Renewals -->
+      <div class="card">
+        <div class="card-header">
+          <p class="card-header-title">
+          <span class="icon">
+            <i class="fas fa-file-contract"></i>
+          </span>
+            <% if current_user.level == UserLevel::THREE %>
+              Amendments/Renewals in Progress
+            <% else %>
+              Amendments/Renewals in Review
+            <% end %>
+          </p>
+        </div>
+        <div class="card-content is-paddingless" id="home-page-amendments-table-container">
+          <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+            <tr>
+              <th>Title</th>
+              <th>Number</th>
+              <th>Point of Contact</th>
+              <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% if @amendments_and_renewals.present? %>
+              <% @amendments_and_renewals.each do |contract| %>
+                <tr>
+                  <td><%= link_to contract.title, contract_path(contract) %></td>
+                  <td><%= contract.number %></td>
+                  <td><%= contract.point_of_contact.full_name %></td>
+                  <td><%= contract.created_at.strftime("%B %d, %Y") %></td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="4" class="has-text-centered">No Amendments or Renewals Available</td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

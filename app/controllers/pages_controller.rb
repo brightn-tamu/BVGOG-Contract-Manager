@@ -6,6 +6,7 @@ class PagesController < ApplicationController
         add_breadcrumb 'Home', root_path
         # Fetch contracts using the new method for the home page
         @contracts = home_contracts
+        @amendments_and_renewals = home_amendments_and_renewals
     end
 
     # Method to retrieve contracts for the home page based on the user's level and entities
@@ -18,6 +19,22 @@ class PagesController < ApplicationController
         else
             # Get contracts in review for all other users
             contracts.where(contract_status: ContractStatus::IN_REVIEW).order(created_at: :desc)
+        end
+    end
+
+    # Method to retrieve amendments and renewals for the home page based on the user's level and entities
+    def home_amendments_and_renewals
+        amendments_renewals = Contract.where(
+          entity_id: current_user.entity_ids,
+          contract_type: ['amendment', 'renewal']
+        )
+
+        if current_user.level == UserLevel::THREE
+            # Get amendments and renewals in progress for level 3 users
+            amendments_renewals.where(contract_status: ContractStatus::IN_PROGRESS).order(created_at: :desc)
+        else
+            # Get amendments and renewals in review for all other users
+            amendments_renewals.where(contract_status: ContractStatus::IN_REVIEW).order(created_at: :desc)
         end
     end
 

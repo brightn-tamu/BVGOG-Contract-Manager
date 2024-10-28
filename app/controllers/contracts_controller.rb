@@ -417,6 +417,7 @@ class ContractsController < ApplicationController
             value_type
             vendor_visible_id
             contract_value
+            current_type
         ]
         params.require(:contract).permit(allowed)
     end
