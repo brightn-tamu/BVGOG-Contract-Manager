@@ -35,6 +35,17 @@ class ContractsController < ApplicationController
         Rails.logger.debug params[:search].inspect
     end
 
+    def modify
+        add_breadcrumb 'Contracts', modify_contracts_path
+        # Sort contracts
+        @contracts = sort_contracts.page params[:page]
+        # Filter contracts based on allowed entities if user is level 3
+        @contracts = @contracts.where(entity_id: current_user.entities.pluck(:id)) if current_user.level != UserLevel::ONE
+        # Search contracts
+        @contracts = search_contracts(@contracts) if params[:search].present?
+        Rails.logger.debug params[:search].inspect
+    end
+
     # GET /contracts/1 or /contracts/1.json
     def show
         begin
@@ -69,6 +80,13 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
+        if request.path == renew_contract_path(@contract)
+            render 'renew' 
+        elsif request.path == amend_contract_path(@contract)
+            render 'amend'   
+        else
+            render 'edit'  
+        end
         if current_user.level == UserLevel::TWO
             # :nocov:
             redirect_to root_path, alert: 'You do not have permission to access this page.'
@@ -82,6 +100,23 @@ class ContractsController < ApplicationController
 
         @vendor_visible_id = vendor_name || ''
         add_breadcrumb 'Edit', edit_contract_path(@contract)
+        @value_type = @contract.value_type
+    end
+
+    def renew
+        if current_user.level == UserLevel::TWO
+            # :nocov:
+            redirect_to root_path, alert: 'You do not have permission to access this page.'
+            return
+            # :nocov:
+        end
+        add_breadcrumb 'Contracts', contracts_path
+        add_breadcrumb @contract.title, contract_path(@contract)
+        vendor = Vendor.find_by(id: @contract.vendor_id)
+        vendor_name = vendor.name if vendor.present? || ''
+
+        @vendor_visible_id = vendor_name || ''
+        add_breadcrumb 'Renew', edit_contract_path(@contract)
         @value_type = @contract.value_type
     end
 
@@ -218,6 +253,16 @@ class ContractsController < ApplicationController
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
 
+        source_page = if request.referrer&.include?("renew")
+            "renew"
+          elsif request.referrer&.include?("amend")
+            "amend"
+          else
+            "edit"
+          end
+        
+        add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
+
         handle_if_new_vendor
         # Remove the new vendor from the params
         params[:contract].delete(:new_vendor_name)
@@ -245,7 +290,7 @@ class ContractsController < ApplicationController
                         session[:vendor_visible_id] = vendor_selection
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
-                        render :edit, status: :unprocessable_entity
+                        render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                     # :nocov:
@@ -264,7 +309,7 @@ class ContractsController < ApplicationController
                         session[:vendor_visible_id] = vendor_selection
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
-                        render :edit, status: :unprocessable_entity
+                        render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                 # :nocov:
@@ -280,7 +325,7 @@ class ContractsController < ApplicationController
                         session[:vendor_visible_id] = vendor_selection
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
-                        render :edit, status: :unprocessable_entity
+                        render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                     # :nocov:
@@ -296,7 +341,16 @@ class ContractsController < ApplicationController
                         # so that the value of the dropdowns will not be retained for the next contract creation
                         session[:value_type] = nil
                         session[:vendor_visible_id] = nil
-                        redirect_to contract_url(@contract), notice: 'Contract was successfully updated.'
+
+                        success_message = case source_page
+                        when "renew"
+                            "Renewal request for #{@contract.title} submitted successfully and is pending approval."
+                        when "amend"
+                            "Amendment request for #{@contract.title} submitted successfully and is pending approval"
+                        else
+                            "Contract was successfully updated."
+                        end
+                        redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
                     end
                     format.json { render :show, status: :ok, location: @contract }
                 else
@@ -306,7 +360,7 @@ class ContractsController < ApplicationController
                         session[:vendor_visible_id] = vendor_selection
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
-                        render :edit, status: :unprocessable_entity
+                        render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                 end
@@ -324,6 +378,7 @@ class ContractsController < ApplicationController
                 message = e.message
             end
             # Rollback the transaction
+            
             format.html { redirect_to contract_url(@contract), alert: message }
             # :nocov:
         end
