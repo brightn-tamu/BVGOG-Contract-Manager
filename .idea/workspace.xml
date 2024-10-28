@@ -6,12 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/pages_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/pages_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/pages/home.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/pages/home.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seeds.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/seeds.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/test.sqlite3-journal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/home_page.feature" beforeDir="false" afterPath="$PROJECT_DIR$/features/home_page.feature" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/step_definitions/db_steps.rb" beforeDir="false" afterPath="$PROJECT_DIR$/features/step_definitions/db_steps.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/requests/pages_controller_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/requests/pages_controller_spec.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -294,7 +292,7 @@
       <workItem from="1729124106849" duration="2889000" />
       <workItem from="1729261321756" duration="702000" />
       <workItem from="1729718277890" duration="788000" />
-      <workItem from="1730122997059" duration="4606000" />
+      <workItem from="1730122997059" duration="6094000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />

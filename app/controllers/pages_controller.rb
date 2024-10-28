@@ -11,7 +11,7 @@ class PagesController < ApplicationController
 
     # Method to retrieve contracts for the home page based on the user's level and entities
     def home_contracts
-        contracts = Contract.where(entity_id: current_user.entity_ids)
+        contracts = Contract.where(entity_id: current_user.entity_ids, current_type: 'contract')
 
         if current_user.level == UserLevel::THREE
             # Get contracts in progress for level 3 users
@@ -24,17 +24,13 @@ class PagesController < ApplicationController
 
     # Method to retrieve amendments and renewals for the home page based on the user's level and entities
     def home_amendments_and_renewals
-        amendments_renewals = Contract.where(
-          entity_id: current_user.entity_ids,
-          contract_type: ['amendment', 'renewal']
-        )
+        amendments_and_renewals = Contract.where(entity_id: current_user.entity_ids)
+                                          .where(current_type: %w[amend renew])
 
         if current_user.level == UserLevel::THREE
-            # Get amendments and renewals in progress for level 3 users
-            amendments_renewals.where(contract_status: ContractStatus::IN_PROGRESS).order(created_at: :desc)
+            amendments_and_renewals.where(contract_status: ContractStatus::IN_PROGRESS).order(created_at: :desc)
         else
-            # Get amendments and renewals in review for all other users
-            amendments_renewals.where(contract_status: ContractStatus::IN_REVIEW).order(created_at: :desc)
+            amendments_and_renewals.where(contract_status: ContractStatus::IN_REVIEW).order(created_at: :desc)
         end
     end
 

@@ -81,6 +81,31 @@ Given('{int} example contracts exist') do |num_contracts|
     end
 end
 
+Given('{int} example amendments and renewals exist') do |num_amendments|
+    # Create amendments and renewals
+    contract_types = %w[amend renew]
+    statuses = ContractStatus.list.reject { |status| status == :created }
+
+    (1..num_amendments).each do |i|
+        d = Time.zone.today + 1.day * i
+        current_type = contract_types.sample
+
+        FactoryBot.create(
+          :contract,
+          id: 100 + i, # Use a different range for IDs to avoid conflicts
+          title: "#{current_type.capitalize} #{i}",
+          entity: Entity.all.sample,
+          program: Program.all.sample,
+          point_of_contact: User.all.sample,
+          vendor: Vendor.all.sample,
+          current_type: current_type,
+          ends_at: d,
+          extension_duration_units: TimePeriod::MONTH,
+          contract_status: statuses[i % statuses.length]
+        )
+    end
+end
+
 Given('{int} example contract documents exist') do |num_contract_docs|
     # Create multiple contracts
     (1..num_contract_docs).each do |i|
@@ -108,6 +133,7 @@ Given(/^db is set up$/) do
     step '5 example vendors exist'
     step '10 example contracts exist'
     step '10 example contract documents exist'
+    step '10 example amendments and renewals exist'
 
     # Create vendor reviews manually since they have a (user, vendor) unique index
     used_user_vendor_combos = []
