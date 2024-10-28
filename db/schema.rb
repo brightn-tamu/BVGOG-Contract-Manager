@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_26_000322) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_28_235142) do
   create_table "bvcog_configs", force: :cascade do |t|
     t.text "contracts_path", null: false
     t.text "reports_path", null: false
@@ -124,6 +124,41 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_26_000322) do
     t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
+  create_table "temp_contracts", force: :cascade do |t|
+    t.text "title", null: false
+    t.text "number"
+    t.integer "entity_id", null: false
+    t.integer "program_id", null: false
+    t.integer "point_of_contact_id", null: false
+    t.integer "vendor_id", null: false
+    t.text "description"
+    t.text "key_words"
+    t.float "amount_dollar"
+    t.datetime "starts_at", null: false
+    t.integer "initial_term_amount"
+    t.datetime "ends_at"
+    t.boolean "requires_rebid"
+    t.text "contract_type", null: false
+    t.text "contract_status"
+    t.text "amount_duration"
+    t.text "initial_term_duration"
+    t.text "end_trigger"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "extension_count", default: 1
+    t.date "ends_at_final"
+    t.integer "extension_duration"
+    t.string "extension_duration_units"
+    t.float "total_amount"
+    t.string "value_type"
+    t.decimal "contract_value", precision: 15, scale: 2
+    t.string "current_type", default: "contract"
+    t.index ["entity_id"], name: "index_temp_contracts_on_entity_id"
+    t.index ["point_of_contact_id"], name: "index_temp_contracts_on_point_of_contact_id"
+    t.index ["program_id"], name: "index_temp_contracts_on_program_id"
+    t.index ["vendor_id"], name: "index_temp_contracts_on_vendor_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.text "first_name", null: false
     t.text "last_name", null: false
@@ -186,6 +221,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_26_000322) do
   add_foreign_key "reports", "programs"
   add_foreign_key "reports", "users"
   add_foreign_key "reports", "users", column: "point_of_contact_id"
+  add_foreign_key "temp_contracts", "entities"
+  add_foreign_key "temp_contracts", "programs"
+  add_foreign_key "temp_contracts", "users", column: "point_of_contact_id"
+  add_foreign_key "temp_contracts", "vendors"
   add_foreign_key "users", "programs"
   add_foreign_key "users", "users", column: "redirect_user_id"
   add_foreign_key "vendor_reviews", "users"

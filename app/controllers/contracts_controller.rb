@@ -329,6 +329,28 @@ class ContractsController < ApplicationController
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                     # :nocov:
+                elsif source_page == "renew" || source_page == "amend"
+                    temp_contract_attributes = @contract.attributes.except("id") # 忽略 id 字段
+                    @temp_contract = TempContract.create(temp_contract_attributes)
+                    if @temp_contract.update(contract_params)
+                        format.html do
+                            # erase the session value after successful creation of contract
+                            # so that the value of the dropdowns will not be retained for the next contract creation
+                            session[:value_type] = nil
+                            session[:vendor_visible_id] = nil
+                            success_message = case source_page
+                            when "renew"
+                                "Renewal request for #{@contract.title} submitted successfully and is pending approval."
+                            when "amend"
+                                "Amendment request for #{@contract.title} submitted successfully and is pending approval"
+                            else
+                                "Contract was successfully updated."
+                            end
+                            redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
+                        end
+                    else
+                        render source_page, alert: 'Failed to update TempContract.'
+                    end
                 elsif @contract.update(contract_params)
                     if contract_documents_upload.present?
                         # :nocov:
