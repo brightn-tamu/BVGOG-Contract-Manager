@@ -66,10 +66,20 @@
                 </td>
                 <td><%= number_to_currency(contract.total_amount) %></td>
                 <td>
-                    <%= button_to 'Renew', renew_contract_path(contract), method: :get, class: 'button is-primary' %>
+                    <%= button_to renew_contract_path(contract), method: :get, class: 'button is-success is-rounded', style: 'display: flex; align-items: center;' do %>
+                        <span class="icon is-small">
+                        <i class="fas fa-sync-alt"></i>
+                        </span>
+                        <span>Renew</span>
+                    <% end %>
                 </td>
                 <td>
-                    <%= button_to 'Amend', amend_contract_path(contract), method: :get, class: 'button is-primary' %>
+                    <%= button_to amend_contract_path(contract), method: :get, class: 'button is-info is-rounded', style: 'display: flex; align-items: center;' do %>
+                        <span class="icon is-small">
+                        <i class="fas fa-pencil-alt"></i>
+                        </span>
+                        <span>Amend</span>
+                    <% end %>
                 </td>
                 </tr>
             <% end %>
