@@ -29,7 +29,7 @@
         <table class="table table is-striped is-hoverable is-fullwidth">
             <thead>
             <tr>
-                <% columns = [["Title", "title"], ["Number", "number"], ["Point of Contact", "point_of_contact"], ["Start Date", "starts_at"], ["End Date", "ends_at"], ["Total Amount", "total_amount"], ["Status", "contract_status"]] %>
+                <% columns = [["Title", "title"], ["Number", "number"], ["Point of Contact", "point_of_contact"], ["Start Date", "starts_at"], ["End Date", "ends_at"], ["Total Amount", "total_amount"]] %>
                 <% columns.each do |col| %>
                 <th>
                     <%= link_to col[0], sort: col[1], order: (params[:order] == "asc" ? "desc" : "asc") %>
@@ -65,7 +65,6 @@
                     <% end %>
                 </td>
                 <td><%= number_to_currency(contract.total_amount) %></td>
-                <td><%= contract_status_icon(contract) %></td>
                 <td>
                     <%= button_to 'Renew', renew_contract_path(contract), method: :get, class: 'button is-primary' %>
                 </td>
