@@ -23,12 +23,15 @@ class Contract < ApplicationRecord
     validates :contract_value,
               numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
+    validates :current_type, presence: true, inclusion: { in: %w[contract renew amend] }
+
     belongs_to :entity, class_name: 'Entity'
     belongs_to :program, class_name: 'Program'
     belongs_to :point_of_contact, class_name: 'User'
     belongs_to :vendor, class_name: 'Vendor'
     has_many :contract_documents, class_name: 'ContractDocument'
     has_many :decisions, class_name: 'ContractDecision'
+    has_many :modification_logs, class_name: 'ModificationLog'
 
     # Enums
     has_enumeration_for :contract_type, with: ContractType, create_helpers: true
