@@ -49,6 +49,7 @@ class ContractsController < ApplicationController
         add_breadcrumb @contract.title, contract_path(@contract)
 
         @decisions = @contract.decisions.order(created_at: :asc)
+        @modification_logs = @contract.modification_logs.order(created_at: :asc)
     end
 
     # GET /contracts/new
