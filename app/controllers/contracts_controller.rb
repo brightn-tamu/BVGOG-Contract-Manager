@@ -330,9 +330,17 @@ class ContractsController < ApplicationController
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                     # :nocov:
                 elsif source_page == "renew" || source_page == "amend"
-                    temp_contract_attributes = @contract.attributes.except("id") # 忽略 id 字段
-                    @temp_contract = TempContract.create(temp_contract_attributes)
-                    if @temp_contract.update(contract_params)
+                    changes_made = @contract.previous_changes.slice(*contract_params.keys)
+                    log_attributes = {
+                          contract_id: @contract.id,
+                          modified_by: current_user.name, # 假设有 `current_user`，取其名字
+                          modification_type: source_page,    # 可以自定义修改类型
+                          changes_made: changes_made.to_json,
+                          status: 'pending',              # 初始状态，您可以更改
+                          modified_at: Time.current
+                        }
+                    
+                    if ModificationLog.create(log_attributes)
                         format.html do
                             # erase the session value after successful creation of contract
                             # so that the value of the dropdowns will not be retained for the next contract creation
