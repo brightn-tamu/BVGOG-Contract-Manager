@@ -331,16 +331,25 @@ class ContractsController < ApplicationController
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                     # :nocov:
                 elsif source_page == "renew" || source_page == "amend"
-                    changes_made = @contract.previous_changes.slice(*contract_params.keys)
+                    @contract = Contract.find(params[:id])
+                    changes_made = {}
+                    contract_params.each do |key, new_value|
+                      current_value = @contract.send(key)
+                      if current_value != new_value
+                        current_value = current_value.is_a?(Time) ? current_value.iso8601 : current_value
+                        new_value = new_value.is_a?(Time) ? new_value.iso8601 : new_value
+                        changes_made[key] = [current_value, new_value]
+                      end
+                    end
+                    changes_made_json = changes_made.to_json
                     log_attributes = {
                           contract_id: @contract.id,
-                          modified_by: current_user.name, # 假设有 `current_user`，取其名字
-                          modification_type: source_page,    # 可以自定义修改类型
-                          changes_made: changes_made.to_json,
-                          status: 'pending',              # 初始状态，您可以更改
+                          modified_by: current_user.first_name, 
+                          modification_type: source_page,   
+                          changes_made: changes_made,
+                          status: 'pending',        
                           modified_at: Time.current
                         }
-                    
                     if ModificationLog.create(log_attributes)
                         format.html do
                             # erase the session value after successful creation of contract
@@ -357,9 +366,9 @@ class ContractsController < ApplicationController
                             end
                             redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
                         end
-                    else
-                        render source_page, alert: 'Failed to update TempContract.'
-                    end
+                        else
+                            render source_page, alert: 'Failed to update TempContract.'
+                        end
                 elsif @contract.update(contract_params)
                     if contract_documents_upload.present?
                         # :nocov:
