@@ -342,9 +342,10 @@ class ContractsController < ApplicationController
                       end
                     end
                     changes_made_json = changes_made.to_json
+                    user_name = current_user.first_name + " " + current_user.last_name
                     log_attributes = {
                           contract_id: @contract.id,
-                          modified_by: current_user.first_name, 
+                          modified_by: user_name, 
                           modification_type: source_page,   
                           changes_made: changes_made,
                           status: 'pending',        
