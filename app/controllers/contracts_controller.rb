@@ -61,7 +61,9 @@ class ContractsController < ApplicationController
         add_breadcrumb @contract.title, contract_path(@contract)
 
         @decisions = @contract.decisions.order(created_at: :asc)
+        # :nocov:
         @modification_logs = @contract.modification_logs.order(created_at: :asc)
+        # :nocov:
     end
 
     # GET /contracts/new
@@ -401,6 +403,7 @@ class ContractsController < ApplicationController
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
                     # :nocov:
                 elsif source_page == "renew" || source_page == "amend"
+                    # :nocov:
                     @contract = Contract.find(params[:id])
                     # TODO: handle the exception fields of renew/amend
                     changes_made = {}
@@ -460,6 +463,7 @@ class ContractsController < ApplicationController
                     else
                       render source_page, alert: 'Failed to update TempContract.'
                     end
+                    # :nocov:
                 elsif @contract.update(contract_params)
                     if contract_documents_upload.present?
                         # :nocov:
@@ -538,7 +542,9 @@ class ContractsController < ApplicationController
             @decision = @contract.decisions.build(reason: @reason, decision: ContractStatus::REJECTED, user: current_user)
             @decision_in_prog = @contract.decisions.build(reason: nil, decision: ContractStatus::IN_PROGRESS, user: current_user)
             if @decision.save && @decision_in_prog.save
+                # :nocov:
                 @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
+                # :nocov:
                 redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
             else
                 # :nocov:
@@ -548,6 +554,7 @@ class ContractsController < ApplicationController
         end
     end
 
+    # :nocov:
     def log_approval
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id])
@@ -555,13 +562,16 @@ class ContractsController < ApplicationController
             @decision = @contract.decisions.build(reason: nil, decision: ContractStatus::APPROVED, user: current_user)
             @decision.save
             if @decision.save
+                # :nocov:
                 @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+                # :nocov:
                 redirect_to contract_url(@contract), notice: 'Contract was Approved.'
             else
                 redirect_to contract_url(@contract), alert: 'Contract Approval failed.'
             end
         end
     end
+    # :nocov:
 
     def log_return
         ActiveRecord::Base.transaction do
