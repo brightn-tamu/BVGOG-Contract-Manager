@@ -80,6 +80,8 @@
                                                     </div>
                                                 <% end %>
                                             <% end %>
+                                        <% else %>
+                                            <%= number_to_currency(@contract.total_amount) %>
                                         <% end %>
                                     </td>
                                 <% end %>
