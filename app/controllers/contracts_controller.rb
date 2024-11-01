@@ -543,14 +543,37 @@ class ContractsController < ApplicationController
     def log_approval
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id])
-            @contract.update(contract_status: ContractStatus::APPROVED)
-            @decision = @contract.decisions.build(reason: nil, decision: ContractStatus::APPROVED, user: current_user)
-            @decision.save
-            if @decision.save
-                @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
-                redirect_to contract_url(@contract), notice: 'Contract was Approved.'
+            unless @contract.current_type == 'contract'
+                message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
+
+                latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+                # apply latest modification log
+                latest_log.changes_made.each do |key, value|
+                    # runs validation on every key
+                    @contract.update!(key => value)
+                end
+                # update contract status and current type
+                @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
+                # update latest modification log's status
+                latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+                @contract.decisions.build(reason: "#{message_text} request was Approved", decision: ContractStatus::APPROVED, user: current_user)
+                @decision.save
+                if @decision.save
+                    @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+                    redirect_to contract_url(@contract), notice: "#{message_text} request was Approved"
+                else
+                    redirect_to contract_url(@contract), alert: "#{message_text} approval failed"
+                end
             else
-                redirect_to contract_url(@contract), alert: 'Contract Approval failed.'
+                @contract.update(contract_status: ContractStatus::APPROVED)
+                @decision = @contract.decisions.build(reason: nil, decision: ContractStatus::APPROVED, user: current_user)
+                @decision.save
+                if @decision.save
+                    @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+                    redirect_to contract_url(@contract), notice: 'Contract was Approved.'
+                else
+                    redirect_to contract_url(@contract), alert: 'Contract Approval failed.'
+                end
             end
         end
     end
