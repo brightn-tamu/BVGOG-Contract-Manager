@@ -198,32 +198,34 @@
                 </p>
                 </header>
                 <div class="card-content is-paddingless">
-                <table class="table is-striped is-hoverable is-fullwidth">
-                    <thead>
-                    <tr>
-                        <th>Modifier</th>
-                        <th>Timestamp</th>
-                        <th>Fields Changed</th>
-                        <th>Old Values</th>
-                        <th>New Values</th>
-                        <th>Action</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <% @modification_logs.each do |log| %>
-                    <tr>
-                        <td><%= log.modified_by %></td>
-                        <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
-                        <td><%= log.changes_made.keys.join(", ") %></td>
-                        <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
-                        <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
-                        <td><%= log.modification_type %></td>
-                        <td><%= log.status %></td>
-                    </tr>
-                    <% end %>
-                    </tbody>
-                </table>
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th>Modifier</th>
+                                <th>Timestamp</th>
+                                <th>Fields Changed</th>
+                                <th>Old Values</th>
+                                <th>New Values</th>
+                                <th>Action</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% @modification_logs.each do |log| %>
+                            <tr>
+                                <td><%= log.modified_by %></td>
+                                <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
+                                <td><%= log.changes_made.keys.join(", ") %></td>
+                                <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
+                                <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
+                                <td><%= log.modification_type %></td>
+                                <td><%= log.status %></td>
+                            </tr>
+                            <% end %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             </div>
@@ -231,5 +233,3 @@
         </div>
   </div>
 </div>
-
-
