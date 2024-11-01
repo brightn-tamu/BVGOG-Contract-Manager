@@ -81,27 +81,37 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
-        if request.path == renew_contract_path(@contract)
-            render 'renew' 
-        elsif request.path == amend_contract_path(@contract)
-            render 'amend'   
-        else
-            render 'edit'  
-        end
         if current_user.level == UserLevel::TWO
             # :nocov:
             redirect_to root_path, alert: 'You do not have permission to access this page.'
             return
             # :nocov:
         end
-        add_breadcrumb 'Contracts', contracts_path
-        add_breadcrumb @contract.title, contract_path(@contract)
-        vendor = Vendor.find_by(id: @contract.vendor_id)
-        vendor_name = vendor.name if vendor.present? || ''
+        
+        if @contract.current_type == "contract"
+            if request.path == renew_contract_path(@contract)
+                render 'renew' 
+            elsif request.path == amend_contract_path(@contract)
+                render 'amend'   
+            else
+                render 'edit'  
+            end
+            
+            add_breadcrumb 'Contracts', contracts_path
+            add_breadcrumb @contract.title, contract_path(@contract)
+            vendor = Vendor.find_by(id: @contract.vendor_id)
+            vendor_name = vendor.name if vendor.present? || ''
 
-        @vendor_visible_id = vendor_name || ''
-        add_breadcrumb 'Edit', edit_contract_path(@contract)
-        @value_type = @contract.value_type
+            @vendor_visible_id = vendor_name || ''
+            add_breadcrumb 'Edit', edit_contract_path(@contract)
+            @value_type = @contract.value_type
+        else
+            if @contract.current_type == "amend"
+                render 'amend'
+            elsif @contract.current_type == "renew"
+                render 'renew' 
+            end
+        end
     end
 
     def renew
@@ -279,6 +289,61 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_documents_attributes)
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
+
+        # Only for contract current_type != contract
+        unless @contract.current_type == "contract"
+            changes_made = {}
+            
+            contract_params.each do |key, new_value|
+                old_value = @contract.send(key)
+
+                new_value = case old_value
+                    when Integer
+                        new_value.to_i
+                    when Float
+                        new_value.to_f
+                    when BigDecimal
+                        BigDecimal(new_value)
+                    when Date
+                        new_value.to_date
+                    else
+                        new_value
+                end
+            
+                if old_value != new_value
+                    old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
+                    new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
+                    changes_made[key] = [old_value, new_value]
+                end
+            end
+
+            if changes_made.empty?
+                flash[:alert] = "No value is edited!"
+                redirect_to edit_contract_path(@contract) and return
+            end
+
+            latest_log = @contract.modification_logs.order(updated_at: :desc).first
+
+            if latest_log&.status == "rejected" || latest_log&.status != "pending"
+                ModificationLog.create!(
+                  contract_id: @contract.id,
+                  modified_by: "#{current_user.first_name} #{current_user.last_name}",
+                  modification_type: @contract.current_type,
+                  changes_made: changes_made,
+                  status: 'pending',
+                  modified_at: Time.current
+                )
+            elsif latest_log&.status == "pending"
+                combined_changes = latest_log.changes_made.merge(changes_made) { |_key, old, new| [old[0], new[1]] }
+                latest_log.update!(
+                  changes_made: combined_changes,
+                  modified_at: Time.current
+                )
+            end
+            flash[:notice] = "Contract was successfully updated."
+            redirect_to @contract
+            return
+        end
 
         respond_to do |format|
             ActiveRecord::Base.transaction do
