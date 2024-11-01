@@ -49,7 +49,7 @@ class Contract < ApplicationRecord
     # Deprecated
     # :nocov:
     def expired?
-        ends_at < Time.zone.today or final_ends_at < Time.zone.today
+        ends_at < Time.zone.today or ends_at_final < Time.zone.today
     end
     # :nocov:
 
