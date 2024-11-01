@@ -332,14 +332,28 @@ class ContractsController < ApplicationController
                     # :nocov:
                 elsif source_page == "renew" || source_page == "amend"
                     @contract = Contract.find(params[:id])
+                    #TODO: handle the exception fields of renew/amend
                     changes_made = {}
                     contract_params.each do |key, new_value|
-                      current_value = @contract.send(key)
-                      if current_value != new_value
-                        current_value = current_value.is_a?(Time) ? current_value.iso8601 : current_value
-                        new_value = new_value.is_a?(Time) ? new_value.iso8601 : new_value
-                        changes_made[key] = [current_value, new_value]
-                      end
+                        current_value = @contract.send(key)
+                        #NOTE: handle the redundant change logs
+                        if current_value.is_a?(Numeric) && new_value.is_a?(Numeric)
+                            current_value = current_value.to_f
+                            new_value = new_value.to_f
+                            if (current_value - new_value).abs > Float::EPSILON
+                                changes_made[key] = [current_value, new_value]
+                            end
+                        elsif current_value.is_a?(Date) || current_value.is_a?(Time)
+                            current_value = current_value.iso8601
+                            new_value = new_value.iso8601 if new_value.respond_to?(:iso8601)
+                            if current_value != new_value
+                                changes_made[key] = [current_value, new_value]
+                            end
+                        else
+                            if current_value.to_s != new_value.to_s
+                                changes_made[key] = [current_value, new_value]
+                            end
+                        end
                     end
                     changes_made_json = changes_made.to_json
                     user_name = current_user.first_name + " " + current_user.last_name
