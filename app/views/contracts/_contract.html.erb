@@ -228,7 +228,7 @@
                             </thead>
                             <tbody>
                             <% @modification_logs.each do |log| %>
-                                <% unless log.status == 'pending' %>
+                                < % unless log.status == "pending" %>
                                     <tr>
                                         <td><%= log.modified_by %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>

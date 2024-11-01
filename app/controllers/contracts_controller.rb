@@ -398,60 +398,64 @@ class ContractsController < ApplicationController
                     # :nocov:
                 elsif source_page == "renew" || source_page == "amend"
                     @contract = Contract.find(params[:id])
-                    #TODO: handle the exception fields of renew/amend
+                    # TODO: handle the exception fields of renew/amend
                     changes_made = {}
+                    
                     contract_params.each do |key, new_value|
-                        current_value = @contract.send(key)
-                        #NOTE: handle the redundant change logs
-                        if current_value.is_a?(Numeric) && new_value.is_a?(Numeric)
-                            current_value = current_value.to_f
-                            new_value = new_value.to_f
-                            if (current_value - new_value).abs > Float::EPSILON
-                                changes_made[key] = [current_value, new_value]
-                            end
-                        elsif current_value.is_a?(Date) || current_value.is_a?(Time)
-                            current_value = current_value.iso8601
-                            new_value = new_value.iso8601 if new_value.respond_to?(:iso8601)
-                            if current_value != new_value
-                                changes_made[key] = [current_value, new_value]
-                            end
+                        old_value = @contract.send(key)
+                    
+                        new_value = case old_value
+                        when Integer
+                          new_value.to_i
+                        when Float
+                          new_value.to_f
+                        when BigDecimal
+                          BigDecimal(new_value)
+                        when Date
+                          new_value.to_date
                         else
-                            if current_value.to_s != new_value.to_s
-                                changes_made[key] = [current_value, new_value]
-                            end
+                          new_value
+                        end
+                    
+                        if old_value != new_value
+                            old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
+                            new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
+                            changes_made[key] = [old_value, new_value]
                         end
                     end
+                    
                     changes_made_json = changes_made.to_json
-                    user_name = current_user.first_name + " " + current_user.last_name
+                    user_name = "#{current_user.first_name} #{current_user.last_name}"
                     log_attributes = {
-                          contract_id: @contract.id,
-                          modified_by: user_name, 
-                          modification_type: source_page,   
-                          changes_made: changes_made,
-                          status: 'pending',        
-                          modified_at: Time.current
-                        }
+                      contract_id: @contract.id,
+                      modified_by: user_name,
+                      modification_type: source_page,
+                      changes_made: changes_made,
+                      status: 'pending',
+                      modified_at: Time.current
+                    }
+                    
                     if ModificationLog.create(log_attributes)
-                        @contract.update(contract_status: ContractStatus::IN_PROGRESS)
-                        @contract.update(current_type: source_page)
-                        format.html do
-                            # erase the session value after successful creation of contract
-                            # so that the value of the dropdowns will not be retained for the next contract creation
-                            session[:value_type] = nil
-                            session[:vendor_visible_id] = nil
-                            success_message = case source_page
-                            when "renew"
-                                "Renewal request for #{@contract.title} submitted successfully and is pending approval."
-                            when "amend"
-                                "Amendment request for #{@contract.title} submitted successfully and is pending approval"
-                            else
-                                "Contract was successfully updated."
-                            end
-                            redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
-                        end
-                        else
-                            render source_page, alert: 'Failed to update TempContract.'
-                        end
+                      @contract.update(contract_status: ContractStatus::IN_PROGRESS)
+                      @contract.update(current_type: source_page)
+                      format.html do
+                        # erase the session value after successful creation of contract
+                        # so that the value of the dropdowns will not be retained for the next contract creation
+                        session[:value_type] = nil
+                        session[:vendor_visible_id] = nil
+                        success_message = case source_page
+                                          when "renew"
+                                            "Renewal request for #{@contract.title} submitted successfully and is pending approval."
+                                          when "amend"
+                                            "Amendment request for #{@contract.title} submitted successfully and is pending approval"
+                                          else
+                                            "Contract was successfully updated."
+                                          end
+                        redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
+                      end
+                    else
+                      render source_page, alert: 'Failed to update TempContract.'
+                    end
                 elsif @contract.update(contract_params)
                     if contract_documents_upload.present?
                         # :nocov:
