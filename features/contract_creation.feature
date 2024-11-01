@@ -18,7 +18,7 @@ Scenario: Successfully create a contract
 	Given I am on the new contract page
 	When I fill in "Title" with "TestContract"
 	And I select "Contract" from the contract types dropdown
-	And I fill in "Contract ID" with "23"
+	And I fill in "contract[number]" with "23"
 	And I fill in the vendor field with vendor value "new"
 	And I fill in the "contract[new_vendor_name]" field with "Test Vendor"
 	And I select "Example User" from the point of contact dropdown
@@ -34,7 +34,7 @@ Scenario: Create a contract with an inactive point of contract who has a redirec
 	And I am on the new contract page
 	When I fill in "Title" with "TestContract"
 	And I select "Contract" from the contract types dropdown
-	And I fill in "Contract ID" with "23"
+	And I fill in "contract[number]" with "23"
 	And I fill in the vendor field with vendor value "new"
 	And I fill in the "contract[new_vendor_name]" field with "Test Vendor"
 	And I select "Inactive User" from the point of contact dropdown
@@ -50,7 +50,7 @@ Scenario: Create a contract with an inactive point of contract who does not have
 	And I am on the new contract page
 	When I fill in "Title" with "TestContract"
 	And I select "Contract" from the contract types dropdown
-	And I fill in "Contract ID" with "23"
+	And I fill in "contract[number]" with "23"
 	And I fill in the vendor field with vendor value "new"
 	And I fill in the "contract[new_vendor_name]" field with "Test Vendor"
 	And I select "Inactive User" from the point of contact dropdown
