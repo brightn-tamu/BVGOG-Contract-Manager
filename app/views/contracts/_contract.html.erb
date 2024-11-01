@@ -70,7 +70,18 @@
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
                                     <td>Not Applicable</td>
                                 <% else %>
-                                    <td><%= number_to_currency(@contract.total_amount) %></td>
+                                    <td>
+                                        <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs.each do |log| %>
+                                                <% if log.changes_made.key?('total_amount') %>
+                                                    <div class="diff">
+                                                        <span class="old-value"><%= number_to_currency(log.changes_made['total_amount'][0]) %></span>
+                                                        <span class="new-value"><%= number_to_currency(log.changes_made['total_amount'][1]) %></span>
+                                                    </div>
+                                                <% end %>
+                                            <% end %>
+                                        <% end %>
+                                    </td>
                                 <% end %>
                             </tr>
                             <tr>
@@ -213,15 +224,15 @@
                             </thead>
                             <tbody>
                             <% @modification_logs.each do |log| %>
-                            <tr>
-                                <td><%= log.modified_by %></td>
-                                <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
-                                <td><%= log.changes_made.keys.join(", ") %></td>
-                                <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
-                                <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
-                                <td><%= log.modification_type %></td>
-                                <td><%= log.status %></td>
-                            </tr>
+                                <tr>
+                                    <td><%= log.modified_by %></td>
+                                    <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
+                                    <td><%= log.changes_made.keys.join(", ") %></td>
+                                    <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
+                                    <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
+                                    <td><%= log.modification_type %></td>
+                                    <td><%= log.status %></td>
+                                </tr>
                             <% end %>
                             </tbody>
                         </table>
