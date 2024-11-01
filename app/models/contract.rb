@@ -2,6 +2,7 @@
 
 # Contracts
 class Contract < ApplicationRecord
+
     validates :title, presence: true, length: { maximum: 255 }
     validates :description, length: { maximum: 2048 }
     validates :entity_id, presence: true
@@ -14,8 +15,6 @@ class Contract < ApplicationRecord
     validates :total_amount, numericality: { greater_than_or_equal_to: 0 }
     validates :contract_type, presence: true, inclusion: { in: ContractType.list }
     validates :contract_status, inclusion: { in: ContractStatus.list }
-
-    validates :end_trigger, inclusion: { in: EndTrigger.list }
 
     validates :contract_value,
               numericality: { less_than_or_equal_to: 99_000_000, allow_nil: true }
@@ -50,7 +49,7 @@ class Contract < ApplicationRecord
     # Deprecated
     # :nocov:
     def expired?
-        ends_at < Time.zone.today or final_ends_at < Time.zone.today
+        ends_at < Time.zone.today or ends_at_final < Time.zone.today
     end
     # :nocov:
 
