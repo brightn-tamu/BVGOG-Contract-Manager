@@ -352,7 +352,7 @@ class ContractsController < ApplicationController
                           modified_at: Time.current
                         }
                     if ModificationLog.create(log_attributes)
-                        @contract.update(contract_status: "in progress")
+                        @contract.update(contract_status: ContractStatus::IN_PROGRESS)
                         format.html do
                             # erase the session value after successful creation of contract
                             # so that the value of the dropdowns will not be retained for the next contract creation
