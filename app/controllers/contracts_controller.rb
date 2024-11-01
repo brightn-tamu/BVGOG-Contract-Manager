@@ -529,6 +529,7 @@ class ContractsController < ApplicationController
             @decision = @contract.decisions.build(reason: @reason, decision: ContractStatus::REJECTED, user: current_user)
             @decision_in_prog = @contract.decisions.build(reason: nil, decision: ContractStatus::IN_PROGRESS, user: current_user)
             if @decision.save && @decision_in_prog.save
+                @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
                 redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
             else
                 # :nocov:
@@ -544,7 +545,12 @@ class ContractsController < ApplicationController
             @contract.update(contract_status: ContractStatus::APPROVED)
             @decision = @contract.decisions.build(reason: nil, decision: ContractStatus::APPROVED, user: current_user)
             @decision.save
-            redirect_to contract_url(@contract), notice: 'Contract was Approved.'
+            if @decision.save
+                @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+                redirect_to contract_url(@contract), notice: 'Contract was Approved.'
+            else
+                redirect_to contract_url(@contract), alert: 'Contract Approval failed.'
+            end
         end
     end
 

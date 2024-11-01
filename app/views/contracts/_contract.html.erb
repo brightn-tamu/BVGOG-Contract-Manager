@@ -226,15 +226,17 @@
                             </thead>
                             <tbody>
                             <% @modification_logs.each do |log| %>
-                                <tr>
-                                    <td><%= log.modified_by %></td>
-                                    <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
-                                    <td><%= log.changes_made.keys.join(", ") %></td>
-                                    <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
-                                    <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
-                                    <td><%= log.modification_type %></td>
-                                    <td><%= log.status %></td>
-                                </tr>
+                                <% unless log.status == 'pending' %>
+                                    <tr>
+                                        <td><%= log.modified_by %></td>
+                                        <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
+                                        <td><%= log.changes_made.keys.join(", ") %></td>
+                                        <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
+                                        <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
+                                        <td><%= log.modification_type %></td>
+                                        <td><%= log.status %></td>
+                                    </tr>
+                                <% end %>
                             <% end %>
                             </tbody>
                         </table>

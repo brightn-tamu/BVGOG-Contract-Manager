@@ -2,7 +2,7 @@
 class CreateModificationLogs < ActiveRecord::Migration[6.1]
   def change
     create_table :modification_logs do |t|
-      t.references :contract, null: false, foreign_key: true   # Reference to the contract
+      t.references :contract, null: false, foreign_key: true    # Reference to the contract
       t.string :modified_by, null: false                        # User requesting the modification
       t.string :approved_by                                     # User approving the modification
       t.string :modification_type, null: false                  # Type of modification, e.g., 'renew' or 'amend'
