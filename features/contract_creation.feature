@@ -24,7 +24,6 @@ Scenario: Successfully create a contract
 	And I select "Example User" from the point of contact dropdown
 	And I select "Program 1" from the program dropdown
 	And I select "Entity 1" from the entity dropdown
-	And I select "Continuous" from the end trigger dropdown
 	And I fill in the "contract_starts_at" field with "2023-03-30"
 	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
@@ -41,7 +40,6 @@ Scenario: Create a contract with an inactive point of contract who has a redirec
 	And I select "Inactive User" from the point of contact dropdown
 	And I select "Program 1" from the program dropdown
 	And I select "Entity 1" from the entity dropdown
-	And I select "Continuous" from the end trigger dropdown
 	And I fill in the "contract_starts_at" field with "2023-03-30"
 	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
@@ -58,7 +56,6 @@ Scenario: Create a contract with an inactive point of contract who does not have
 	And I select "Inactive User" from the point of contact dropdown
 	And I select "Program 1" from the program dropdown
 	And I select "Entity 1" from the entity dropdown
-	And I select "Continuous" from the end trigger dropdown
 	And I fill in the "contract_starts_at" field with "2023-03-30"
 	And I fill in "contract[total_amount]" with "100"
 	And I press "Create Contract"
