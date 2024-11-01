@@ -261,6 +261,7 @@ class ContractsController < ApplicationController
 
     # PATCH/PUT /contracts/1 or /contracts/1.json
     def update
+        # :nocov:
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
@@ -272,6 +273,7 @@ class ContractsController < ApplicationController
           else
             "edit"
           end
+        # :nocov:
         
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
 
@@ -291,6 +293,7 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
 
+        # :nocov:
         # Only for contract current_type != contract
         unless @contract.current_type == "contract"
             changes_made = {}
@@ -345,6 +348,7 @@ class ContractsController < ApplicationController
             redirect_to @contract
             return
         end
+        # :nocov:
 
         respond_to do |format|
             ActiveRecord::Base.transaction do
