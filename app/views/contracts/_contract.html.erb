@@ -65,7 +65,20 @@
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
                                     <td>Not Applicable</td>
                                 <% else %>
-                                    <td><%= number_to_currency(@contract.total_amount) %></td>
+                                    <td>
+                                        <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs.each do |log| %>
+                                                <% if log.changes_made.key?('total_amount') %>
+                                                    <div class="diff">
+                                                        <span class="old-value"><%= number_to_currency(log.changes_made['total_amount'][0]) %></span>
+                                                        <span class="new-value"><%= number_to_currency(log.changes_made['total_amount'][1]) %></span>
+                                                    </div>
+                                                <% end %>
+                                            <% end %>
+                                        <% else %>
+                                            <%= number_to_currency(@contract.total_amount) %>
+                                        <% end %>
+                                    </td>
                                 <% end %>
                             </tr>
                             <tr>
@@ -176,8 +189,53 @@
                 </div>
             </div>
             <% end %>
+
+            <% if @modification_logs.present? %>
+            <div class="column is-12 is-paddingless">
+            <div class="card">
+                <header class="card-header">
+                <p class="card-header-title">
+                    <span class="icon">
+                    <i class="fas fa-history"></i>
+                    </span>
+                    Modification Logs
+                </p>
+                </header>
+                <div class="card-content is-paddingless">
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th>Modifier</th>
+                                <th>Timestamp</th>
+                                <th>Fields Changed</th>
+                                <th>Old Values</th>
+                                <th>New Values</th>
+                                <th>Action</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% @modification_logs.each do |log| %>
+                                <% unless log.status == 'pending' %>
+                                    <tr>
+                                        <td><%= log.modified_by %></td>
+                                        <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
+                                        <td><%= log.changes_made.keys.join(", ") %></td>
+                                        <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
+                                        <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
+                                        <td><%= log.modification_type %></td>
+                                        <td><%= log.status %></td>
+                                    </tr>
+                                <% end %>
+                            <% end %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <% end %>
         </div>
   </div>
 </div>
-
-
