@@ -336,8 +336,8 @@ class ContractsController < ApplicationController
                     contract_params.each do |key, new_value|
                       current_value = @contract.send(key)
                       if current_value != new_value
-                        current_value = current_value.is_a?(Time) ? current_value.iso8601 : current_value
-                        new_value = new_value.is_a?(Time) ? new_value.iso8601 : new_value
+                        current_value = current_value.is_a?(Time) ? current_value.strftime("%Y-%m-%d") : current_value
+                        new_value = new_value.is_a?(Time) ? new_value.strftime("%Y-%m-%d") : new_value
                         changes_made[key] = [current_value, new_value]
                       end
                     end
@@ -353,6 +353,7 @@ class ContractsController < ApplicationController
                         }
                     if ModificationLog.create(log_attributes)
                         @contract.update(contract_status: "in progress")
+                        @contract.update(contract_type: source_page)
                         format.html do
                             # erase the session value after successful creation of contract
                             # so that the value of the dropdowns will not be retained for the next contract creation
@@ -366,7 +367,7 @@ class ContractsController < ApplicationController
                             else
                                 "Contract was successfully updated."
                             end
-                            redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
+                            redirect_to send("modify_contracts_path", @contract), notice: success_message
                         end
                         else
                             render source_page, alert: 'Failed to update TempContract.'
