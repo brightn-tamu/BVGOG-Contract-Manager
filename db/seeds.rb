@@ -14,6 +14,12 @@ require 'factory_bot_rails'
 # orig_stdout = $stdout.clone
 # $stdout.reopen(File.new('/dev/null', 'w'))
 
+TYPE = %w[
+        contract
+        amend
+        renew
+    ].freeze
+
 if Rails.env.production?
     # ------------ PROD SEEDS ------------
 
@@ -40,6 +46,7 @@ if Rails.env.production?
     PROGRAM_NAMES.each do |program_name|
         FactoryBot.create(
             :program,
+            id: i,
             name: program_name
         )
     end
@@ -102,11 +109,15 @@ if Rails.env.production?
             name: "Vendor #{i}"
         )
 
+        # Cycle through the contract types (contract, amend, renew) to ensure variety
+        contract_type = TYPE[i % TYPE.length]
+
         d = Time.zone.today + 1.day * i
         FactoryBot.create(
             :contract,
             id: i,
-            title: "Contract #{i}",
+            current_type: contract_type,
+            title: "#{contract_type.capitalize} #{i}",
             entity: Entity.all.sample,
             program: Program.all.sample,
             point_of_contact: User.all.sample,
@@ -233,13 +244,17 @@ else
             name: "Vendor #{i}"
         )
 
+        # Cycle through the contract types (contract, amend, renew) to ensure variety
+        contract_type = TYPE[i % TYPE.length]
+
         # Create Contracts
         d = Time.zone.today + 1.day * i
         statuses = ContractStatus.list.reject { |status| status == :created }
         FactoryBot.create(
             :contract,
             id: i,
-            title: "Contract #{i}",
+            current_type: contract_type,
+            title: "#{contract_type.capitalize} #{i}",
             entity: Entity.all.sample,
             program: Program.all.sample,
             point_of_contact: User.all.sample,
@@ -249,7 +264,7 @@ else
             extension_count: i,
             extension_duration: i.months,
             extension_duration_units: TimePeriod::MONTH,
-            contract_status: statuses.sample
+            contract_status: statuses.sample,
         )
     end
 

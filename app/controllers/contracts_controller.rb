@@ -591,7 +591,6 @@ class ContractsController < ApplicationController
 			      point_of_contact_id
 			      vendor_id
 			      total_amount
-			      end_trigger
 			      contract_type
 			      number
 			      new_vendor_name
@@ -602,6 +601,7 @@ class ContractsController < ApplicationController
             value_type
             vendor_visible_id
             contract_value
+            current_type
         ]
         params.require(:contract).permit(allowed)
     end
