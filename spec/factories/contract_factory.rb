@@ -12,10 +12,9 @@ FactoryBot.define do
         id { Faker::Number.positive }
         title { Faker::Lorem.sentence }
         description { Faker::Lorem.paragraph(sentence_count: 15) }
-        total_amount { Faker::Number.between(from: 0, to: 99_000_000)}
+        total_amount { Faker::Number.between(from: 0, to: 99_000_000) }
         number { Faker::Alphanumeric.alphanumeric(number: 10) }
         requires_rebid { false }
-
 
         starts_at { Faker::Date.between(from: 2.years.ago, to: Date.today) }
         # Set date very far in the future to avoid validation errors

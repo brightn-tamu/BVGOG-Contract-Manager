@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require 'active_support/core_ext/integer/time'
 Rails.application.configure do
     # Settings specified here will take precedence over those in config/application.rb.
     # Default host
-    Rails.application.routes.default_url_options[:host] = ENV.fetch("HOST")
+    Rails.application.routes.default_url_options[:host] = ENV.fetch('HOST')
     # Code is not reloaded between requests.
     config.cache_classes = true
     # Eager load code on boot. This eager loads most of Rails and

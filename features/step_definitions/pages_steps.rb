@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Then('all contracts displayed should be in progress') do
     # Find the number of rows (contracts) on the home page initially
     contract_titles = page.all('#home-page-contracts-table-container tbody tr td a').map(&:text)

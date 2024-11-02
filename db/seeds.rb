@@ -15,10 +15,10 @@ require 'factory_bot_rails'
 # $stdout.reopen(File.new('/dev/null', 'w'))
 
 TYPE = %w[
-        contract
-        amend
-        renew
-    ].freeze
+    contract
+    amend
+    renew
+].freeze
 
 if Rails.env.production?
     # ------------ PROD SEEDS ------------
@@ -264,7 +264,7 @@ else
             extension_count: i,
             extension_duration: i.months,
             extension_duration_units: TimePeriod::MONTH,
-            contract_status: statuses.sample,
+            contract_status: statuses.sample
         )
     end
 

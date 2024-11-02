@@ -116,7 +116,7 @@ RSpec.describe '/contracts', type: :request do
     describe 'PATCH /update' do
         context 'with valid parameters' do
             let(:new_attributes) { { title: 'Updated Title', total_amount: 1500 } }
-        
+
             it 'updates the requested contract' do
                 contract = Contract.create! valid_attributes
                 patch contract_url(contract), params: { contract: new_attributes }
