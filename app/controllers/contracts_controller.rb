@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-
+require 'pp'
+require 'byebug'
 class ContractsController < ApplicationController
     before_action :set_contract, only: %i[show edit update]
 
@@ -525,17 +526,35 @@ class ContractsController < ApplicationController
         @contract = Contract.find(params[:contract_id])
         ActiveRecord::Base.transaction do
             @reason = params[:contract][:rejection_reason]
+            if @contract.current_type == 'renew' || @contract.current_type == 'amend'
 
-            @contract.update(contract_status: ContractStatus::IN_PROGRESS)
-            @decision = @contract.decisions.build(reason: @reason, decision: ContractStatus::REJECTED, user: current_user)
-            @decision_in_prog = @contract.decisions.build(reason: nil, decision: ContractStatus::IN_PROGRESS, user: current_user)
-            if @decision.save && @decision_in_prog.save
-                @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
-                redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
+                message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
+
+                # update contract status and current type
+                @contract.update(contract_status: ContractStatus::IN_PROGRESS, current_type: 'contract')
+                latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+                # update latest modification log's status
+                latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
+                @decision = @contract.decisions.build(reason: "#{message_text} request rejected: #{@reason}", decision: ContractStatus::REJECTED, user: current_user)
+                @decision.save
+                if @decision.save
+                    @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
+                    redirect_to contract_url(@contract), notice: "#{message_text} request was rejected."
+                else
+                    redirect_to contract_url(@contract), alert: "#{message_text} rejection failed"
+                end
             else
-                # :nocov:
-                redirect_to contract_url(@contract), alert: 'Contract Rejection failed.'
-                # :nocov:
+                @contract.update(contract_status: ContractStatus::IN_PROGRESS)
+                @decision = @contract.decisions.build(reason: @reason, decision: ContractStatus::REJECTED, user: current_user)
+                @decision_in_prog = @contract.decisions.build(reason: nil, decision: ContractStatus::IN_PROGRESS, user: current_user)
+                if @decision.save && @decision_in_prog.save
+                    @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
+                    redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
+                else
+                    # :nocov:
+                    redirect_to contract_url(@contract), alert: 'Contract Rejection failed.'
+                    # :nocov:
+                end
             end
         end
     end
@@ -543,20 +562,25 @@ class ContractsController < ApplicationController
     def log_approval
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id])
-            unless @contract.current_type == 'contract'
+            if @contract.current_type == 'renew' || @contract.current_type == 'amend'
+
                 message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
 
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+                pp latest_log
                 # apply latest modification log
                 latest_log.changes_made.each do |key, value|
+
                     # runs validation on every key
-                    @contract.update!(key => value)
+                    # format [old value, new value]
+                    @contract.update!(key => value[1])
+
                 end
                 # update contract status and current type
                 @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
                 # update latest modification log's status
                 latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
-                @contract.decisions.build(reason: "#{message_text} request was Approved", decision: ContractStatus::APPROVED, user: current_user)
+                @decision = @contract.decisions.build(reason: "#{message_text} request was Approved", decision: ContractStatus::APPROVED, user: current_user)
                 @decision.save
                 if @decision.save
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
