@@ -42,6 +42,7 @@ if Rails.env.production?
         'Workforce'
     ].freeze
 
+
     # Create programs
     PROGRAM_NAMES.each do |program_name, i|
         FactoryBot.create(
@@ -122,6 +123,7 @@ if Rails.env.production?
             program: Program.all.sample,
             point_of_contact: User.all.sample,
             vendor: Vendor.all.sample,
+            start_date: d,
             ends_at: d,
             ends_at_final: d + 1.day * i,
             extension_count: i,
