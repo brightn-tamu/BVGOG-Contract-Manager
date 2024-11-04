@@ -46,7 +46,7 @@ if Rails.env.production?
     PROGRAM_NAMES.each do |program_name|
         FactoryBot.create(
             :program,
-            id: i,
+            id: i + 1,
             name: program_name
         )
     end
