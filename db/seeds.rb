@@ -106,7 +106,6 @@ if Rails.env.production?
     (1..50).each do |i|
         FactoryBot.create(
             :vendor,
-            id: i,
             name: "Vendor #{i}"
         )
 
@@ -116,7 +115,6 @@ if Rails.env.production?
         d = Time.zone.today + 1.day * i
         FactoryBot.create(
             :contract,
-            id: i,
             current_type: contract_type,
             title: "#{contract_type.capitalize} #{i}",
             entity: Entity.all.sample,
@@ -151,7 +149,6 @@ if Rails.env.production?
         d = Time.zone.today + 1.day * i
         FactoryBot.create(
             :contract,
-            id: 50 + i,
             point_of_contact: contact_person,
             title: "Expiry Contract #{i}",
             program: Program.all.sample,
