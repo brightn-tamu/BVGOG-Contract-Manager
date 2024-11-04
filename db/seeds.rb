@@ -43,10 +43,10 @@ if Rails.env.production?
     ].freeze
 
     # Create programs
-    PROGRAM_NAMES.each do |program_name|
+    PROGRAM_NAMES.each do |program_name, i|
         FactoryBot.create(
             :program,
-            id: i + 1,
+            id: i,
             name: program_name
         )
     end
