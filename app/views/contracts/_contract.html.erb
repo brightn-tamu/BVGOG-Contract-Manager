@@ -46,7 +46,22 @@
                                 <td><%= @contract.program.name %></td>
                             <tr>
                                 <td><strong>Start Date:</strong></td>
-                                <td><%= @contract.starts_at.strftime("%B %d, %Y") %></td>
+                                <td>
+                                    <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs.each do |log| %>
+                                            <% if log.changes_made.key?('starts_at') %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= Date.parse(log.changes_made['starts_at'][0]).strftime("%B %d, %Y") %></span>
+                                                    <span class="new-value"><%= Date.parse(log.changes_made['starts_at'][1]).strftime("%B %d, %Y") %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= @contract.starts_at.strftime("%B %d, %Y") %>
+                                            <% end %>
+                                        <% end %>
+                                    <% else %>
+                                        <%= @contract.starts_at.strftime("%B %d, %Y") %>
+                                    <% end %>
+                                </td>
                             </tr>
                             <% if @contract.ends_at && contract.end_trigger == "limited_term"%>
                                 <tr>
@@ -97,6 +112,19 @@
                             <%= link_to "Edit this contract", edit_contract_path(@contract), class: "card-footer-item common-button" %>
                             <%= form_with model: @contract, url: [@contract, :log_submission], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
+                            <% end %>
+                        <% elsif @contract.contract_status == ContractStatus::APPROVED %>
+                            <%= link_to renew_contract_path(@contract), class: 'card-footer-item button is-success is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
+                                <span class="icon is-small">
+                                    <i class="fas fa-sync-alt"></i>
+                                </span>
+                                <span>Renew</span>
+                            <% end %>
+                            <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
+                                <span class="icon is-small">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
+                                <span>Amend</span>
                             <% end %>
                         <% end %>
                     <% end %>
