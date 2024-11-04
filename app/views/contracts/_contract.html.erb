@@ -47,7 +47,8 @@
                             <tr>
                                 <td><strong>Start Date:</strong></td>
                                 <td>
-                                    <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                    <% if @contract.current_type == 'renew' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                         <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('starts_at') } %>
                                         <% if latest_log && latest_log.changes_made['starts_at'].present? %>
                                             <div class="diff">
@@ -80,7 +81,8 @@
                                     <td>Not Applicable</td>
                                 <% else %>
                                     <td>
-                                        <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% if @contract.current_type == 'amend' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                             <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('total_amount') } %>
                                             <% if latest_log && latest_log.changes_made['total_amount'].present? %>
                                                 <div class="diff">
