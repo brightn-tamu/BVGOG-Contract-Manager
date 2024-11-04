@@ -46,7 +46,22 @@
                                 <td><%= @contract.program.name %></td>
                             <tr>
                                 <td><strong>Start Date:</strong></td>
-                                <td><%= @contract.starts_at.strftime("%B %d, %Y") %></td>
+                                <td>
+                                    <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs.each do |log| %>
+                                            <% if log.changes_made.key?('starts_at') %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= Date.parse(log.changes_made['starts_at'][0]).strftime("%B %d, %Y") %></span>
+                                                    <span class="new-value"><%= Date.parse(log.changes_made['starts_at'][1]).strftime("%B %d, %Y") %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= @contract.starts_at.strftime("%B %d, %Y") %>
+                                            <% end %>
+                                        <% end %>
+                                    <% else %>
+                                        <%= @contract.starts_at.strftime("%B %d, %Y") %>
+                                    <% end %>
+                                </td>
                             </tr>
                             <% if @contract.ends_at && contract.end_trigger == "limited_term"%>
                                 <tr>
