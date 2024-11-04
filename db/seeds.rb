@@ -123,7 +123,6 @@ if Rails.env.production?
             program: Program.all.sample,
             point_of_contact: User.all.sample,
             vendor: Vendor.all.sample,
-            start_date: d,
             ends_at: d,
             ends_at_final: d + 1.day * i,
             extension_count: i,
@@ -254,7 +253,7 @@ else
         statuses = ContractStatus.list.reject { |status| status == :created }
         FactoryBot.create(
             :contract,
-            id: i,
+            id: i + 1500,
             current_type: contract_type,
             title: "#{contract_type.capitalize} #{i}",
             entity: Entity.all.sample,
@@ -325,3 +324,4 @@ else
         reports_path: Rails.root.join('public/reports')
     )
 end
+
