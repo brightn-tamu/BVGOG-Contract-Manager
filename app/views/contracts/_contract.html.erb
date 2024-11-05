@@ -109,7 +109,7 @@
                 <footer class="card-footer distribute">
                     <% if current_user.present? && current_user.level != UserLevel::TWO %>
                         <% if @contract.contract_status == ContractStatus::IN_PROGRESS  %>
-                            <%= link_to "Edit this contract", edit_contract_path(@contract), class: "card-footer-item common-button" %>
+                            <%= link_to @contract.current_type == 'contract' ? "Edit this contract" : 'Edit this request', edit_contract_path(@contract), class: "card-footer-item common-button" %>
                             <%= form_with model: @contract, url: [@contract, :log_submission], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
                             <% end %>
