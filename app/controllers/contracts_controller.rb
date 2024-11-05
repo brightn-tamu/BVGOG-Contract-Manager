@@ -457,7 +457,11 @@ class ContractsController < ApplicationController
                                               else
                                                   'Contract was successfully updated.'
                                               end
-                            redirect_to send('modify_contracts_path', @contract), notice: success_message
+                            # redirect_to send('modify_contracts_path', @contract), notice: success_message
+                            redirect_to(
+                                %w[renew amend].include?(source_page) ? contract_url(@contract) : modify_contracts_path,
+                                notice: success_message
+                            )
                         end
                     else
                         render source_page, alert: 'Failed to update TempContract.'
