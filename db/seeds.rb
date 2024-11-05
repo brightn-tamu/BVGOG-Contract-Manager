@@ -245,17 +245,14 @@ else
             name: "Vendor #{i}"
         )
 
-        # Cycle through the contract types (contract, amend, renew) to ensure variety
-        contract_type = TYPE[i % TYPE.length]
-
         # Create Contracts
         d = Time.zone.today + 1.day * i
         statuses = ContractStatus.list.reject { |status| status == :created }
         FactoryBot.create(
             :contract,
-            id: i + 1500,
-            current_type: contract_type,
-            title: "#{contract_type.capitalize} #{i}",
+            id: i + 151,
+            current_type: TYPE[0],
+            title: "Contract #{i}",
             entity: Entity.all.sample,
             program: Program.all.sample,
             point_of_contact: User.all.sample,
@@ -266,6 +263,29 @@ else
             extension_duration: i.months,
             extension_duration_units: TimePeriod::MONTH,
             contract_status: statuses.sample
+        )
+
+        # Create Amendments/Renewals
+        d = Time.zone.today + 1.day * i
+        statuses = ContractStatus.list.reject { |status| status == :created }
+        contract_type = TYPE.select { |type| %w[amend renew].include?(type) }
+        selected_type = contract_type.sample
+
+        FactoryBot.create(
+          :contract,
+          id: i + 201,
+          current_type: selected_type,
+          title: "#{selected_type.capitalize} #{i}",
+          entity: Entity.all.sample,
+          program: Program.all.sample,
+          point_of_contact: User.all.sample,
+          vendor: Vendor.all.sample,
+          ends_at: d,
+          ends_at_final: d + 1.day * i,
+          extension_count: i,
+          extension_duration: i.months,
+          extension_duration_units: TimePeriod::MONTH,
+          contract_status: (statuses - ['approved']).sample
         )
     end
 

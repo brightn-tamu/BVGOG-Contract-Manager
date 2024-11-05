@@ -63,13 +63,13 @@
                                     <% end %>
                                 </td>
                             </tr>
-                            <% if @contract.ends_at && contract.end_trigger == "limited_term"%>
+                            <% if @contract.ends_at%>
                                 <tr>
                                     <td><strong>End Date:</strong></td>
                                     <td><%= @contract.ends_at.strftime("%B %d, %Y") %></td>
                                 </tr>
                             <% end %>
-                            <% if @contract.ends_at_final && contract.end_trigger == "limited_term"%>
+                            <% if @contract.ends_at_final%>
                                 <tr>
                                     <td><strong>Final End Date:</strong></td>
                                     <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
