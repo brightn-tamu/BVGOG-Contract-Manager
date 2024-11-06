@@ -118,6 +118,7 @@ class ContractsController < ApplicationController
         end
     end
 
+
     def renew
         if current_user.level == UserLevel::TWO
             # :nocov:
@@ -125,7 +126,7 @@ class ContractsController < ApplicationController
             return
             # :nocov:
         end
->>>>>>> Stashed changes
+
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         vendor = Vendor.find_by(id: @contract.vendor_id)
@@ -157,23 +158,6 @@ class ContractsController < ApplicationController
         when 'renew'
             render 'renew'
         end
-    end
-
-    def renew
-        if current_user.level == UserLevel::TWO
-            # :nocov:
-            redirect_to root_path, alert: 'You do not have permission to access this page.'
-            return
-            # :nocov:
-        end
-        add_breadcrumb 'Contracts', contracts_path
-        add_breadcrumb @contract.title, contract_path(@contract)
-        vendor = Vendor.find_by(id: @contract.vendor_id)
-        vendor_name = vendor.name if vendor.present? || ''
-
-        @vendor_visible_id = vendor_name || ''
-        add_breadcrumb 'Renew', edit_contract_path(@contract)
-        @value_type = @contract.value_type
     end
 
     # POST /contracts or /contracts.json
@@ -309,6 +293,8 @@ class ContractsController < ApplicationController
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
+
+        handle_if_new_vendor
 
         source_page = if request.referer&.include?('renew')
                           'renew'
@@ -754,22 +740,31 @@ class ContractsController < ApplicationController
     end
 
     def handle_if_new_vendor
-        # Check if the vendor is new
-        if params[:contract][:vendor_id] == 'new'
-            # Create a new vendor
+        # Add logging to inspect params
+        Rails.logger.debug "Vendor ID: #{params[:contract][:vendor_id]}"
+        Rails.logger.debug "New Vendor Name: #{params[:contract][:new_vendor_name]}"
 
-            # Make vendor name Name Case
+        # Check if the vendor is new and the new_vendor_name is provided
+        if params[:contract][:vendor_id] == 'new' && params[:contract][:new_vendor_name].present?
+            # Make vendor name Title Case
             params[:contract][:new_vendor_name] = params[:contract][:new_vendor_name].titlecase
-            vendor = Vendor.new(name: params[:contract][:new_vendor_name])
-            # If the vendor is saved successfully
-            if vendor.save
-                # Set the contract's vendor to the new vendor
+            vendor = Vendor.find_or_create_by(name: params[:contract][:new_vendor_name])
+
+            # If the vendor is saved successfully, assign it to the contract
+            if vendor.persisted?
                 @contract.vendor = vendor
+            else
+                @contract.errors.add(:base, "Failed to create new vendor: #{vendor.errors.full_messages.join(', ')}")
             end
+        elsif params[:contract][:vendor_id] == 'new' && params[:contract][:new_vendor_name].blank?
+            # Add an error if 'New Vendor' is selected but no name is provided
+            @contract.errors.add(:base, 'Please provide a name for the new vendor')
         end
-        # Remove the new_vendor_name parameter
+
+        # Remove the new_vendor_name parameter to avoid saving it
         params[:contract].delete(:new_vendor_name)
     end
+
 
     # TODO: This is a temporary solution
     # File upload is a seperate issue that will be handled with a dropzone
@@ -803,6 +798,8 @@ class ContractsController < ApplicationController
         end
         # :nocov:
     end
+
+
 end
 
 __END__

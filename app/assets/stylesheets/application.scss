@@ -93,8 +93,6 @@ body {
   /* Adjust the blur strength as needed */
   -webkit-filter: blur(10px);
 }
-<<<<<<< Updated upstream
-=======
 
 .diff {
   display: flex;
@@ -184,27 +182,8 @@ body {
   pointer-events: none; /* Prevent icon from interfering with input interaction */
 }
 
->>>>>>> Stashed changes
 
 .diff {
    display: flex;
    flex-direction: column;
- }
-
- .old-value {
-   text-decoration: line-through;
-   color: red;
- }
-
- .new-value {
-   color: green;
- }
-
- .debug {
-   background-color: #ffeb3b;
-   color: #000;
-   padding: 10px;
-   margin: 10px 0;
-   border: 1px solid #fbc02d;
-   border-radius: 5px;
  }
