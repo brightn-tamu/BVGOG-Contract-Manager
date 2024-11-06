@@ -11,6 +11,7 @@
       <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_contract.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/index.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +49,19 @@
     "nodejs_package_manager_path": "npm",
     "ruby.structure.view.model.defaults.configured": "true",
     "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/features/step_definitions&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }]]></component>
   <component name="RecentsManager">
@@ -303,6 +317,7 @@
       <workItem from="1730122997059" duration="6094000" />
       <workItem from="1730743231596" duration="10556000" />
       <workItem from="1730868228790" duration="8791000" />
+      <workItem from="1730743231596" duration="6542000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />

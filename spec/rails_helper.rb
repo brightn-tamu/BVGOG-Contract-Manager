@@ -46,6 +46,9 @@ RSpec.configure do |config|
     config.include Rails.application.routes.url_helpers
     Rails.application.routes.default_url_options[:host] = 'test.host'
 
+    # Include FactoryBot methods
+    config.include FactoryBot::Syntax::Methods
+
     # You can uncomment this line to turn off ActiveRecord support entirely.
     # config.use_active_record = false
 

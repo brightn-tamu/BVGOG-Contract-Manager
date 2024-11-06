@@ -174,6 +174,7 @@ A [deploy script](./script/deploy/deploy.sh) has been provided for your convienc
 Use/modify it as you see fit.  
 Note: the [Fall 2023](#fall-2023) team deprecated this script, if you have questions about it, ask the [Spring 2023](#spring-2023) team
 
+
 ## Contacting the Team
 Please contact the most recent team.
 
@@ -192,3 +193,7 @@ Please contact the most recent team.
 | Matan Broner     | matanbroner@gmail.com |
 | Chrysanthos Pepi | cpepi001@outlook.com  |
 | Hanrui Chen      | No Email Given        |
+
+### Sprint 3 Code Climate and  Deployment (Fall 2024)
+![image](app/assets/images/rubycritic.png)
+[Heroku deployment](https://bvcog-2024-fall-702c30e5a327.herokuapp.com) for Fall 2024

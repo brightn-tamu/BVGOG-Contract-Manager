@@ -13,12 +13,12 @@ class ContractType < EnumerateIt::Base
     )
 
     OPTIONS = {
-        contract: "Contract",
-        grant: "Grant",
-        property_lease: "Property Lease",
-        ila: "ILA",
-        mou_moa: "MOU/MOA",
-        letter_of_intent: "Letter of Intent",
-        other: "Other"
-      }
+        contract: 'Contract',
+        grant: 'Grant',
+        property_lease: 'Property Lease',
+        ila: 'ILA',
+        mou_moa: 'MOU/MOA',
+        letter_of_intent: 'Letter of Intent',
+        other: 'Other'
+    }.freeze
 end

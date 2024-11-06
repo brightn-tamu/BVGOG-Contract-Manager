@@ -2,7 +2,6 @@
 
 # Helper for contracts
 module ContractsHelper
-    # :nocov:
     def contract_status_icon(contract)
         case contract.contract_status
         when ContractStatus::CREATED
@@ -37,9 +36,7 @@ module ContractsHelper
             ".html_safe
         end
     end
-    # :nocov:
 
-    # :nocov:
     def file_type_icon(file_name)
         file_type = file_name.split('.').last
         case file_type
@@ -111,7 +108,6 @@ module ContractsHelper
             ".html_safe
         end
     end
-    # :nocov:
 end
 
 def user_select_options
@@ -132,9 +128,7 @@ end
 def entity_select_options
     options = if current_user.nil?
                   # return empty array
-                  # :nocov:
                   []
-                  # :nocov:
               elsif current_user.level == UserLevel::THREE
                   current_user.entities.map { |entity| [entity.name, entity.id] }
               else
@@ -143,7 +137,6 @@ def entity_select_options
 end
 
 def contract_document_filename(contract, file_extension)
-    # :nocov:
     # Sample file name:  EEEEE-PPP-VVV-NNNNN-XXXXX
     # Where,
     #   EEEEE = 5 characters for the Entity Name
@@ -178,5 +171,4 @@ def contract_document_filename(contract, file_extension)
     "#{e}-#{p}-#{n}-#{x}#{file_extension}"
 
     # Return the file name
-    # :nocov:
 end
