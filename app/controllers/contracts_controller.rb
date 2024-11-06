@@ -83,6 +83,7 @@ class ContractsController < ApplicationController
     end
 
     # GET /contracts/1/edit
+    # GET /contracts/1/edit
     def edit
         if current_user.level == UserLevel::TWO
             # :nocov:
@@ -91,17 +92,6 @@ class ContractsController < ApplicationController
             # :nocov:
         end
 
-        # Set up instance variables before rendering
-        add_breadcrumb 'Contracts', contracts_path
-        add_breadcrumb @contract.title, contract_path(@contract)
-
-        vendor = Vendor.find_by(id: @contract.vendor_id)
-        @vendor_visible_id = vendor.present? ? vendor.name : ''
-
-        add_breadcrumb 'Edit', edit_contract_path(@contract)
-        @value_type = @contract.value_type
-
-        # Render the correct template based on the path or contract type
         case @contract.current_type
         when 'contract'
             if request.path == renew_contract_path(@contract)
@@ -111,6 +101,15 @@ class ContractsController < ApplicationController
             else
                 render 'edit'
             end
+
+            add_breadcrumb 'Contracts', contracts_path
+            add_breadcrumb @contract.title, contract_path(@contract)
+            vendor = Vendor.find_by(id: @contract.vendor_id)
+            vendor_name = vendor.name if vendor.present? || ''
+
+            @vendor_visible_id = vendor_name || ''
+            add_breadcrumb 'Edit', edit_contract_path(@contract)
+            @value_type = @contract.value_type
         when 'amend'
             render 'amend'
         when 'renew'
@@ -307,7 +306,6 @@ class ContractsController < ApplicationController
 
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
 
-        handle_if_new_vendor
         # Remove the new vendor from the params
         params[:contract].delete(:new_vendor_name)
         contract_documents_upload = params[:contract][:contract_documents]
@@ -315,6 +313,10 @@ class ContractsController < ApplicationController
 
         vendor_selection = params[:vendor_visible_id]
         value_type_selected = params[:contract][:value_type]
+
+        vendor_id = params[:contract][:vendor_id]
+        Rails.logger.debug "Final Vendor ID after handling new vendor: #{vendor_id}"
+
 
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
@@ -753,6 +755,8 @@ class ContractsController < ApplicationController
             # If the vendor is saved successfully, assign it to the contract
             if vendor.persisted?
                 @contract.vendor = vendor
+                params[:contract][:vendor_id] = vendor.id # Update the vendor_id in the params to ensure consistency
+                Rails.logger.debug "Assigned new vendor ID: #{params[:contract][:vendor_id]}"
             else
                 @contract.errors.add(:base, "Failed to create new vendor: #{vendor.errors.full_messages.join(', ')}")
             end
@@ -764,6 +768,8 @@ class ContractsController < ApplicationController
         # Remove the new_vendor_name parameter to avoid saving it
         params[:contract].delete(:new_vendor_name)
     end
+
+
 
 
     # TODO: This is a temporary solution
