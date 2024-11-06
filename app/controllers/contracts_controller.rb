@@ -62,7 +62,7 @@ class ContractsController < ApplicationController
 
         @decisions = @contract.decisions.order(created_at: :asc)
         # :nocov:
-        @modification_logs = @contract.modification_logs.order(created_at: :asc)
+        @modification_logs = @contract.modification_logs.order(created_at: :desc)
         # :nocov:
     end
 
