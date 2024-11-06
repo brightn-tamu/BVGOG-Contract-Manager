@@ -73,6 +73,44 @@ class ContractsController < ApplicationController
             return
             # :nocov:
         end
+<<<<<<< Updated upstream
+=======
+
+        # Set up instance variables before rendering
+        add_breadcrumb 'Contracts', contracts_path
+        add_breadcrumb @contract.title, contract_path(@contract)
+
+        vendor = Vendor.find_by(id: @contract.vendor_id)
+        @vendor_visible_id = vendor.present? ? vendor.name : ''
+
+        add_breadcrumb 'Edit', edit_contract_path(@contract)
+        @value_type = @contract.value_type
+
+        # Render the correct template based on the path or contract type
+        case @contract.current_type
+        when 'contract'
+            if request.path == renew_contract_path(@contract)
+                render 'renew'
+            elsif request.path == amend_contract_path(@contract)
+                render 'amend'
+            else
+                render 'edit'
+            end
+        when 'amend'
+            render 'amend'
+        when 'renew'
+            render 'renew'
+        end
+    end
+
+    def renew
+        if current_user.level == UserLevel::TWO
+            # :nocov:
+            redirect_to root_path, alert: 'You do not have permission to access this page.'
+            return
+            # :nocov:
+        end
+>>>>>>> Stashed changes
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         vendor = Vendor.find_by(id: @contract.vendor_id)

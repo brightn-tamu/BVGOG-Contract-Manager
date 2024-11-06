@@ -90,7 +90,7 @@
                                 <td><%= number_to_currency(@contract.amount_dollar) %> per <%= @contract.amount_duration %></td>
                             </tr>
                              <tr>
-                                <td><strong>Total Amount:</strong></td>
+                                <td><strong>Contract Value:</strong></td>
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
                                     <td>Not Applicable</td>
                                 <% else %>
