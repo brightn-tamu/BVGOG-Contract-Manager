@@ -27,13 +27,17 @@
         var selectField = document.getElementById("vendor_visible_id");
         var newVendorField = document.getElementById("new_vendor_field");
         var textField = document.getElementById("new_vendor_name");
+        var hiddenVendorField = document.getElementById("vendor_id"); // The hidden field for submission
+
 
         if (selectField && newVendorField && textField) {
             if (selectField.value === "new") {
                 newVendorField.classList.remove("is-hidden"); // Remove hidden class to show field
+                hiddenVendorField.value = "new"; // Set hidden field to "new" for backend check
                 textField.value = "";
             } else {
                 newVendorField.classList.add("is-hidden"); // Add hidden class to hide field
+                hiddenVendorField.value = selectField.value; // Set hidden field to selected vendor ID
                 textField.value = "";
             }
         } else {
@@ -47,25 +51,28 @@
         const endDateField = document.getElementById('contract_ends_at');
 
         if (effectiveDateField && endDateField) {
+            // Automatically set the end date to 1 year after start date when a start date is selected
             effectiveDateField.addEventListener('change', function() {
                 const effectiveDateValue = new Date(effectiveDateField.value);
 
                 if (effectiveDateValue && !isNaN(effectiveDateValue)) {
-                    // Add one year to the effective date
                     const newEndDate = new Date(effectiveDateValue);
                     newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+                    endDateField.value = newEndDate.toISOString().split('T')[0];
+                }
+            });
 
-                    // Format the new date to YYYY-MM-DD
-                    const formattedDate = newEndDate.toISOString().split('T')[0];
-
-                    // Set the end date field with the calculated date
-                    endDateField.value = formattedDate;
+            // Detect if the end date is cleared and set it to "N/A"
+            endDateField.addEventListener('input', function() {
+                if (endDateField.value === '') {
+                    endDateField.placeholder = 'N/A'; // Show 'N/A' in the placeholder
                 }
             });
         } else {
             console.error("Date fields not found");
         }
     }
+
 </script>
 
 <div id="contract-form">

@@ -152,6 +152,9 @@ class ContractsController < ApplicationController
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_vendor_name)
 
+        # Set ends_at to nil if the date is empty to store it as "N/A" in the view or use `nil` for database logic
+        contract_params_clean[:ends_at] = nil if contract_params_clean[:ends_at].blank?
+
         @contract = Contract.new(contract_params_clean.merge(contract_status: ContractStatus::IN_PROGRESS))
 
         respond_to do |format|
@@ -259,14 +262,13 @@ class ContractsController < ApplicationController
             end
         end
     end
-
     # PATCH/PUT /contracts/1 or /contracts/1.json
     def update
-        # :nocov:
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
 
+        # Determine the source page based on the referrer
         source_page = if request.referer&.include?('renew')
                           'renew'
                       elsif request.referer&.include?('amend')
@@ -274,226 +276,59 @@ class ContractsController < ApplicationController
                       else
                           'edit'
                       end
-        # :nocov:
 
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
 
+        # Process new vendor creation if applicable
         handle_if_new_vendor
-        # Remove the new vendor from the params
-        params[:contract].delete(:new_vendor_name)
+        # After handling new vendor, update vendor_id if it was created
+        if params[:contract][:vendor_id] == 'new' && @contract.vendor.present?
+            params[:contract][:vendor_id] = @contract.vendor.id
+            Rails.logger.debug "Updated vendor_id to new vendor's ID: #{@contract.vendor.id}"
+        end
+
+        # Ensure ends_at is nil if it's blank to signify "N/A"
+        contract_params[:ends_at] = nil if contract_params[:ends_at].blank?
+
+        # Prepare to remove non-permitted parameters before saving
         contract_documents_upload = params[:contract][:contract_documents]
         contract_documents_attributes = params[:contract][:contract_documents_attributes]
-
         vendor_selection = params[:vendor_visible_id]
         value_type_selected = params[:contract][:value_type]
 
         # Delete the contract_documents from the params
-        # so that it doesn't get saved as a contract attribute
         params[:contract].delete(:contract_documents)
         params[:contract].delete(:contract_documents_attributes)
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
 
-        # :nocov:
-        # Only for contract current_type != contract
-        unless @contract.current_type == 'contract'
-            changes_made = {}
-
-            contract_params.each do |key, new_value|
-                old_value = @contract.send(key)
-
-                new_value = case old_value
-                            when Integer
-                                new_value.to_i
-                            when Float
-                                new_value.to_f
-                            when BigDecimal
-                                BigDecimal(new_value)
-                            when Date
-                                new_value.to_date
-                            else
-                                new_value
-                            end
-
-                next unless old_value != new_value
-
-                old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
-                new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
-                changes_made[key] = [old_value, new_value]
-            end
-
-            if changes_made.empty?
-                flash[:alert] = 'No value is edited!'
-                redirect_to edit_contract_path(@contract) and return
-            end
-
-            latest_log = @contract.modification_logs.order(updated_at: :desc).first
-
-            if latest_log&.status == 'rejected' || latest_log&.status != 'pending'
-                ModificationLog.create!(
-                  contract_id: @contract.id,
-                  modified_by: "#{current_user.first_name} #{current_user.last_name}",
-                  modification_type: @contract.current_type,
-                  changes_made:,
-                  status: 'pending',
-                  modified_at: Time.current
-                )
-            elsif latest_log&.status == 'pending'
-                combined_changes = latest_log.changes_made.merge(changes_made) { |_key, old, new| [old[0], new[1]] }
-                latest_log.update!(
-                  changes_made: combined_changes,
-                  modified_at: Time.current
-                )
-            end
-            flash[:notice] = 'Contract was successfully updated.'
-            redirect_to @contract
-            return
-        end
-        # :nocov:
-
         respond_to do |format|
             ActiveRecord::Base.transaction do
+                # Authorize the update
                 OSO.authorize(current_user, 'edit', @contract)
-                if @contract[:point_of_contact_id].blank? && contract_params[:point_of_contact_id].blank?
-                    # :nocov:
-                    @contract.errors.add(:base, 'Point of contact is required')
-                    format.html do
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @value_type = session[:value_type] || ''
-                        render source_page, status: :unprocessable_entity
-                    end
-                    format.json { render json: @contract.errors, status: :unprocessable_entity }
-                    # :nocov:
-                elsif contract_params[:point_of_contact_id].present? && !User.find(contract_params[:point_of_contact_id]).is_active
-                    # :nocov:
-                    if User.find(contract_params[:point_of_contact_id]).redirect_user_id.present?
-                        @contract.errors.add(:base,
-                                             "#{User.find(contract_params[:point_of_contact_id]).full_name} is not active, use #{User.find(User.find(contract_params[:point_of_contact_id]).redirect_user_id).full_name} instead")
-                    else
-                        @contract.errors.add(:base,
-                                             "#{User.find(contract_params[:point_of_contact_id]).full_name} is not active")
-                    end
-                    format.html do
-                        # to retain the value of the vendor dropdown and value type dropdown after validation error
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @value_type = session[:value_type] || ''
-                        render source_page, status: :unprocessable_entity
-                    end
-                    format.json { render json: @contract.errors, status: :unprocessable_entity }
-                    # :nocov:
-                    # Excuse this monster if statement, it's just checking if the user is associated with the entity, and for
-                    # some reason nested-if statements don't work here when you use format (ie. UnkownFormat error)
-                elsif contract_params[:point_of_contact_id].present? && User.find(contract_params[:point_of_contact_id]).level == UserLevel::THREE && !User.find(contract_params[:point_of_contact_id]).entities.include?(Entity.find((contract_params[:entity_id].presence || @contract.entity_id)))
-                    # :nocov:
-                    @contract.errors.add(:base,
-                                         "#{User.find((contract_params[:point_of_contact_id].presence || @contract.point_of_contact_id)).full_name} is not associated with #{Entity.find((contract_params[:entity_id].presence || @contract.entity_id)).name}")
-                    format.html do
-                        # to retain the value of the vendor dropdown and value type dropdown after validation error
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @value_type = session[:value_type] || ''
-                        render source_page, status: :unprocessable_entity
-                    end
-                    format.json { render json: @contract.errors, status: :unprocessable_entity }
-                    # :nocov:
-                elsif %w[renew amend].include?(source_page)
-                    # :nocov:
-                    @contract = Contract.find(params[:id])
-                    # TODO: handle the exception fields of renew/amend
-                    changes_made = {}
 
-                    contract_params.each do |key, new_value|
-                        old_value = @contract.send(key)
+                # Attempt to save updated contract information
+                if @contract.update(contract_params)
+                    # Handle contract documents if they exist
+                    handle_contract_documents(contract_documents_upload, contract_documents_attributes) if contract_documents_upload.present?
 
-                        new_value = case old_value
-                                    when Integer
-                                        new_value.to_i
-                                    when Float
-                                        new_value.to_f
-                                    when BigDecimal
-                                        BigDecimal(new_value)
-                                    when Date
-                                        new_value.to_date
-                                    else
-                                        new_value
-                                    end
+                    # Clear session values
+                    session[:value_type] = nil
+                    session[:vendor_visible_id] = nil
 
-                        next unless old_value != new_value
-
-                        old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
-                        new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
-                        changes_made[key] = [old_value, new_value]
-                    end
-
-                    changes_made_json = changes_made.to_json
-                    user_name = "#{current_user.first_name} #{current_user.last_name}"
-                    log_attributes = {
-                      contract_id: @contract.id,
-                      modified_by: user_name,
-                      modification_type: source_page,
-                      changes_made:,
-                      status: 'pending',
-                      modified_at: Time.current
-                    }
-
-                    if ModificationLog.create(log_attributes)
-                        @contract.update(contract_status: ContractStatus::IN_PROGRESS)
-                        @contract.update(current_type: source_page)
-                        format.html do
-                            # erase the session value after successful creation of contract
-                            # so that the value of the dropdowns will not be retained for the next contract creation
-                            session[:value_type] = nil
-                            session[:vendor_visible_id] = nil
-                            success_message = case source_page
-                                              when 'renew'
-                                                  "Renewal request for #{@contract.title} submitted successfully and is pending approval."
-                                              when 'amend'
-                                                  "Amendment request for #{@contract.title} submitted successfully and is pending approval"
-                                              else
-                                                  'Contract was successfully updated.'
-                                              end
-                            # redirect_to send('modify_contracts_path', @contract), notice: success_message
-                            redirect_to(
-                              %w[renew amend].include?(source_page) ? contract_url(@contract) : modify_contracts_path,
-                              notice: success_message
-                            )
-                        end
-                    else
-                        render source_page, alert: 'Failed to update TempContract.'
-                    end
-                    # :nocov:
-                elsif @contract.update(contract_params)
-                    if contract_documents_upload.present?
-                        # :nocov:
-                        handle_contract_documents(contract_documents_upload,
-                                                  contract_documents_attributes)
-                        # :nocov:
-                    end
-                    format.html do
-                        # erase the session value after successful creation of contract
-                        # so that the value of the dropdowns will not be retained for the next contract creation
-                        session[:value_type] = nil
-                        session[:vendor_visible_id] = nil
-
-                        success_message = case source_page
-                                          when 'renew'
-                                              "Renewal request for #{@contract.title} submitted successfully and is pending approval."
-                                          when 'amend'
-                                              "Amendment request for #{@contract.title} submitted successfully and is pending approval"
-                                          else
-                                              'Contract was successfully updated.'
-                                          end
-                        redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
-                    end
+                    success_message = case source_page
+                                      when 'renew'
+                                          "Renewal request for #{@contract.title} submitted successfully and is pending approval."
+                                      when 'amend'
+                                          "Amendment request for #{@contract.title} submitted successfully and is pending approval"
+                                      else
+                                          'Contract was successfully updated.'
+                                      end
+                    format.html { redirect_to contract_url(@contract), notice: success_message }
                     format.json { render :show, status: :ok, location: @contract }
                 else
+                    # Handle errors and retain form data
                     format.html do
-                        # to retain the value of the vendor dropdown and value type dropdown after validation error
                         session[:value_type] = value_type_selected
                         session[:vendor_visible_id] = vendor_selection
                         @vendor_visible_id = session[:vendor_visible_id] || ''
@@ -504,23 +339,13 @@ class ContractsController < ApplicationController
                 end
             end
         rescue StandardError => e
-            # :nocov:
+            # Handle errors and rollback the transaction
             @contract.reload
-            # If error type is Oso::ForbiddenError, then the user is not authorized
-            if e.instance_of?(Oso::ForbiddenError)
-                # status = :unauthorized
-                @contract.errors.add(:base, 'You are not authorized to update this contract')
-                message = 'You are not authorized to update this contract'
-            else
-                # status = :unprocessable_entity
-                message = e.message
-            end
-            # Rollback the transaction
-
-            format.html { redirect_to contract_url(@contract), alert: message }
-            # :nocov:
+            error_message = e.instance_of?(Oso::ForbiddenError) ? 'You are not authorized to update this contract' : e.message
+            format.html { redirect_to contract_url(@contract), alert: error_message }
         end
     end
+
 
     # :nocov:
     def contract_files
@@ -715,22 +540,33 @@ class ContractsController < ApplicationController
     end
 
     def handle_if_new_vendor
-        # Check if the vendor is new
-        if params[:contract][:vendor_id] == 'new'
-            # Create a new vendor
+        Rails.logger.debug "Initial vendor_id: #{params[:contract][:vendor_id]}"
+        Rails.logger.debug "New vendor name: #{params[:contract][:new_vendor_name]}"
 
-            # Make vendor name Name Case
+        if params[:contract][:vendor_id] == 'new' && params[:contract][:new_vendor_name].present?
+            # Convert new vendor name to title case
             params[:contract][:new_vendor_name] = params[:contract][:new_vendor_name].titlecase
             vendor = Vendor.new(name: params[:contract][:new_vendor_name])
-            # If the vendor is saved successfully
+
             if vendor.save
-                # Set the contract's vendor to the new vendor
                 @contract.vendor = vendor
+                Rails.logger.debug "New vendor created and assigned with ID: #{vendor.id}"
+            else
+                Rails.logger.debug "Failed to create new vendor: #{vendor.errors.full_messages}"
             end
+        elsif params[:contract][:vendor_id].present? && params[:contract][:vendor_id] != 'new'
+            # Assign the selected vendor
+            @contract.vendor_id = params[:contract][:vendor_id]
+            Rails.logger.debug "Existing vendor selected with ID: #{@contract.vendor_id}"
+        else
+            Rails.logger.debug "No vendor selected"
         end
-        # Remove the new_vendor_name parameter
+
+        # Remove the new_vendor_name to avoid storing it unnecessarily
         params[:contract].delete(:new_vendor_name)
+        Rails.logger.debug "After cleanup, params[:contract]: #{params[:contract].inspect}"
     end
+
 
     # TODO: This is a temporary solution
     # File upload is a seperate issue that will be handled with a dropzone
