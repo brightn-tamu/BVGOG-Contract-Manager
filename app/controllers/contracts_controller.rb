@@ -62,7 +62,7 @@ class ContractsController < ApplicationController
 
         @decisions = @contract.decisions.order(created_at: :asc)
         # :nocov:
-        @modification_logs = @contract.modification_logs.order(created_at: :asc)
+        @modification_logs = @contract.modification_logs.order(created_at: :desc)
         # :nocov:
     end
 
@@ -82,7 +82,6 @@ class ContractsController < ApplicationController
         @contract = Contract.new
     end
 
-    # GET /contracts/1/edit
     # GET /contracts/1/edit
     def edit
         if current_user.level == UserLevel::TWO
@@ -117,7 +116,6 @@ class ContractsController < ApplicationController
         end
     end
 
-
     def renew
         if current_user.level == UserLevel::TWO
             # :nocov:
@@ -125,38 +123,14 @@ class ContractsController < ApplicationController
             return
             # :nocov:
         end
-
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         vendor = Vendor.find_by(id: @contract.vendor_id)
         vendor_name = vendor.name if vendor.present? || ''
-        
+
         @vendor_visible_id = vendor_name || ''
-        add_breadcrumb 'Edit', edit_contract_path(@contract)
-
-        case @contract.current_type
-        when 'contract'
-            if request.path == renew_contract_path(@contract)
-                render 'renew'
-            elsif request.path == amend_contract_path(@contract)
-                render 'amend'
-            else
-                render 'edit'
-            end
-
-            add_breadcrumb 'Contracts', contracts_path
-            add_breadcrumb @contract.title, contract_path(@contract)
-            vendor = Vendor.find_by(id: @contract.vendor_id)
-            vendor_name = vendor.name if vendor.present? || ''
-
-            @vendor_visible_id = vendor_name || ''
-            add_breadcrumb 'Edit', edit_contract_path(@contract)
-            @value_type = @contract.value_type
-        when 'amend'
-            render 'amend'
-        when 'renew'
-            render 'renew'
-        end
+        add_breadcrumb 'Renew', edit_contract_path(@contract)
+        @value_type = @contract.value_type
     end
 
     # POST /contracts or /contracts.json
@@ -293,8 +267,6 @@ class ContractsController < ApplicationController
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
 
-        handle_if_new_vendor
-
         source_page = if request.referer&.include?('renew')
                           'renew'
                       elsif request.referer&.include?('amend')
@@ -306,6 +278,7 @@ class ContractsController < ApplicationController
 
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
 
+        handle_if_new_vendor
         # Remove the new vendor from the params
         params[:contract].delete(:new_vendor_name)
         contract_documents_upload = params[:contract][:contract_documents]
@@ -313,10 +286,6 @@ class ContractsController < ApplicationController
 
         vendor_selection = params[:vendor_visible_id]
         value_type_selected = params[:contract][:value_type]
-
-        vendor_id = params[:contract][:vendor_id]
-        Rails.logger.debug "Final Vendor ID after handling new vendor: #{vendor_id}"
-
 
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
@@ -362,18 +331,18 @@ class ContractsController < ApplicationController
 
             if latest_log&.status == 'rejected' || latest_log&.status != 'pending'
                 ModificationLog.create!(
-                    contract_id: @contract.id,
-                    modified_by: "#{current_user.first_name} #{current_user.last_name}",
-                    modification_type: @contract.current_type,
-                    changes_made:,
-                    status: 'pending',
-                    modified_at: Time.current
+                  contract_id: @contract.id,
+                  modified_by: "#{current_user.first_name} #{current_user.last_name}",
+                  modification_type: @contract.current_type,
+                  changes_made:,
+                  status: 'pending',
+                  modified_at: Time.current
                 )
             elsif latest_log&.status == 'pending'
                 combined_changes = latest_log.changes_made.merge(changes_made) { |_key, old, new| [old[0], new[1]] }
                 latest_log.update!(
-                    changes_made: combined_changes,
-                    modified_at: Time.current
+                  changes_made: combined_changes,
+                  modified_at: Time.current
                 )
             end
             flash[:notice] = 'Contract was successfully updated.'
@@ -415,9 +384,9 @@ class ContractsController < ApplicationController
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
-                # :nocov:
-                # Excuse this monster if statement, it's just checking if the user is associated with the entity, and for
-                # some reason nested-if statements don't work here when you use format (ie. UnkownFormat error)
+                    # :nocov:
+                    # Excuse this monster if statement, it's just checking if the user is associated with the entity, and for
+                    # some reason nested-if statements don't work here when you use format (ie. UnkownFormat error)
                 elsif contract_params[:point_of_contact_id].present? && User.find(contract_params[:point_of_contact_id]).level == UserLevel::THREE && !User.find(contract_params[:point_of_contact_id]).entities.include?(Entity.find((contract_params[:entity_id].presence || @contract.entity_id)))
                     # :nocov:
                     @contract.errors.add(:base,
@@ -464,12 +433,12 @@ class ContractsController < ApplicationController
                     changes_made_json = changes_made.to_json
                     user_name = "#{current_user.first_name} #{current_user.last_name}"
                     log_attributes = {
-                        contract_id: @contract.id,
-                        modified_by: user_name,
-                        modification_type: source_page,
-                        changes_made:,
-                        status: 'pending',
-                        modified_at: Time.current
+                      contract_id: @contract.id,
+                      modified_by: user_name,
+                      modification_type: source_page,
+                      changes_made:,
+                      status: 'pending',
+                      modified_at: Time.current
                     }
 
                     if ModificationLog.create(log_attributes)
@@ -488,7 +457,11 @@ class ContractsController < ApplicationController
                                               else
                                                   'Contract was successfully updated.'
                                               end
-                            redirect_to send('modify_contracts_path', @contract), notice: success_message
+                            # redirect_to send('modify_contracts_path', @contract), notice: success_message
+                            redirect_to(
+                              %w[renew amend].include?(source_page) ? contract_url(@contract) : modify_contracts_path,
+                              notice: success_message
+                            )
                         end
                     else
                         render source_page, alert: 'Failed to update TempContract.'
@@ -721,7 +694,7 @@ class ContractsController < ApplicationController
             begin
                 # Sort by the specified column and direction
                 params[:sort] ? Contract.order(params[:sort] => asc.to_sym) : Contract.order(created_at: :asc)
-            # :nocov:
+                # :nocov:
             rescue ActiveRecord::StatementInvalid
                 # Otherwise, sort by title
                 Contract.order(title: :asc)
@@ -742,35 +715,22 @@ class ContractsController < ApplicationController
     end
 
     def handle_if_new_vendor
-        # Add logging to inspect params
-        Rails.logger.debug "Vendor ID: #{params[:contract][:vendor_id]}"
-        Rails.logger.debug "New Vendor Name: #{params[:contract][:new_vendor_name]}"
+        # Check if the vendor is new
+        if params[:contract][:vendor_id] == 'new'
+            # Create a new vendor
 
-        # Check if the vendor is new and the new_vendor_name is provided
-        if params[:contract][:vendor_id] == 'new' && params[:contract][:new_vendor_name].present?
-            # Make vendor name Title Case
+            # Make vendor name Name Case
             params[:contract][:new_vendor_name] = params[:contract][:new_vendor_name].titlecase
-            vendor = Vendor.find_or_create_by(name: params[:contract][:new_vendor_name])
-
-            # If the vendor is saved successfully, assign it to the contract
-            if vendor.persisted?
+            vendor = Vendor.new(name: params[:contract][:new_vendor_name])
+            # If the vendor is saved successfully
+            if vendor.save
+                # Set the contract's vendor to the new vendor
                 @contract.vendor = vendor
-                params[:contract][:vendor_id] = vendor.id # Update the vendor_id in the params to ensure consistency
-                Rails.logger.debug "Assigned new vendor ID: #{params[:contract][:vendor_id]}"
-            else
-                @contract.errors.add(:base, "Failed to create new vendor: #{vendor.errors.full_messages.join(', ')}")
             end
-        elsif params[:contract][:vendor_id] == 'new' && params[:contract][:new_vendor_name].blank?
-            # Add an error if 'New Vendor' is selected but no name is provided
-            @contract.errors.add(:base, 'Please provide a name for the new vendor')
         end
-
-        # Remove the new_vendor_name parameter to avoid saving it
+        # Remove the new_vendor_name parameter
         params[:contract].delete(:new_vendor_name)
     end
-
-
-
 
     # TODO: This is a temporary solution
     # File upload is a seperate issue that will be handled with a dropzone
@@ -794,18 +754,16 @@ class ContractsController < ApplicationController
             document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
             # Create a new contract_document
             contract_document = ContractDocument.new(
-                orig_file_name: doc.original_filename,
-                file_name: official_file_name,
-                full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
-                document_type:
+              orig_file_name: doc.original_filename,
+              file_name: official_file_name,
+              full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
+              document_type:
             )
             # Add the contract_document to the contract
             @contract.contract_documents << contract_document
         end
         # :nocov:
     end
-
-
 end
 
 __END__
@@ -822,4 +780,3 @@ def get_file
 
         contract_params[:total_amount]
     end
-

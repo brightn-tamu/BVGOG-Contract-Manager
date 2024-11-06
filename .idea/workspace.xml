@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -304,7 +306,8 @@
       <workItem from="1730743231596" duration="10556000" />
       <workItem from="1730868228790" duration="8791000" />
       <workItem from="1730743231596" duration="6542000" />
-      <workItem from="1730900635821" duration="5452000" />
+      <workItem from="1730900635821" duration="7051000" />
+      <workItem from="1730929758272" duration="1839000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />
