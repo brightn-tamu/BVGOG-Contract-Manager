@@ -16,6 +16,6 @@ Background:
 
 Scenario: Amend contract successfully
     And I fill in "Title" with "Contract 2"
-    And I press "Submit request"  
+    And I press "Update Contract"  
 	Then I should see "Amendment request for Contract 1 submitted successfully and is pending approval"
 

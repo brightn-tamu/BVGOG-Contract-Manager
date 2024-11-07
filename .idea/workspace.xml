@@ -6,14 +6,27 @@
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/contracts/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/index.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_form.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -24,21 +37,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/features/step_definitions&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "hint__bubble",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/brigh/RubymineProjects/BVGOG-Contract-Manager/features/step_definitions",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ruby.structure.view.model.defaults.configured": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\brigh\RubymineProjects\BVGOG-Contract-Manager\features\step_definitions" />
@@ -290,7 +303,11 @@
       <workItem from="1729261321756" duration="702000" />
       <workItem from="1729718277890" duration="788000" />
       <workItem from="1730122997059" duration="6094000" />
+      <workItem from="1730743231596" duration="10556000" />
+      <workItem from="1730868228790" duration="8791000" />
       <workItem from="1730743231596" duration="6542000" />
+      <workItem from="1730900635821" duration="7051000" />
+      <workItem from="1730929758272" duration="4358000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />

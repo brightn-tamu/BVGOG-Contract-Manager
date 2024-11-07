@@ -121,6 +121,11 @@ def vendor_select_options_json
     options.to_json
 end
 
+def vendor_select_options
+    Vendor.all.pluck(:name, :id).push(['New Vendor', 'new'])
+end
+
+
 def program_select_options
     options = Program.all.map { |program| [program.name, program.id] }
 end
