@@ -332,7 +332,7 @@ class ContractsController < ApplicationController
             if latest_log&.status == 'rejected' || latest_log&.status != 'pending'
                 ModificationLog.create!(
                     contract_id: @contract.id,
-                    modified_by: "#{current_user.first_name} #{current_user.last_name}",
+                    modified_by_id: current_user.id,
                     modification_type: @contract.current_type,
                     changes_made:,
                     status: 'pending',
@@ -431,10 +431,9 @@ class ContractsController < ApplicationController
                     end
 
                     changes_made_json = changes_made.to_json
-                    user_name = "#{current_user.first_name} #{current_user.last_name}"
                     log_attributes = {
                         contract_id: @contract.id,
-                        modified_by: user_name,
+                        modified_by_id: current_user.id,
                         modification_type: source_page,
                         changes_made:,
                         status: 'pending',
