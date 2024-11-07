@@ -249,7 +249,7 @@
                             <% @modification_logs.each do |log| %>
                                 <% unless log.status == 'pending' %>
                                     <tr>
-                                        <td><%= log.modified_by %></td>
+                                        <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
                                         <td><%= log.changes_made.keys.join(", ") %></td>
                                         <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
