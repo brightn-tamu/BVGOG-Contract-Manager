@@ -453,7 +453,7 @@ class ContractsController < ApplicationController
                                           when "amend"
                                             "Amendment request for #{@contract.title} submitted successfully and is pending approval"
                                           else
-                                            "Contract was successfully updated."
+                                            "error"
                                           end
                         redirect_to send("modify_contracts_path", @contract), notice: success_message
                       end
@@ -472,7 +472,7 @@ class ContractsController < ApplicationController
                         # so that the value of the dropdowns will not be retained for the next contract creation
                         session[:value_type] = nil
                         session[:vendor_visible_id] = nil
-                        redirect_to edit_contract_path(@contract), notice: success_message
+                        redirect_to edit_contract_path(@contract), notice: "Contract was successfully updated."
                     format.json { render :show, status: :ok, location: @contract }
                     end
                 else
