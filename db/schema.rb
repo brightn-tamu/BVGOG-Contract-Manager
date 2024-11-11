@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_06_235956) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_07_044057) do
   create_table "bvcog_configs", force: :cascade do |t|
     t.text "contracts_path", null: false
     t.text "reports_path", null: false
@@ -76,6 +76,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_06_235956) do
     t.string "value_type"
     t.decimal "contract_value", precision: 15, scale: 2
     t.string "current_type", default: "contract"
+    t.string "funding_source"
     t.index ["entity_id"], name: "index_contracts_on_entity_id"
     t.index ["point_of_contact_id"], name: "index_contracts_on_point_of_contact_id"
     t.index ["program_id"], name: "index_contracts_on_program_id"
