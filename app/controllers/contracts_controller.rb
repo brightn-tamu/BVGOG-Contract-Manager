@@ -90,6 +90,23 @@ class ContractsController < ApplicationController
             return
             # :nocov:
         end
+        # action = case
+        #     when request.path == renew_contract_path(@contract)
+        #         "renew"
+        #     when request.path == amend_contract_path(@contract)
+        #         "amend"
+        #     else
+        #         "edit"
+        #     end 
+
+        # begin
+        #     OSO.authorize(current_user, action, @contract)
+        # rescue Oso::Error
+        #     # :nocov:
+        #     redirect_to root_path, alert: 'You do not have permission to access this page.'
+        #     return
+        #     # :nocov:
+        # end
 
         case @contract.current_type
         when 'contract'
@@ -671,6 +688,7 @@ class ContractsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_contract
         @contract = Contract.find(params[:id])
+
     end
 
     def set_users
