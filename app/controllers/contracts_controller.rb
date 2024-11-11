@@ -84,29 +84,30 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
-        if current_user.level == UserLevel::TWO
-            # :nocov:
-            redirect_to root_path, alert: 'You do not have permission to access this page.'
-            return
-            # :nocov:
-        end
-        # action = case
-        #     when request.path == renew_contract_path(@contract)
-        #         "renew"
-        #     when request.path == amend_contract_path(@contract)
-        #         "amend"
-        #     else
-        #         "edit"
-        #     end 
-
-        # begin
-        #     OSO.authorize(current_user, action, @contract)
-        # rescue Oso::Error
+        # if current_user.level == UserLevel::TWO
         #     # :nocov:
         #     redirect_to root_path, alert: 'You do not have permission to access this page.'
         #     return
         #     # :nocov:
         # end
+
+        action = case
+            when request.path == renew_contract_path(@contract)
+                "renew"
+            when request.path == amend_contract_path(@contract)
+                "amend"
+            else
+                "edit"
+            end 
+
+        begin
+            OSO.authorize(current_user, action, @contract)
+        rescue Oso::Error
+            # :nocov:
+            redirect_to root_path, alert: 'You do not have permission to access this page.'
+            return
+            # :nocov:
+        end
 
         case @contract.current_type
         when 'contract'
@@ -291,6 +292,7 @@ class ContractsController < ApplicationController
                       else
                           'edit'
                       end
+        action = source_page
         # :nocov:
 
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
@@ -370,7 +372,7 @@ class ContractsController < ApplicationController
 
         respond_to do |format|
             ActiveRecord::Base.transaction do
-                OSO.authorize(current_user, 'edit', @contract)
+                OSO.authorize(current_user, action, @contract)
                 if @contract[:point_of_contact_id].blank? && contract_params[:point_of_contact_id].blank?
                     # :nocov:
                     @contract.errors.add(:base, 'Point of contact is required')
