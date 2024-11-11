@@ -799,4 +799,3 @@ def get_file
 
         contract_params[:total_amount]
     end
-
