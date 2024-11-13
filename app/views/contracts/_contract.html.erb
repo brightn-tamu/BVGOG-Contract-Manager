@@ -186,6 +186,7 @@
                     <header class="card-header">
                         <p class="card-header-title">Contract Decision History</p>
                     </header>
+                  <div class="card-content is-paddingless scrollable-container">
                     <table class="table is-striped is-hoverable is-fullwidth">
                         <tbody>
                             <% @decisions.each do |decision| %>
@@ -215,6 +216,7 @@
                             <% end %>
                         </tbody>
                     </table>
+                  </div>
                 </div>
             </div>
             <% end %>
@@ -230,7 +232,7 @@
                     Modification Logs
                 </p>
                 </header>
-                <div class="card-content is-paddingless">
+                <div class="card-content is-paddingless scrollable-container">
                     <div class="table-container">
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <thead>
