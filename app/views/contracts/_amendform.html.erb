@@ -162,10 +162,42 @@
               </div>
             </div>
 
+            <%# Funding Source %>
+						<div class="field">
+								<%= form.label :funding_source do %>
+										<div class="icon-text">
+												<span class="icon has-text-info tooltip-container">
+														<i class="fas fa-circle-info"></i>
+														<div class="tooltip-content">
+																The source of funds for this contract. If the funding source does not appear in the list, select "New Funding Source" and enter a new one.
+														</div>
+												</span>
+															<span>Funding Source</span>
+										</div>
+								<% end %>
+
+								<div class="control has-icons-right">
+										<!-- Visible field for funding source selection (not used for form submission) -->
+										<%= form.select :funding_source, funding_source_select_options, { include_blank: true }, class: "input", id: "funding_source_visible", onchange: "showFundingSourceField()", disabled: true %>
+										<!-- Hidden field used for form submission, bound to funding_source in the model -->
+										<%= form.hidden_field :funding_source, value: @funding_source_selected, class: "input", id: "contract_funding_source", disabled: true %>
+
+										<span class="icon is-small is-right">
+												<i class="fas fa-chevron-down"></i>
+										</span>
+								</div>
+						</div>
+
+						<!-- Text input for entering a new funding source, initially hidden -->
+						<div id="new_funding_source_field" class="field <%= @funding_source_selected == 'new' ? '' : 'is-hidden' %>">
+								<%= form.label :new_funding_source, "New Funding Source" %>
+								<%= form.text_field :new_funding_source, class: "input", id: "new_funding_source", disabled: true %>
+						</div>
+
             <!-- A text input field for entering a new vendor name, initially hidden -->
             <div id="new_vendor_field" class="field is-hidden">
               <%= form.label :new_vendor_name, "New Vendor Name" %>
-              <%= form.text_field :new_vendor_name, class: "input", id: "new_vendor_name" %>
+              <%= form.text_field :new_vendor_name, class: "input", id: "new_vendor_name", disabled: true %>
             </div>
 
 
