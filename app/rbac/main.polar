@@ -11,8 +11,9 @@ is_three(lvl) if lvl == "three";
 # Can a user read a contract?
 has_permission(user: User, "read", contract: Contract) if
     contract matches Contract and
+    (is_one(user.level) or  
     (user.entity?(contract.entity_id) or
-    contract.point_of_contact_id == user.id);  # Use '==' for equality check
+    contract.point_of_contact_id == user.id));
 
 # Can a user create a contract?
 has_permission(user: User, "write", contract: Contract) if
