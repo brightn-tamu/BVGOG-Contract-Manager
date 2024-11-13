@@ -364,8 +364,8 @@ class ContractsController < ApplicationController
                     modified_at: Time.current
                 )
             end
-            flash[:notice] = 'Contract was successfully updated.'
-            redirect_to @contract
+            success_message = 'Contract was successfully updated.'
+            redirect_to contract_url(@contract), notice: success_message
             return
         end
         # :nocov:
@@ -513,7 +513,7 @@ class ContractsController < ApplicationController
                                           else
                                               'Contract was successfully updated.'
                                           end
-                        redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
+                        redirect_to contract_path(@contract), notice: success_message
                     end
                     format.json { render :show, status: :ok, location: @contract }
                 else
