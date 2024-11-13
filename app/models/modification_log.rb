@@ -9,5 +9,9 @@ class ModificationLog < ApplicationRecord
     validates :status, inclusion: { in: %w[pending approved rejected] }
     # TODO: Add 'approved by' or 'rejected by' fields?
 
+    def send_failure_notification
+        ContractMailer.amend_failure_notification(self).deliver_now
+    end
+
     serialize :changes_made, Hash
 end
