@@ -14,7 +14,12 @@
 
   <div class="control has-icons-right">
     <% if field_type == 'select' %>
-      <%= form.select field_id, field_options, field_options_hash, class: "input" %>
+      <%= form.select(
+        field_id, 
+        field_options, 
+        { include_blank: field_options_hash[:include_blank] }, 
+        { class: field_options_hash[:class], disabled: field_options_hash[:disabled] }
+      ) %>
     <% elsif field_type == 'number' %>
       <%= form.number_field field_id, **field_options_hash.merge(class: "input") %>
     <% else %>

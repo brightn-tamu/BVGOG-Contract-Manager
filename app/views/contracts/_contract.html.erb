@@ -114,12 +114,6 @@
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
                             <% end %>
                         <% elsif @contract.contract_status == ContractStatus::APPROVED %>
-                            <%= link_to renew_contract_path(@contract), class: 'card-footer-item button is-success is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
-                                <span class="icon is-small">
-                                    <i class="fas fa-sync-alt"></i>
-                                </span>
-                                <span>Renew</span>
-                            <% end %>
                             <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
                                 <span class="icon is-small">
                                     <i class="fas fa-pencil-alt"></i>

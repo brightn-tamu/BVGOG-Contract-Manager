@@ -93,9 +93,7 @@ class ContractsController < ApplicationController
 
         case @contract.current_type
         when 'contract'
-            if request.path == renew_contract_path(@contract)
-                render 'renew'
-            elsif request.path == amend_contract_path(@contract)
+            if request.path == amend_contract_path(@contract)
                 render 'amend'
             else
                 render 'edit'
@@ -111,8 +109,8 @@ class ContractsController < ApplicationController
             @value_type = @contract.value_type
         when 'amend'
             render 'amend'
-        when 'renew'
-            render 'renew'
+        # when 'renew'
+        #     render 'renew'
         end
     end
 

@@ -5,6 +5,11 @@
         justify-content: flex-end;
         height: 100%;
     }
+
+    .no-pointer-events {
+      pointer-events: none;
+      background-color: #f5f5f5; /* 使其看起来被禁用 */
+    }
 </style>
 <script type="text/javascript">
 
@@ -84,6 +89,7 @@
             contract_date_entry_div.style.display = 'none'
         }
     }
+});
 
 </script>
 
@@ -122,7 +128,7 @@
                        field_options: nil,
                        tooltip_text: 'The name of the contract/grant/ILA. This is usually found on the first page of the contract.',
                        field_type: 'text',
-                       field_options_hash: { class: "input" } %>
+                       field_options_hash: { class: "input", disabled: true } %>
 
             <%# Contract ID %>
             <%= render 'shared/tooltip_select_field',
@@ -149,7 +155,7 @@
               <% end %>
 
               <div class="control has-icons-right">
-                <%= form.select :vendor_id, vendor_select_options, { include_blank: true }, class: "input", id: "vendor_visible_id", onchange: "showVendorField()" %>
+                <%= form.select :vendor_id, vendor_select_options, { include_blank: true }, class: "input", id: "vendor_visible_id", onchange: "showVendorField()", disabled: true %>
                 <span class="icon is-small is-right">
                                     <i class="fas fa-chevron-down"></i>
                                 </span>
@@ -171,9 +177,10 @@
                        field_options: ContractType.to_a,
                        tooltip_text: 'Select from a list of options describing the contract.',
                        field_type: 'select',
-                       field_options_hash: { include_blank: true, class: "input" } %>
+                       field_options_hash: { include_blank: true, class: "input", disabled: true} %>
 
             <%# Point of Contact %>
+            
             <%= render 'shared/tooltip_select_field',
                        form: form,
                        field_id: :point_of_contact_id,
@@ -181,7 +188,7 @@
                        field_options: user_select_options,
                        tooltip_text: 'This is the Program Manager over the contract.',
                        field_type: 'select',
-                       field_options_hash: { include_blank: true, class: "input" } %>
+                       field_options_hash: { class: "input", disabled: true } %>
 
             <%# Program %>
             <%= render 'shared/tooltip_select_field',
@@ -191,7 +198,7 @@
                        field_options: program_select_options,
                        tooltip_text: 'The primary program responsible for the contract. The program manager will be notified when the contract is due to expire.',
                        field_type: 'select',
-                       field_options_hash: { include_blank: !@contract.program_id.present?, class: "input" } %>
+                       field_options_hash: { include_blank: !@contract.program_id.present?, class: "input", disabled: true } %>
 
             <%# Entity %>
             <%= render 'shared/tooltip_select_field',
@@ -201,7 +208,7 @@
                        field_options: entity_select_options,
                        tooltip_text: 'Pick from a list of agencies associated with this contract.',
                        field_type: 'select',
-                       field_options_hash: { include_blank: !@contract.entity_id.present?, class: "input" } %>
+                       field_options_hash: { include_blank: !@contract.entity_id.present?, class: "input", disabled: true } %>
           </div>
 
           <div class="column is-6">

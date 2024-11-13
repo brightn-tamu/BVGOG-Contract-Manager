@@ -15,7 +15,7 @@ Background:
 	Given I am on the amend page
 
 Scenario: Amend contract successfully
-    And I fill in "Title" with "Contract 2"
-    And I press "Update Contract"  
+    And I fill in "Contract ID" with "1234"
+    And I press "Update Contract" 
 	Then I should see "Amendment request for Contract 1 submitted successfully and is pending approval"
 
