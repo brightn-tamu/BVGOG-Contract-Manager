@@ -107,6 +107,8 @@ class ContractsController < ApplicationController
             @vendor_visible_id = vendor_name || ''
             add_breadcrumb 'Edit', edit_contract_path(@contract)
             @value_type = @contract.value_type
+            @funding_source_selected = @contract.funding_source.presence || ''
+            @hidden_funding_source = ''
         when 'amend'
             render 'amend'
         # when 'renew'
@@ -140,6 +142,8 @@ class ContractsController < ApplicationController
         contract_documents_attributes = params[:contract][:contract_documents_attributes]
         value_type_selected = params[:contract][:value_type]
         vendor_selection = params[:vendor_visible_id]
+        funding_source_selected = params[:contract][:funding_source]
+        new_funding_source_input = params[:contract][:new_funding_source]
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
         params[:contract].delete(:contract_documents)
@@ -149,6 +153,7 @@ class ContractsController < ApplicationController
 
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_vendor_name)
+        contract_params_clean.delete(:new_funding_source)
 
         @contract = Contract.new(contract_params_clean.merge(contract_status: ContractStatus::IN_PROGRESS))
 
@@ -157,6 +162,7 @@ class ContractsController < ApplicationController
                 begin
                     OSO.authorize(current_user, 'write', @contract)
                     handle_if_new_vendor
+                    handle_if_new_funding_source
 
                     #  Check specific for PoC since we use it down the line to check entity association
                     if contract_params[:point_of_contact_id].blank?
@@ -166,8 +172,10 @@ class ContractsController < ApplicationController
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
                             session[:value_type] = value_type_selected
                             session[:vendor_visible_id] = vendor_selection
+                            session[:funding_source] = funding_source_selected
                             @vendor_visible_id = session[:vendor_visible_id] || ''
                             @value_type = session[:value_type] || ''
+                            @funding_source_selected = session[:funding_source] || ''
                             render :new, status: :unprocessable_entity
                         end
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -185,8 +193,10 @@ class ContractsController < ApplicationController
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
                             session[:value_type] = value_type_selected
                             session[:vendor_visible_id] = vendor_selection
+                            session[:funding_source] = funding_source_selected
                             @vendor_visible_id = session[:vendor_visible_id] || ''
                             @value_type = session[:value_type] || ''
+                            @funding_source_selected = session[:funding_source] || ''
                             render :new, status: :unprocessable_entity
                         end
                         # format.html { render :new, status: :unprocessable_entity, session[:value_type] = params[:contract][:value_type] }
@@ -202,8 +212,10 @@ class ContractsController < ApplicationController
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
                             session[:value_type] = value_type_selected
                             session[:vendor_visible_id] = vendor_selection
+                            session[:funding_source] = funding_source_selected
                             @vendor_visible_id = session[:vendor_visible_id] || ''
                             @value_type = session[:value_type] || ''
+                            @funding_source_selected = session[:funding_source] || ''
                             render :new, status: :unprocessable_entity
                         end
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -224,6 +236,7 @@ class ContractsController < ApplicationController
                             # so that the value of the dropdowns will not be retained for the next contract creation
                             session[:value_type] = nil
                             session[:vendor_visible_id] = nil
+                            session[:funding_source] = nil
                             redirect_to contract_url(@contract), notice: 'Contract was successfully created.'
                         end
                         format.json { render :show, status: :created, location: @contract }
@@ -233,8 +246,10 @@ class ContractsController < ApplicationController
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
                             session[:value_type] = value_type_selected
                             session[:vendor_visible_id] = vendor_selection
+                            session[:funding_source] = funding_source_selected
                             @vendor_visible_id = session[:vendor_visible_id] || ''
                             @value_type = session[:value_type] || ''
+                            @funding_source_selected = session[:funding_source] || ''
                             render :new, status: :unprocessable_entity
                         end
                         # format.html { render :new, status: :unprocessable_entity, session[:value_type] = params[:contract][:value_type]}
@@ -277,13 +292,17 @@ class ContractsController < ApplicationController
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
 
         handle_if_new_vendor
+        handle_if_new_funding_source
         # Remove the new vendor from the params
         params[:contract].delete(:new_vendor_name)
+        params[:contract].delete(:new_funding_source)
         contract_documents_upload = params[:contract][:contract_documents]
         contract_documents_attributes = params[:contract][:contract_documents_attributes]
 
         vendor_selection = params[:vendor_visible_id]
         value_type_selected = params[:contract][:value_type]
+        funding_source_selected = params[:contract][:funding_source]
+        new_funding_source_input = params[:contract][:new_funding_source]
 
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
@@ -291,6 +310,8 @@ class ContractsController < ApplicationController
         params[:contract].delete(:contract_documents_attributes)
         params[:contract].delete(:contract_document_type_hidden)
         params[:contract].delete(:vendor_visible_id)
+        contract_params_clean = contract_params
+        contract_params_clean.delete(:new_funding_source)
 
         # :nocov:
         # Only for contract current_type != contract
@@ -358,8 +379,10 @@ class ContractsController < ApplicationController
                     format.html do
                         session[:value_type] = value_type_selected
                         session[:vendor_visible_id] = vendor_selection
+                        session[:funding_source] = funding_source_selected
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
+                        @funding_source_selected = session[:funding_source] || ''
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -377,8 +400,10 @@ class ContractsController < ApplicationController
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
                         session[:value_type] = value_type_selected
                         session[:vendor_visible_id] = vendor_selection
+                        session[:funding_source] = funding_source_selected
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
+                        @funding_source_selected = session[:funding_source] || ''
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -393,7 +418,9 @@ class ContractsController < ApplicationController
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
                         session[:value_type] = value_type_selected
                         session[:vendor_visible_id] = vendor_selection
+                        session[:funding_source] = funding_source_selected
                         @vendor_visible_id = session[:vendor_visible_id] || ''
+                        @funding_source_selected = session[:funding_source] || ''
                         @value_type = session[:value_type] || ''
                         render source_page, status: :unprocessable_entity
                     end
@@ -476,6 +503,7 @@ class ContractsController < ApplicationController
                         # so that the value of the dropdowns will not be retained for the next contract creation
                         session[:value_type] = nil
                         session[:vendor_visible_id] = nil
+                        session[:funding_source] = nil 
 
                         success_message = case source_page
                                           when 'renew'
@@ -493,8 +521,10 @@ class ContractsController < ApplicationController
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
                         session[:value_type] = value_type_selected
                         session[:vendor_visible_id] = vendor_selection
+                        session[:funding_source] = funding_source_selected 
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
+                        @funding_source_selected = session[:funding_source] || ''
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -662,6 +692,8 @@ class ContractsController < ApplicationController
             vendor_visible_id
             contract_value
             current_type
+            funding_source 
+            new_funding_source
         ]
         params.require(:contract).permit(allowed)
     end
@@ -728,6 +760,23 @@ class ContractsController < ApplicationController
         # Remove the new_vendor_name parameter
         params[:contract].delete(:new_vendor_name)
     end
+
+    def handle_if_new_funding_source
+        # Check if the funding source is new
+        if params[:contract][:funding_source] == 'new'
+            if params[:contract][:new_funding_source].present?
+                @contract.funding_source = params[:contract][:new_funding_source]
+            else
+                @contract.errors.add(:funding_source, "New funding source cannot be empty")
+            end
+        else
+            # If not a new funding source, set the selected value
+            @contract.funding_source = params[:contract][:funding_source]
+        end
+        params[:contract].delete(:new_funding_source)
+    end
+    
+      
 
     # TODO: This is a temporary solution
     # File upload is a seperate issue that will be handled with a dropzone

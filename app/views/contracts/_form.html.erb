@@ -9,17 +9,24 @@
 
 <script type="text/javascript">
     var vendorOptions = <%= vendor_select_options_json.html_safe %>;
+    var fundingSourceOptions = <%= funding_source_select_options_json.html_safe %>;
+    console.log('vendorOptions:', vendorOptions);
+    console.log('fundingSourceOptions:', fundingSourceOptions);
+
 
     // Run the function after the page loads
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOMContentLoaded event triggered');
-        showVendorField();
         setupDateFields();
+        showVendorField();
+        showFundingSourceField();
+        
     });
 
     document.addEventListener("turbo:load", function() {
         console.log('turbo:load event triggered');
         setupDateFields();
+        showFundingSourceField();
     });
 
     // Function to show or hide the new vendor input field based on dropdown selection
@@ -44,21 +51,54 @@
             console.error("One or more required elements are not found.");
         }
     }
+      
+    function showFundingSourceField() {
+      const fundingSourceSelectField = document.getElementById("funding_source_visible");
+      const newFundingSourceField = document.getElementById("new_funding_source_field");
+      const hiddenFundingSourceField = document.getElementById("contract_funding_source");
+      const newFundingSourceInput = document.getElementById("new_funding_source");
+
+      if (fundingSourceSelectField && newFundingSourceField && hiddenFundingSourceField && newFundingSourceInput) {
+          // 当用户选择 "new" 时，显示输入框
+          if (fundingSourceSelectField.value === "new") {
+              newFundingSourceField.classList.remove("is-hidden");
+              hiddenFundingSourceField.value = ""; // 清空 hidden field 的值，避免保存为 "new"
+          } else {
+              // 当选择已有的 funding source 时，隐藏输入框并将 hidden field 设置为选定的值
+              newFundingSourceField.classList.add("is-hidden");
+              hiddenFundingSourceField.value = fundingSourceSelectField.value;
+          }
+
+          // 当用户输入新的 Funding Source 时，将 hidden field 设置为输入的值
+          newFundingSourceInput.addEventListener('input', () => {
+              if (newFundingSourceInput.value.trim() !== "") {
+                  hiddenFundingSourceField.value = newFundingSourceInput.value;
+              }
+          });
+      } else {
+          console.error("One or more required elements for funding source are not found.");
+      }
+    }
+
 
     // Auto-set the end date to 1-year after start date
     function setupDateFields() {
         const effectiveDateField = document.getElementById('contract_starts_at');
         const endDateField = document.getElementById('contract_ends_at');
-
+        console.log('Effective Date Field:', effectiveDateField);
+        console.log('End Date Field:', endDateField);
         if (effectiveDateField && endDateField) {
+            console.log('Binding change event to Effective Date');
             // Automatically set the end date to 1 year after start date when a start date is selected
             effectiveDateField.addEventListener('change', function() {
+                console.log('Effective Date changed:', effectiveDateField.value);
                 const effectiveDateValue = new Date(effectiveDateField.value);
 
                 if (effectiveDateValue && !isNaN(effectiveDateValue)) {
                     const newEndDate = new Date(effectiveDateValue);
                     newEndDate.setFullYear(newEndDate.getFullYear() + 1);
                     endDateField.value = newEndDate.toISOString().split('T')[0];
+                    console.log('End Date set to:', endDateField.value);
                 }
             });
 
@@ -152,6 +192,39 @@
               <%= form.label :new_vendor_name, "New Vendor Name" %>
               <%= form.text_field :new_vendor_name, class: "input", id: "new_vendor_name" %>
             </div>
+
+<%# Funding Source %>
+						<div class="field">
+								<%= form.label :funding_source do %>
+										<div class="icon-text">
+												<span class="icon has-text-info tooltip-container">
+														<i class="fas fa-circle-info"></i>
+														<div class="tooltip-content">
+																The source of funds for this contract. If the funding source does not appear in the list, select "New Funding Source" and enter a new one.
+														</div>
+												</span>
+															<span>Funding Source</span>
+										</div>
+								<% end %>
+
+								<div class="control has-icons-right">
+										<!-- Visible field for funding source selection (not used for form submission) -->
+										<%= form.select :funding_source, funding_source_select_options, { include_blank: true }, class: "input", id: "funding_source_visible", onchange: "showFundingSourceField()" %>
+										<!-- Hidden field used for form submission, bound to funding_source in the model -->
+										<%= form.hidden_field :funding_source, value: @funding_source_selected, class: "input", id: "contract_funding_source" %>
+
+										<span class="icon is-small is-right">
+												<i class="fas fa-chevron-down"></i>
+										</span>
+								</div>
+						</div>
+
+						<!-- Text input for entering a new funding source, initially hidden -->
+						<div id="new_funding_source_field" class="field <%= @funding_source_selected == 'new' ? '' : 'is-hidden' %>">
+								<%= form.label :new_funding_source, "New Funding Source" %>
+								<%= form.text_field :new_funding_source, class: "input", id: "new_funding_source" %>
+						</div>
+
 
             <%# Contract Type %>
             <%= render 'shared/tooltip_select_field',

@@ -38,6 +38,11 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td><strong>Funding Source:</strong></td>
+                                 <td><%= @contract.funding_source.presence || 'N/A' %></td>
+                            </tr>
+
+                            <tr>
                                 <td><strong>Entity:</strong></td>
                                 <td><%= @contract.entity.name %></td>
                             </tr>
