@@ -25,16 +25,18 @@ has_permission(user: User, "edit", contract: Contract) if
     contract matches Contract and
     contract.contract_status == "in_progress" and
     (not is_two(user.level)) and
+    (is_one(user.level) or 
     (user.entity?(contract.entity_id) or
-    contract.point_of_contact_id == user.id);
+    contract.point_of_contact_id == user.id));
 
 # Can a user amend a contract
 has_permission(user: User, "amend", contract: Contract) if
     contract matches Contract and
     contract.contract_status.in?(["approved", "in_progress"]) and
     (not is_two(user.level)) and
+    (is_one(user.level) or 
     (user.entity?(contract.entity_id) or
-    contract.point_of_contact_id == user.id);
+    contract.point_of_contact_id == user.id));
 
 # Can a user review a contract
 has_permission(user: User, "review", contract: Contract) if
