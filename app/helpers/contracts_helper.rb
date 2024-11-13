@@ -125,6 +125,17 @@ def vendor_select_options
     Vendor.all.pluck(:name, :id).push(['New Vendor', 'new'])
 end
 
+def funding_source_select_options_json
+    options = Contract.distinct.pluck(:funding_source).compact.map { |source| { label: source, value: source } }
+    options.push({ label: 'New Funding Source', value: 'new' })
+  
+    options.to_json
+end
+  
+def funding_source_select_options
+    Contract.distinct.pluck(:funding_source).compact.push(['New Funding Source', 'new'])
+end
+  
 
 def program_select_options
     options = Program.all.map { |program| [program.name, program.id] }
