@@ -22,6 +22,8 @@
       ) %>
     <% elsif field_type == 'number' %>
       <%= form.number_field field_id, **field_options_hash.merge(class: "input") %>
+    <% elsif field_type == 'textarea' %>
+      <%= form.text_area field_id, **field_options_hash.merge(class: "textarea") %>
     <% else %>
       <%= form.text_field field_id, **field_options_hash.merge(class: "input") %>
     <% end %>
