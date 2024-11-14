@@ -443,13 +443,40 @@
     const continuousCheckbox = document.getElementById("contract_continuous_add");
     const endDateField = document.getElementById("contract_ends_at_add");
 
-    continuousCheckbox.addEventListener("change", function() {
+    // Function to update the end date field based on the checkbox status
+    function updateEndDateField() {
       if (continuousCheckbox.checked) {
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
       } else {
         endDateField.disabled = false; // Enable the end date field
       }
-    });
+    }
+
+    // Initialize the state based on the checkbox value when the page loads
+    updateEndDateField();
+
+    // Add an event listener for changes to the checkbox
+    continuousCheckbox.addEventListener("change", updateEndDateField);
+  });
+  document.addEventListener("turbo:load", function() { 
+    const continuousCheckbox = document.getElementById("contract_continuous_add");
+    const endDateField = document.getElementById("contract_ends_at_add");
+
+    // Function to update the end date field based on the checkbox status
+    function updateEndDateField() {
+      if (continuousCheckbox.checked) {
+        endDateField.value = ""; // Clear the end date field
+        endDateField.disabled = true; // Disable the end date field
+      } else {
+        endDateField.disabled = false; // Enable the end date field
+      }
+    }
+
+    // Initialize the state based on the checkbox value when the page loads
+    updateEndDateField();
+
+    // Add an event listener for changes to the checkbox
+    continuousCheckbox.addEventListener("change", updateEndDateField);
   });
 </script>
