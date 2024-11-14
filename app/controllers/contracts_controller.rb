@@ -626,7 +626,8 @@ class ContractsController < ApplicationController
                 @decision.save
                 if @decision.save
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
-                    redirect_to contract_url(@contract), notice: "#{message_text} request was Approved"
+                    # redirect_to contract_url(@contract), notice: "#{message_text} request was Approved"
+                    redirect_to contract_url(@contract), notice: params[:contract][:hard_rejection].present? ? "#{message_text} was Hard rejected." : "#{message_text} was Approved."
                 else
                     redirect_to contract_url(@contract), alert: "#{message_text} approval failed"
                 end
