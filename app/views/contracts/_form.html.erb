@@ -285,6 +285,7 @@
                       </div>
                     <% end %>
                     <%= form.date_field :starts_at, class: "input", id: "contract_starts_at" %>
+                    <%= form.hidden_field :ends_at, id: "hidden_contract_ends_at_add" %>
                   </div>
                 </div>
 
@@ -441,15 +442,19 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const continuousCheckbox = document.getElementById("contract_continuous_add");
-    const endDateField = document.getElementById("contract_ends_at_add");
+    const endDateField = document.getElementById("contract_ends_at_amend");
+    const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_add");
 
     // Function to update the end date field based on the checkbox status
     function updateEndDateField() {
       if (continuousCheckbox.checked) {
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
+        hiddenEndDateField.disabled = false;
+        hiddenEndDateField.value = "N/A";
       } else {
         endDateField.disabled = false; // Enable the end date field
+        hiddenEndDateField.disabled = true;
       }
     }
 
@@ -461,15 +466,19 @@
   });
   document.addEventListener("turbo:load", function() { 
     const continuousCheckbox = document.getElementById("contract_continuous_add");
-    const endDateField = document.getElementById("contract_ends_at_add");
+    const endDateField = document.getElementById("contract_ends_at_amend");
+    const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_add");
 
     // Function to update the end date field based on the checkbox status
     function updateEndDateField() {
       if (continuousCheckbox.checked) {
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
+        hiddenEndDateField.disabled = false;
+        hiddenEndDateField.value = "N/A";
       } else {
         endDateField.disabled = false; // Enable the end date field
+        hiddenEndDateField.disabled = true;
       }
     }
 
