@@ -375,11 +375,19 @@
         const fieldsArray = fieldsChanged.split(', ');
         const valuesArray = values.split(', ').map(item => item.split(' -> '));
 
+        const fieldDisplayNames = {
+        'description': 'Summary',
+        'starts_at': 'Effective Date',
+        'ends_at': 'End Date',
+        'total_amount': 'Contract Value',
+        'number': 'Contract ID'
+        };
+
         for (let i = 0; i < fieldsArray.length; i++) {
             const row = document.createElement('tr');
 
             const fieldCell = document.createElement('td');
-            fieldCell.innerText = fieldsArray[i];
+            fieldCell.innerText = fieldDisplayNames[fieldsArray[i]] || fieldsArray[i];
             row.appendChild(fieldCell);
 
             const oldValueCell = document.createElement('td');
