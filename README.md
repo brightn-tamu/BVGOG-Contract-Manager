@@ -194,6 +194,6 @@ Please contact the most recent team.
 | Chrysanthos Pepi | cpepi001@outlook.com  |
 | Hanrui Chen      | No Email Given        |
 
-### Sprint 2 Code Climate and  Deployment (Fall 2024)
-![image](https://github.com/user-attachments/assets/cce02b2a-4fcb-4c80-8752-c1ad3c01e93c)
+### Sprint 3 Code Climate and  Deployment (Fall 2024)
+![image](app/assets/images/rubycritic.png)
 [Heroku deployment](https://bvcog-2024-fall-702c30e5a327.herokuapp.com) for Fall 2024

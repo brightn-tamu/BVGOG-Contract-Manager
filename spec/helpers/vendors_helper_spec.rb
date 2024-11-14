@@ -29,7 +29,6 @@ RSpec.describe VendorsHelper, type: :helper do
         end
     end
 
-
     describe '#bar_chart_reviews_html' do
         it 'returns empty bar chart when there are no reviews' do
             expect(helper.bar_chart_reviews_html(vendor)).to include('width: 0%')

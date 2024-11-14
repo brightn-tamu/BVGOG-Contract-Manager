@@ -46,8 +46,25 @@ RSpec.describe Report, type: :model do
     end
 
     describe '#set_report_file' do
-        it 'generates a file name and path for the report' do
-            # Write test code here
+        it 'generates a file name' do
+            user = create(:user, id: 3, level: UserLevel::ONE)
+            entity_one = create(:entity, name: 'Entity 1')
+
+            # Invoke the method being tested
+            report = described_class.new(entity_id: entity_one.id, created_by: user.id, title: 'abc')
+            report.set_report_file
+            # Assertion to check if the file name contains title and random uuid
+            expect(report.file_name).to match(/^abc-[a-f0-9]{8}\.pdf$/)
+        end
+        it 'sets the full path of the report' do
+            user = create(:user, id: 1, level: UserLevel::ONE)
+            entity_one = create(:entity, name: 'Entity 1')
+
+            # Invoke the method being tested
+            report = described_class.new(entity_id: entity_one.id, created_by: user.id, title: 'abc')
+            report.set_report_file
+            # Assertion to check if the file name contains title and random uuid
+            expect(report.full_path).to eq(File.join('./', report.file_name))
         end
     end
 

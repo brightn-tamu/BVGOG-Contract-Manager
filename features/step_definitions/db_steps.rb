@@ -91,17 +91,17 @@ Given('{int} example amendments and renewals exist') do |num_amendments|
         current_type = contract_types.sample
 
         FactoryBot.create(
-          :contract,
-          id: 100 + i, # Use a different range for IDs to avoid conflicts
-          title: "#{current_type.capitalize} #{i}",
-          entity: Entity.all.sample,
-          program: Program.all.sample,
-          point_of_contact: User.all.sample,
-          vendor: Vendor.all.sample,
-          current_type: current_type,
-          ends_at: d,
-          extension_duration_units: TimePeriod::MONTH,
-          contract_status: statuses[i % statuses.length]
+            :contract,
+            id: 100 + i, # Use a different range for IDs to avoid conflicts
+            title: "#{current_type.capitalize} #{i}",
+            entity: Entity.all.sample,
+            program: Program.all.sample,
+            point_of_contact: User.all.sample,
+            vendor: Vendor.all.sample,
+            current_type:,
+            ends_at: d,
+            extension_duration_units: TimePeriod::MONTH,
+            contract_status: statuses[i % statuses.length]
         )
     end
 end

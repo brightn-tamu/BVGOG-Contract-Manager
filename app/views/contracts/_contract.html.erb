@@ -25,11 +25,6 @@
                                 <td><strong>Contract Type:</strong></td>
                                 <td><%= @contract.contract_type_humanize %></td>
                             </tr>
-
-                            <tr>
-                                <td><strong>End Trigger:</strong></td>
-                                <td><%= @contract.end_trigger_humanize %></td>
-                            </tr>
                             <tr>
                                 <td><strong>Point of Contact:</strong></td>
                                 <td>
@@ -43,6 +38,11 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td><strong>Funding Source:</strong></td>
+                                 <td><%= @contract.funding_source.presence || 'N/A' %></td>
+                            </tr>
+
+                            <tr>
                                 <td><strong>Entity:</strong></td>
                                 <td><%= @contract.entity.name %></td>
                             </tr>
@@ -51,36 +51,51 @@
                                 <td><%= @contract.program.name %></td>
                             <tr>
                                 <td><strong>Start Date:</strong></td>
-                                <td><%= @contract.starts_at.strftime("%B %d, %Y") %></td>
+                                <td>
+                                    <% if @contract.current_type == 'renew' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                        <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('starts_at') } %>
+                                        <% if latest_log && latest_log.changes_made['starts_at'].present? %>
+                                            <div class="diff">
+                                                <span class="old-value"><%= Date.parse(latest_log.changes_made['starts_at'][0]).strftime("%B %d, %Y") %></span>
+                                                <span class="new-value"><%= Date.parse(latest_log.changes_made['starts_at'][1]).strftime("%B %d, %Y") %></span>
+                                            </div>
+                                        <% else %>
+                                            <%= @contract.starts_at.strftime("%B %d, %Y") %>
+                                        <% end %>
+                                    <% else %>
+                                        <%= @contract.starts_at.strftime("%B %d, %Y") %>
+                                    <% end %>
+                                </td>
                             </tr>
-                            <% if @contract.ends_at && contract.end_trigger == "limited_term"%>
+                            <% if @contract.ends_at%>
                                 <tr>
                                     <td><strong>End Date:</strong></td>
                                     <td><%= @contract.ends_at.strftime("%B %d, %Y") %></td>
                                 </tr>
                             <% end %>
-                            <% if @contract.ends_at_final && contract.end_trigger == "limited_term"%>
+                            <% if @contract.ends_at_final%>
                                 <tr>
                                     <td><strong>Final End Date:</strong></td>
                                     <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
                                 </tr>
                             <% end %>
                              <tr>
-                                <td><strong>Total Amount:</strong></td>
+                                <td><strong>Contract Value:</strong></td>
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
                                     <td>Not Applicable</td>
                                 <% else %>
                                     <td>
-                                        <% if @contract.current_type.in?(%w[amend renew]) && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
-                                            <% @modification_logs.each do |log| %>
-                                                <% if log.changes_made.key?('total_amount') %>
-                                                    <div class="diff">
-                                                        <span class="old-value"><%= number_to_currency(log.changes_made['total_amount'][0]) %></span>
-                                                        <span class="new-value"><%= number_to_currency(log.changes_made['total_amount'][1]) %></span>
-                                                    </div>
-                                                <% else %>
-                                                    <%= number_to_currency(@contract.total_amount) %>
-                                                <% end %>
+                                        <% if @contract.current_type == 'amend' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                            <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('total_amount') } %>
+                                            <% if latest_log && latest_log.changes_made['total_amount'].present? %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= number_to_currency(latest_log.changes_made['total_amount'][0]) %></span>
+                                                    <span class="new-value"><%= number_to_currency(latest_log.changes_made['total_amount'][1]) %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= number_to_currency(@contract.total_amount) %>
                                             <% end %>
                                         <% else %>
                                             <%= number_to_currency(@contract.total_amount) %>
@@ -99,9 +114,16 @@
                 <footer class="card-footer distribute">
                     <% if current_user.present? && current_user.level != UserLevel::TWO %>
                         <% if @contract.contract_status == ContractStatus::IN_PROGRESS  %>
-                            <%= link_to "Edit this contract", edit_contract_path(@contract), class: "card-footer-item common-button" %>
+                            <%= link_to @contract.current_type == 'contract' ? "Edit this contract" : 'Edit this request', edit_contract_path(@contract), class: "card-footer-item common-button" %>
                             <%= form_with model: @contract, url: [@contract, :log_submission], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
+                            <% end %>
+                        <% elsif @contract.contract_status == ContractStatus::APPROVED %>
+                            <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
+                                <span class="icon is-small">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
+                                <span>Amend</span>
                             <% end %>
                         <% end %>
                     <% end %>
@@ -135,10 +157,6 @@
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <tbody>
                                 <tr>
-                                    <td><strong>Key Words:</strong></td>
-                                    <td><%= @contract.key_words %></td>
-                                </tr>
-                                <tr>
                                     <td><strong>Description:</strong></td>
                                     <td><%= @contract.description %></td>
                                 </tr>
@@ -168,6 +186,7 @@
                     <header class="card-header">
                         <p class="card-header-title">Contract Decision History</p>
                     </header>
+                  <div class="card-content is-paddingless scrollable-container">
                     <table class="table is-striped is-hoverable is-fullwidth">
                         <tbody>
                             <% @decisions.each do |decision| %>
@@ -197,6 +216,7 @@
                             <% end %>
                         </tbody>
                     </table>
+                  </div>
                 </div>
             </div>
             <% end %>
@@ -212,7 +232,7 @@
                     Modification Logs
                 </p>
                 </header>
-                <div class="card-content is-paddingless">
+                <div class="card-content is-paddingless scrollable-container">
                     <div class="table-container">
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <thead>
@@ -230,7 +250,7 @@
                             <% @modification_logs.each do |log| %>
                                 <% unless log.status == 'pending' %>
                                     <tr>
-                                        <td><%= log.modified_by %></td>
+                                        <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
                                         <td><%= log.changes_made.keys.join(", ") %></td>
                                         <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>

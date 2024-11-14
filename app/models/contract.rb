@@ -2,7 +2,6 @@
 
 # Contracts
 class Contract < ApplicationRecord
-
     validates :title, presence: true, length: { maximum: 255 }
     validates :description, length: { maximum: 2048 }
     validates :entity_id, presence: true

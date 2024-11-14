@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddContractValueToContracts < ActiveRecord::Migration[6.0]
     def change
         # Remove the existing column if it already exists
