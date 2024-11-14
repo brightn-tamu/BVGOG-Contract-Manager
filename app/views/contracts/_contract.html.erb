@@ -1,3 +1,38 @@
+<style>
+    .alert {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    }
+
+    .alert-warning {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    }
+</style>
+
+<% if @decisions != nil %>
+<% @decisions.reverse.each do |decision| %>
+<tr>
+    <td>
+    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS]) %>
+            <% if decision.reason.present? %>
+                <div class="alert alert-warning"> 
+                Soft Reject Reason: 
+                <%= decision.reason %><br>
+                </div>
+                <% break %>
+            <% end %>
+    <% end %>
+    </td>
+</tr>
+<% end %>
+<% end %>
+
+
 <div id="contract-show">
     <div class="columns is-desktop">
         <div class="column is-6">

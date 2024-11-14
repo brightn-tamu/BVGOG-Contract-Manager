@@ -60,6 +60,8 @@ class ContractsController < ApplicationController
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
 
+        @modify = "123"
+
         @decisions = @contract.decisions.order(created_at: :asc)
         # :nocov:
         @modification_logs = @contract.modification_logs.order(created_at: :desc)
