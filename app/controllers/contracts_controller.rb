@@ -563,6 +563,28 @@ class ContractsController < ApplicationController
         add_breadcrumb 'Reject', reject_contract_path(@contract)
     end
 
+    def log_hard_rejection
+        ActiveRecord::Base.transaction do
+            @contract = Contract.find(params[:contract_id])
+            message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
+            @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
+            latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+            # TODO: modify contract.current_type
+            @decision = @contract.decisions.build(reason: "#{message_text} request was Hard rejected", decision: ContractStatus::APPROVED, user: current_user)
+
+            @decision.save
+            if @decision.save
+                @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+                redirect_to contract_url(@contract), notice: "#{message_text} request was Hard rejected."
+                # redirect_to contract_url(@contract), notice: params[:contract][:hard_rejection].present? ? "#{message_text} was Hard rejected." : "#{message_text} was Approved."
+            else
+                redirect_to contract_url(@contract), alert: "#{message_text} approval failed"
+            end
+        end
+    end
+
+
     def log_rejection
         @contract = Contract.find(params[:contract_id])
         ActiveRecord::Base.transaction do
@@ -626,8 +648,7 @@ class ContractsController < ApplicationController
                 @decision.save
                 if @decision.save
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
-                    # redirect_to contract_url(@contract), notice: "#{message_text} request was Approved"
-                    redirect_to contract_url(@contract), notice: params[:contract][:hard_rejection].present? ? "#{message_text} was Hard rejected." : "#{message_text} was Approved."
+                    redirect_to contract_url(@contract), notice: "#{message_text} request was Approved"
                 else
                     redirect_to contract_url(@contract), alert: "#{message_text} approval failed"
                 end

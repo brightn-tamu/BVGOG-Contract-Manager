@@ -119,6 +119,7 @@
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
                             <% end %>
                         <% elsif @contract.contract_status == ContractStatus::APPROVED %>
+                            <!-- TODO: check if it is hard reject -->
                             <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
                                 <span class="icon is-small">
                                     <i class="fas fa-pencil-alt"></i>
@@ -134,8 +135,7 @@
                             <% end %>
                             <%= link_to 'Set to "Rejected"', reject_contract_path(@contract), class: "card-footer-item common-button" %>
                             <% if @contract.current_type == 'amend' || @contract.current_type == 'renew' %>
-                                <%= form_with model: @contract, url: [@contract, :log_approval], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
-                                    <%= form.hidden_field :hard_rejection, value: true %>
+                                <%= form_with url: contract_log_hard_rejection_path(@contract), method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                     <%= form.submit 'Set to "Hard rejected"', class: "card-footer-item common-button" %>
                                 <% end %>
                             <% end %>
