@@ -503,19 +503,9 @@ class ContractsController < ApplicationController
                         # so that the value of the dropdowns will not be retained for the next contract creation
                         session[:value_type] = nil
                         session[:vendor_visible_id] = nil
-                        session[:funding_source] = nil 
-
-                        success_message = case source_page
-                                          when 'renew'
-                                              "Renewal request for #{@contract.title} submitted successfully and is pending approval."
-                                          when 'amend'
-                                              "Amendment request for #{@contract.title} submitted successfully and is pending approval"
-                                          else
-                                              'Contract was successfully updated.'
-                                          end
-                        redirect_to contract_path(@contract), notice: success_message
-                    end
+                        redirect_to edit_contract_path(@contract), notice: "Contract was successfully updated."
                     format.json { render :show, status: :ok, location: @contract }
+                    end
                 else
                     format.html do
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
@@ -826,3 +816,4 @@ def get_file
 
         contract_params[:total_amount]
     end
+end
