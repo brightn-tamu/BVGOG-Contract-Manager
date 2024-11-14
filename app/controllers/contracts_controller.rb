@@ -38,12 +38,14 @@ class ContractsController < ApplicationController
     def modify
         add_breadcrumb 'Contracts', modify_contracts_path
         # Sort contracts
-        @contracts = sort_contracts.page params[:page]
+        @contracts = sort_contracts
         # Filter contracts based on allowed entities if user is level 3
         @contracts = @contracts.where(entity_id: current_user.entities.pluck(:id)) if current_user.level != UserLevel::ONE
         @contracts = @contracts.where(contract_status: ContractStatus::APPROVED)
         # Search contracts
         @contracts = search_contracts(@contracts) if params[:search].present?
+        @contracts = @contracts.where.not(id: @contracts.select(&:hard_rejected?).map(&:id))  # dirty code
+        @contracts = @contracts.page(params[:page])
         Rails.logger.debug params[:search].inspect
     end
 
@@ -571,7 +573,7 @@ class ContractsController < ApplicationController
                 redirect_to contract_url(@contract), notice: "#{message_text} request was Hard rejected."
                 # redirect_to contract_url(@contract), notice: params[:contract][:hard_rejection].present? ? "#{message_text} was Hard rejected." : "#{message_text} was Approved."
             else
-                redirect_to contract_url(@contract), alert: "#{message_text} approval failed"
+                redirect_to contract_url(@contract), alert: "#{message_text} Hard rejected failed"
             end
         end
     end
