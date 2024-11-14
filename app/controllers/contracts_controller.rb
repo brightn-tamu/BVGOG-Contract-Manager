@@ -3,26 +3,7 @@
 class ContractsController < ApplicationController
     before_action :set_contract, only: %i[show edit update]
 
-    # Deprecated
-    # :nocov:
-    def expiry_reminder
-        @contract = Contract.find(params[:id])
-        respond_to do |format|
-            # If contract already expired, redirect to contract show page
-            if @contract.expired?
-                format.html { redirect_to contract_url(@contract), alert: 'Contract has already expired.' }
-                format.json do
-                    render json: { error: 'Contract has already expired.' }, status: :unprocessable_entity
-                end
-            else
-                @contract.send_expiry_reminder
-                format.html { redirect_to contract_url(@contract), notice: 'Expiry reminder sucessfully sent.' }
-                format.json { render :show, status: :ok, location: @contract }
-            end
-        end
-    end
-    # :nocov:
-
+    # Standard Actions
     # GET /contracts or /contracts.json
     def index
         add_breadcrumb 'Contracts', contracts_path
@@ -35,6 +16,7 @@ class ContractsController < ApplicationController
         Rails.logger.debug params[:search].inspect
     end
 
+    # GET /contracts/modify
     def modify
         add_breadcrumb 'Contracts', modify_contracts_path
         # Sort contracts
@@ -120,6 +102,7 @@ class ContractsController < ApplicationController
         end
     end
 
+    # GET /contracts/1/renew
     def renew
         if current_user.level == UserLevel::TWO
             # :nocov:
@@ -543,6 +526,19 @@ class ContractsController < ApplicationController
         end
     end
 
+    # Parameter and Callback Helpers
+    # Only allow a list of trusted parameters through.
+    def contract_params
+        allowed = %i[
+            title description starts_at ends_at contract_status entity_id
+            program_id point_of_contact_id vendor_id total_amount contract_type
+            number new_vendor_name contract_documents contract_document_type_hidden
+            contract_documents_attributes contract_status value_type vendor_visible_id
+            contract_value current_type funding_source new_funding_source
+        ]
+        params.require(:contract).permit(allowed)
+    end
+
     # :nocov:
     def contract_files
         contract_document = ContractDocument.find(params[:id])
@@ -550,6 +546,119 @@ class ContractsController < ApplicationController
     end
     # :nocov:
 
+    # Use callbacks to share common setup or constraints between actions.
+    def set_contract
+        @contract = Contract.find(params[:id])
+    end
+
+    def set_users
+        @users = User.all
+    end
+
+    def sort_contracts
+        # Sorts by the query string parameter "sort"
+        # Since some columns are combinations or associations, we need to handle them separately
+        asc = params[:order] || 'asc'
+        case params[:sort]
+        when 'point_of_contact'
+            # Sort by the name of the point of contact
+            Contract.joins(:point_of_contact).order("users.last_name #{asc}").order("users.first_name #{asc}")
+
+        when 'vendor'
+            Contract.joins(:vendor).order("vendors.name #{asc}")
+
+        else
+            begin
+                # Sort by the specified column and direction
+                params[:sort] ? Contract.order(params[:sort] => asc.to_sym) : Contract.order(created_at: :asc)
+                # :nocov:
+            rescue ActiveRecord::StatementInvalid
+                # Otherwise, sort by title
+                Contract.order(title: :asc)
+                # :nocov:
+            end
+        end
+
+        # Returns the sorted contracts
+    end
+
+    def search_contracts(contracts)
+        # :nocov:
+        # Search by the query string parameter "search"
+        # Search in "title", "description", and "key_words"
+        contracts.where('title LIKE ? OR description LIKE ? OR key_words LIKE ?', "%#{params[:search]}%",
+                        "%#{params[:search]}%", "%#{params[:search]}%")
+        # :nocov:
+    end
+
+    #Helpers
+    def handle_if_new_vendor
+        # Check if the vendor is new
+        if params[:contract][:vendor_id] == 'new'
+            # Create a new vendor
+
+            # Make vendor name Name Case
+            params[:contract][:new_vendor_name] = params[:contract][:new_vendor_name].titlecase
+            vendor = Vendor.new(name: params[:contract][:new_vendor_name])
+            # If the vendor is saved successfully
+            if vendor.save
+                # Set the contract's vendor to the new vendor
+                @contract.vendor = vendor
+            end
+        end
+        # Remove the new_vendor_name parameter
+        params[:contract].delete(:new_vendor_name)
+    end
+
+    def handle_if_new_funding_source
+        # Check if the funding source is new
+        if params[:contract][:funding_source] == 'new'
+            if params[:contract][:new_funding_source].present?
+                @contract.funding_source = params[:contract][:new_funding_source]
+            else
+                @contract.errors.add(:funding_source, 'New funding source cannot be empty')
+            end
+        else
+            # If not a new funding source, set the selected value
+            @contract.funding_source = params[:contract][:funding_source]
+        end
+        params[:contract].delete(:new_funding_source)
+    end
+
+    # TODO: This is a temporary solution
+    # File upload is a seperate issue that will be handled with a dropzone
+    def handle_contract_documents(contract_documents_upload, contract_documents_attributes)
+        # :nocov:
+        contract_documents_upload.each do |doc|
+            next if doc.blank?
+
+            # Create a file name for the official file
+            official_file_name = contract_document_filename(@contract, File.extname(doc.original_filename))
+            # Write the file to the if the contract does not have
+            # a contract_document with the same orig_file_name
+            next if @contract.contract_documents.find_by(orig_file_name: doc.original_filename)
+
+            # Write the file to the filesystem
+            bvcog_config = BvcogConfig.last
+            File.open(File.join(bvcog_config.contracts_path, official_file_name), 'wb') do |file|
+                file.write(doc.read)
+            end
+            # Get document type
+            document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
+            # Create a new contract_document
+            contract_document = ContractDocument.new(
+              orig_file_name: doc.original_filename,
+              file_name: official_file_name,
+              full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
+              document_type:
+            )
+            # Add the contract_document to the contract
+            @contract.contract_documents << contract_document
+        end
+        # :nocov:
+    end
+
+    #Logging
     def reject
         @contract = Contract.find(params[:id])
         add_breadcrumb 'Contracts', contracts_path
@@ -679,146 +788,23 @@ class ContractsController < ApplicationController
         end
     end
 
-    # Only allow a list of trusted parameters through.
-    # removing: amount_dollar, amount_duration,initial_term_amount, initial_term_duration, requires_rebid
-    # contract_documents_attributes, renewal_count, contract_status, extension_count, extension_duration, extension_duration_units
-    def contract_params
-        allowed = %i[
-            title
-            description
-            starts_at
-            ends_at
-            contract_status
-            entity_id
-            program_id
-            point_of_contact_id
-            vendor_id
-            total_amount
-            contract_type
-            number
-            new_vendor_name
-            contract_documents
-            contract_document_type_hidden
-            contract_documents_attributes
-            contract_status
-            value_type
-            vendor_visible_id
-            contract_value
-            current_type
-            funding_source
-            new_funding_source
-        ]
-        params.require(:contract).permit(allowed)
-    end
-
-    # Use callbacks to share common setup or constraints between actions.
-    def set_contract
+    # Deprecated
+    # :nocov:
+    def expiry_reminder
         @contract = Contract.find(params[:id])
-    end
-
-    def set_users
-        @users = User.all
-    end
-
-    def sort_contracts
-        # Sorts by the query string parameter "sort"
-        # Since some columns are combinations or associations, we need to handle them separately
-        asc = params[:order] || 'asc'
-        case params[:sort]
-        when 'point_of_contact'
-            # Sort by the name of the point of contact
-            Contract.joins(:point_of_contact).order("users.last_name #{asc}").order("users.first_name #{asc}")
-
-        when 'vendor'
-            Contract.joins(:vendor).order("vendors.name #{asc}")
-
-        else
-            begin
-                # Sort by the specified column and direction
-                params[:sort] ? Contract.order(params[:sort] => asc.to_sym) : Contract.order(created_at: :asc)
-            # :nocov:
-            rescue ActiveRecord::StatementInvalid
-                # Otherwise, sort by title
-                Contract.order(title: :asc)
-                # :nocov:
-            end
-        end
-
-        # Returns the sorted contracts
-    end
-
-    def search_contracts(contracts)
-        # :nocov:
-        # Search by the query string parameter "search"
-        # Search in "title", "description", and "key_words"
-        contracts.where('title LIKE ? OR description LIKE ? OR key_words LIKE ?', "%#{params[:search]}%",
-                        "%#{params[:search]}%", "%#{params[:search]}%")
-        # :nocov:
-    end
-
-    def handle_if_new_vendor
-        # Check if the vendor is new
-        if params[:contract][:vendor_id] == 'new'
-            # Create a new vendor
-
-            # Make vendor name Name Case
-            params[:contract][:new_vendor_name] = params[:contract][:new_vendor_name].titlecase
-            vendor = Vendor.new(name: params[:contract][:new_vendor_name])
-            # If the vendor is saved successfully
-            if vendor.save
-                # Set the contract's vendor to the new vendor
-                @contract.vendor = vendor
-            end
-        end
-        # Remove the new_vendor_name parameter
-        params[:contract].delete(:new_vendor_name)
-    end
-
-    def handle_if_new_funding_source
-        # Check if the funding source is new
-        if params[:contract][:funding_source] == 'new'
-            if params[:contract][:new_funding_source].present?
-                @contract.funding_source = params[:contract][:new_funding_source]
+        respond_to do |format|
+            # If contract already expired, redirect to contract show page
+            if @contract.expired?
+                format.html { redirect_to contract_url(@contract), alert: 'Contract has already expired.' }
+                format.json do
+                    render json: { error: 'Contract has already expired.' }, status: :unprocessable_entity
+                end
             else
-                @contract.errors.add(:funding_source, 'New funding source cannot be empty')
+                @contract.send_expiry_reminder
+                format.html { redirect_to contract_url(@contract), notice: 'Expiry reminder sucessfully sent.' }
+                format.json { render :show, status: :ok, location: @contract }
             end
-        else
-            # If not a new funding source, set the selected value
-            @contract.funding_source = params[:contract][:funding_source]
         end
-        params[:contract].delete(:new_funding_source)
     end
-
-    # TODO: This is a temporary solution
-    # File upload is a seperate issue that will be handled with a dropzone
-    def handle_contract_documents(contract_documents_upload, contract_documents_attributes)
-        # :nocov:
-        contract_documents_upload.each do |doc|
-            next if doc.blank?
-
-            # Create a file name for the official file
-            official_file_name = contract_document_filename(@contract, File.extname(doc.original_filename))
-            # Write the file to the if the contract does not have
-            # a contract_document with the same orig_file_name
-            next if @contract.contract_documents.find_by(orig_file_name: doc.original_filename)
-
-            # Write the file to the filesystem
-            bvcog_config = BvcogConfig.last
-            File.open(File.join(bvcog_config.contracts_path, official_file_name), 'wb') do |file|
-                file.write(doc.read)
-            end
-            # Get document type
-            document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
-            # Create a new contract_document
-            contract_document = ContractDocument.new(
-                orig_file_name: doc.original_filename,
-                file_name: official_file_name,
-                full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
-                document_type:
-            )
-            # Add the contract_document to the contract
-            @contract.contract_documents << contract_document
-        end
-        # :nocov:
-    end
+    # :nocov:
 end
