@@ -53,6 +53,11 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td><strong>Funding Source:</strong></td>
+                                 <td><%= @contract.funding_source.presence || 'N/A' %></td>
+                            </tr>
+
+                            <tr>
                                 <td><strong>Entity:</strong></td>
                                 <td><%= @contract.entity.name %></td>
                             </tr>
@@ -101,7 +106,7 @@
                                 </tr>
                             <% end %>
                             <tr>
-                                <td><strong>Total Amount:</strong></td>
+                                <td><strong>Contract Value:</strong></td>
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
                                     <td>Not Applicable</td>
                                 <% else %>
@@ -139,12 +144,6 @@
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
                             <% end %>
                         <% elsif @contract.contract_status == ContractStatus::APPROVED %>
-                            <%= link_to renew_contract_path(@contract), class: 'card-footer-item button is-success is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
-                                <span class="icon is-small">
-                                    <i class="fas fa-sync-alt"></i>
-                                </span>
-                                <span>Renew</span>
-                            <% end %>
                             <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
                                 <span class="icon is-small">
                                     <i class="fas fa-pencil-alt"></i>
@@ -212,6 +211,7 @@
                     <header class="card-header">
                         <p class="card-header-title">Contract Decision History</p>
                     </header>
+                  <div class="card-content is-paddingless scrollable-container">
                     <table class="table is-striped is-hoverable is-fullwidth">
                         <tbody>
                             <% @decisions.each do |decision| %>
@@ -241,6 +241,7 @@
                             <% end %>
                         </tbody>
                     </table>
+                  </div>
                 </div>
             </div>
             <% end %>
@@ -256,7 +257,7 @@
                     Modification Logs
                 </p>
                 </header>
-                <div class="card-content is-paddingless">
+                <div class="card-content is-paddingless scrollable-container">
                     <div class="table-container">
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <thead>
@@ -264,8 +265,7 @@
                                 <th>Modifier</th>
                                 <th>Timestamp</th>
                                 <th>Fields Changed</th>
-                                <th>Old Values</th>
-                                <th>New Values</th>
+                                <th>Values</th>
                                 <th>Action</th>
                                 <th>Status</th>
                             </tr>
@@ -274,11 +274,22 @@
                             <% @modification_logs.each do |log| %>
                                 <% unless log.status == 'pending' %>
                                     <tr>
-                                        <td><%= log.modified_by %></td>
+                                        <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
                                         <td><%= log.changes_made.keys.join(", ") %></td>
-                                        <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
-                                        <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
+                                        <td>
+                                            <div class="limited-content">
+                                                <span class="content">
+                                                    <%= log.changes_made.values.map { |change| "#{change[0]} -> #{change[1]}" }.join(", ") %>
+                                                </span>
+                                            </div>
+                                            <% if log.changes_made.values.map { |change| "#{change[0]} -> #{change[1]}" }.join(", ").length > 54 %>
+                                                <a href="javascript:void(0);" class="show-more-link" onclick="showFullContentModal('<%= j log.changes_made.keys.join(", ") %>', '<%= j log.changes_made.values.map { |change| change.join(' -> ') }.join(', ') %>')">
+                                                    show more
+                                                </a>
+                                            <% end %>
+                                            
+                                        </td>
                                         <td><%= log.modification_type %></td>
                                         <td><%= log.status %></td>
                                     </tr>
@@ -288,9 +299,94 @@
                         </table>
                     </div>
                 </div>
+                <div id="fullContentModal" class="modal">
+                    <div class="modal-background" onclick="closeFullContentModal()"></div>
+                    <div class="modal-content">
+                        <div class="box">
+                            <h3 class="title is-5">Detailed Changes</h3>
+                            <table class="table is-fullwidth" id="modalTable">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Old Value</th>
+                                        <th>New Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <button class="modal-close is-large" aria-label="close" onclick="closeFullContentModal()"></button>
+                </div>
             </div>
             </div>
             <% end %>
         </div>
   </div>
 </div>
+
+<script>
+    // Show full content in modal
+    function showFullContentModal(fieldsChanged, values) {
+        const tableBody = document.getElementById('modalTableBody');
+        tableBody.innerHTML = '';
+
+        const fieldsArray = fieldsChanged.split(', ');
+        const valuesArray = values.split(', ').map(item => item.split(' -> '));
+
+        for (let i = 0; i < fieldsArray.length; i++) {
+            const row = document.createElement('tr');
+
+            const fieldCell = document.createElement('td');
+            fieldCell.innerText = fieldsArray[i];
+            row.appendChild(fieldCell);
+
+            const oldValueCell = document.createElement('td');
+            oldValueCell.innerText = valuesArray[i][0] || ''; 
+            row.appendChild(oldValueCell);
+
+            const newValueCell = document.createElement('td');
+            newValueCell.innerText = valuesArray[i][1] || '';
+            row.appendChild(newValueCell);
+            tableBody.appendChild(row);
+        }
+
+        document.getElementById('fullContentModal').classList.add('is-active');
+    }
+
+    // Close modal
+    function closeFullContentModal() {
+        document.getElementById('fullContentModal').classList.remove('is-active');
+    }
+</script>
+
+<style>
+.limited-content {
+    max-height: 4.5em; 
+    overflow: hidden;
+    position: relative;
+}
+
+.content {
+    display: block; 
+    margin-bottom: 0.5em; 
+}
+
+.show-more-link {
+    display: block; 
+    color: blue !important;
+    cursor: pointer;
+    text-decoration: underline;
+    padding-top: 5px; 
+    position: relative; 
+}
+
+.modal {
+    display: none;
+}
+
+.modal.is-active {
+    display: flex;
+}
+</style>

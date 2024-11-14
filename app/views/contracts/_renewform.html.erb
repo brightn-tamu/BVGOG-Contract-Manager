@@ -141,47 +141,36 @@
                                 </span>
 
           <div class="column is-8">
-            <%# End Trigger %>
-            <div class="field">
-              <%= form.label :length_of_contract, id:"contract_end_trigger_label" do %>
-                <div class="icon-text">
-                                <span class="icon has-text-info" id="contract-length-modal-open-btn">
-                                    <i class="fas fa-circle-info"></i>
-                                </span>
-                  <span>Length of Contract</span>
-                </div>
-              <% end %>
-              <div class="control has-icons-right">
-                <%= form.select :end_trigger, EndTrigger.to_a, {:include_blank => true}, class: "input", onchange:"updateForm()", id: "contract_end_trigger" %>
-                <span class="icon is-small is-right">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-              </div>
-            </div>
-
+            <%# Start Date & End Date %>
             <div id="contract_date_entry">
-              <%# Start Date & End Date %>
               <div class="columns">
-                <div class="column is-3">
+                <div class="column is-4">
                   <div class="field">
                     <%= form.label :effective_date do %>
                       <div class="icon-text">
-                                    <span class="icon has-text-info" id="contract-effective-date-modal-open-btn">
-                                        <i class="fas fa-circle-info"></i>
-                                    </span>
+                                                <span class="icon has-text-info tooltip-container">
+                                                    <i class="fas fa-circle-info"></i>
+                                                    <div class="tooltip-content">
+                                                        The effective start date of the contract.
+                                                    </div>
+                                                </span>
                         <span>Effective Date</span>
                       </div>
                     <% end %>
                     <%= form.date_field :starts_at, class: "input", id: "contract_starts_at" %>
                   </div>
                 </div>
-                <div class="column is-3">
+
+                <div class="column is-4">
                   <div class="field" id="initial_end_date_entry">
                     <%= form.label :end_date do %>
                       <div class="icon-text">
-                                    <span class="icon has-text-info" id="contract-current-end-date-modal-open-btn">
-                                        <i class="fas fa-circle-info"></i>
-                                    </span>
+                                                <span class="icon has-text-info tooltip-container">
+                                                    <i class="fas fa-circle-info"></i>
+                                                    <div class="tooltip-content">
+                                                        The expiration date of the contract.
+                                                    </div>
+                                                </span>
                         <span>End Date</span>
                       </div>
                     <% end %>
@@ -210,270 +199,6 @@
     <% end %>
   </div>
   <script type="text/javascript">updateForm()</script>
-
-  <%# Hints User Story. See https://www.pivotaltracker.com/story/show/186056105 %>
-  <div class="modal" id="contract-title-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Contract Title</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The name of the contract/grant/ILA.<br>
-          This is usually found on the first page of the contract.<br>
-          Type it exactly, even if it's a long title.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-id-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Number</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          This is the contract's identification number.<br>
-          If the contract does not have a number assigned, use the effective date of the contract in the format MM-DD-YYYY.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-vendor-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Vendor</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The entity we are entering an agreement with.<br>
-          If this is a grant, enter the granting agency.<br>
-          If this is an MOU or ILA, enter the city, county, or other public agency in the agreement.<br>
-          Enter "New Vendor" if the vendor's name does not appear in the list.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-length-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Length of Contract</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          If this contract has an end date, select Limited Term.<br>
-          If this contract has no end, select Continuous.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-poc-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Point of Contact</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          This is the Program Manager over the contract.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-program-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Program</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The primary program responsible for the contract.<br>
-          The program manager will be notified when the contract is due to expire.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-entity-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Entity</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The organization the contract belongs to i.e. BVCOG or BVCAP
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-effective-date-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Effective Date</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The starting date of the contract.<br>
-          This date is usually stated on the first page of the contract or just above the signatures.<br>
-          If no effective date is stated, use the latest date of the signatures.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-value-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Contract Value</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The value of contract.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-documents-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Contract Documents</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          Upload as many contract documents as necessary, including any procurement files, debarment checks, cost analysis, etc.<br>
-          Include contract amendments each time the contract is extended.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-description-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Description</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          Enter a summary of the contract, including any information that might be of interest to management.<br>
-          This description will be visible when people select the contract in Reports.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-current-end-date-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Current End Date</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The expiration date of the contract.<br>
-          For contracts that have optional extensions, this is the next date the contract will need to be extended.<br>
-          If the contract is in its last option period, this date is the same as the Final End Date.<br>
-          Change this field each time the contract is extended.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal" id="contract-final-end-date-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <div class="icon-text">
-          <p class="modal-card-title">Final End Date</p>
-        </div>
-      </header>
-      <section class="modal-card-body">
-        <div class="content">
-          The last possible expiration date of the contract.<br>
-          If the contract has optional extensions, this date is the last possible date if all extensions are used.
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button modal-close-btn">Close</button>
-      </footer>
-    </div>
-  </div>
 </div>
 
 <% if @contract.errors.any? %>
