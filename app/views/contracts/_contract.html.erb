@@ -305,7 +305,6 @@
                                 <th>Timestamp</th>
                                 <th>Fields Changed</th>
                                 <th>Values</th>
-                                <th>Action</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
@@ -315,7 +314,7 @@
                                     <tr>
                                         <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
-                                        <td><%= log.changes_made.keys.join(", ") %></td>
+                                        <td><%= log.changes_made.keys.map { |field| humanize_field_name(field) }.join(", ") %></td>
                                         <td>
                                             <div class="limited-content">
                                                 <span class="content">
@@ -329,7 +328,6 @@
                                             <% end %>
                                             
                                         </td>
-                                        <td><%= log.modification_type %></td>
                                         <td><%= log.status %></td>
                                     </tr>
                                 <% end %>
@@ -364,6 +362,9 @@
         </div>
   </div>
 </div>
+
+
+
 
 <script>
     // Show full content in modal
