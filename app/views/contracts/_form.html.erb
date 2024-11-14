@@ -301,10 +301,20 @@
                         <span>End Date</span>
                       </div>
                     <% end %>
-                    <%= form.date_field :ends_at, class: "input", id: "contract_ends_at" %>
+                    <%= form.date_field :ends_at, class: "input", id: "contract_ends_at_add" %>
                   </div>
                 </div>
               </div>
+
+              <div class="field compact-checkbox">
+                <div class="control">
+                  <label class="checkbox">
+                    <%= check_box_tag "continuous", "1", false, id: "contract_continuous_add" %>
+                      Continuous
+                  </label>
+                </div>
+              </div>
+
             </div>
 
             <%# Contract Value %>
@@ -421,4 +431,25 @@
         border: none;
         cursor: pointer;
     }
+        
+    .compact-checkbox {
+    margin-top: -30px; 
+    margin-left: 5px;
+    }
 </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const continuousCheckbox = document.getElementById("contract_continuous_add");
+    const endDateField = document.getElementById("contract_ends_at_add");
+
+    continuousCheckbox.addEventListener("change", function() {
+      if (continuousCheckbox.checked) {
+        endDateField.value = ""; // Clear the end date field
+        endDateField.disabled = true; // Disable the end date field
+      } else {
+        endDateField.disabled = false; // Enable the end date field
+      }
+    });
+  });
+</script>
