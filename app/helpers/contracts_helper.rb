@@ -43,7 +43,7 @@ module ContractsHelper
           'starts_at' => 'Start Date',
           'ends_at' => 'End Date',
           'total_amount' => 'Contract Value',
-          'number' => 'Contract Number',
+          'number' => 'Contract ID',
           'contract_type' => 'Contract Type'
           # Add other mappings as needed
         }
