@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     resources :reports
     resources :contracts do
         post 'rejection', to: 'contracts#log_rejection', as: 'log_rejection'
+        post 'log_hard_rejection', to: 'contracts#log_hard_rejection', as: 'log_hard_rejection'
         post 'approve', to: 'contracts#log_approval', as: 'log_approval'
         post 'return', to: 'contracts#log_return', as: 'log_return'
         post 'submit', to: 'contracts#log_submission', as: 'log_submission'

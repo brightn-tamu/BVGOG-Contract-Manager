@@ -52,5 +52,10 @@ class Contract < ApplicationRecord
     end
     # :nocov:
 
+    def hard_rejected?
+        latest_decision = decisions.order(created_at: :desc).first
+        latest_decision&.reason&.include?('Hard rejected')
+    end
+
     public :send_expiry_reminder
 end

@@ -183,7 +183,7 @@
                             <%= form_with model: @contract, url: [@contract, :log_submission], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
                             <% end %>
-                        <% elsif @contract.contract_status == ContractStatus::APPROVED %>
+                        <% elsif @contract.contract_status == ContractStatus::APPROVED  && !@contract.hard_rejected? %>
                             <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
                                 <span class="icon is-small">
                                     <i class="fas fa-pencil-alt"></i>
@@ -198,6 +198,11 @@
                                 <% form.submit 'Set to "Approved"', class: "card-footer-item common-button"%>
                             <% end %>
                             <%= link_to 'Set to "Rejected"', reject_contract_path(@contract), class: "card-footer-item common-button" %>
+                            <% if @contract.current_type == 'amend' || @contract.current_type == 'renew' %>
+                                <%= form_with url: contract_log_hard_rejection_path(@contract), method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
+                                    <%= form.submit 'Set to "Hard rejected"', class: "card-footer-item common-button" %>
+                                <% end %>
+                            <% end %>
                         <% elsif @contract.contract_status == ContractStatus::REJECTED %>
                             <%= form_with model: @contract, url: [@contract, :log_return], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                 <% form.submit 'Set to "In Progress"', class: "card-footer-item common-button"%>
