@@ -1,3 +1,43 @@
+<style>
+    .alert {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    }
+
+    .alert-warning {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    }
+</style>
+
+<% if @decisions != nil %>
+<% @decisions.reverse.each do |decision| %>
+<tr>
+    <td>
+    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS]) %>
+        <% case decision.decision %>
+            <% when ContractStatus::REJECTED %>
+                <% if decision.reason.present? %>
+                    <div class="alert alert-warning"> 
+                        Soft Reject Reason: 
+                        <%= decision.reason %><br>
+                    </div>
+                    <% break %>
+                <% end %>
+            <% when ContractStatus::APPROVED %>
+                <% break %>
+        <% end %>
+    <% end %>
+    </td>
+</tr>
+<% end %>
+<% end %>
+
+
 <div id="contract-show">
     <div class="columns is-desktop">
         <div class="column is-6">
@@ -19,7 +59,22 @@
                             </tr>
                             <tr>
                                 <td><strong>Number:</strong></td>
-                                <td><%= @contract.number %></td>
+                                <td>
+                                    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                        <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('number') } %>
+                                        <% if latest_log && latest_log.changes_made['number'].present? %>
+                                            <div class="diff">
+                                                <span class="old-value"><%= latest_log.changes_made['number'][0] %></span>
+                                                <span class="new-value"><%= latest_log.changes_made['number'][1] %></span>
+                                            </div>
+                                        <% else %>
+                                            <%= @contract.number %>
+                                        <% end %>
+                                    <% else %>
+                                        <%= @contract.number %>
+                                    <% end %>
+                                </td>
                             </tr>
                             <tr>
                                 <td><strong>Contract Type:</strong></td>
@@ -49,10 +104,11 @@
                             <tr>
                                 <td><strong>Program:</strong></td>
                                 <td><%= @contract.program.name %></td>
+                            </tr>
                             <tr>
                                 <td><strong>Start Date:</strong></td>
                                 <td>
-                                    <% if @contract.current_type == 'renew' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
                                         <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                         <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('starts_at') } %>
                                         <% if latest_log && latest_log.changes_made['starts_at'].present? %>
@@ -71,13 +127,22 @@
                             <% if @contract.ends_at%>
                                 <tr>
                                     <td><strong>End Date:</strong></td>
-                                    <td><%= @contract.ends_at.strftime("%B %d, %Y") %></td>
-                                </tr>
-                            <% end %>
-                            <% if @contract.ends_at_final%>
-                                <tr>
-                                    <td><strong>Final End Date:</strong></td>
-                                    <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
+                                    <td>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                            <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('ends_at') } %>
+                                            <% if latest_log && latest_log.changes_made['ends_at'].present? %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= Date.parse(latest_log.changes_made['ends_at'][0]).strftime("%B %d, %Y") %></span>
+                                                    <span class="new-value"><%= Date.parse(latest_log.changes_made['ends_at'][1]).strftime("%B %d, %Y") %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= @contract.ends_at.strftime("%B %d, %Y") %>
+                                            <% end %>
+                                        <% else %>
+                                            <%= @contract.ends_at.strftime("%B %d, %Y") %>
+                                        <% end %>
+                                    </td>
                                 </tr>
                             <% end %>
                              <tr>
@@ -86,7 +151,7 @@
                                     <td>Not Applicable</td>
                                 <% else %>
                                     <td>
-                                        <% if @contract.current_type == 'amend' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
                                             <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                             <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('total_amount') } %>
                                             <% if latest_log && latest_log.changes_made['total_amount'].present? %>
@@ -150,14 +215,13 @@
                             <span class="icon">
                                 <i class="fas fa-info-circle"></i>
                             </span>
-                            Description
+                            Summary
                         </p>
                     </header>
                     <div class="card-content is-paddingless">
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <tbody>
                                 <tr>
-                                    <td><strong>Description:</strong></td>
                                     <td><%= @contract.description %></td>
                                 </tr>
                             </tbody>
@@ -241,7 +305,6 @@
                                 <th>Timestamp</th>
                                 <th>Fields Changed</th>
                                 <th>Values</th>
-                                <th>Action</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
@@ -251,7 +314,7 @@
                                     <tr>
                                         <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
-                                        <td><%= log.changes_made.keys.join(", ") %></td>
+                                        <td><%= log.changes_made.keys.map { |field| humanize_field_name(field) }.join(", ") %></td>
                                         <td>
                                             <div class="limited-content">
                                                 <span class="content">
@@ -265,7 +328,6 @@
                                             <% end %>
                                             
                                         </td>
-                                        <td><%= log.modification_type %></td>
                                         <td><%= log.status %></td>
                                     </tr>
                                 <% end %>
@@ -300,6 +362,9 @@
         </div>
   </div>
 </div>
+
+
+
 
 <script>
     // Show full content in modal

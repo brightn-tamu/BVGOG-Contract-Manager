@@ -19,13 +19,13 @@ module ApplicationHelper
         pages << if current_user.level == UserLevel::TWO
                      { title: 'Contracts', subpaths: [
                          { name: 'View Contracts', path: contracts_path, icon: 'file-contract' },
-                         { name: 'Amend', path: modify_contracts_path, icon: 'pen-to-square' }
+                         { name: 'Amend Contracts', path: modify_contracts_path, icon: 'pen-to-square' }
                      ] }
                  else
                      { title: 'Contracts', subpaths: [
                          { name: 'View Contracts', path: contracts_path, icon: 'file-contract' },
                          { name: 'Add a Contract', path: new_contract_path, icon: 'pencil' },
-                         { name: 'Amend', path: modify_contracts_path, icon: 'pen-to-square' }
+                         { name: 'Amend Contracts', path: modify_contracts_path, icon: 'pen-to-square' }
                      ] }
                  end
         # All users can view reports
