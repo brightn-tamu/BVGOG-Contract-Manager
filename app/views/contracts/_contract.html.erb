@@ -74,12 +74,6 @@
                                     <td><%= @contract.ends_at.strftime("%B %d, %Y") %></td>
                                 </tr>
                             <% end %>
-                            <% if @contract.ends_at_final%>
-                                <tr>
-                                    <td><strong>Final End Date:</strong></td>
-                                    <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
-                                </tr>
-                            <% end %>
                              <tr>
                                 <td><strong>Contract Value:</strong></td>
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
