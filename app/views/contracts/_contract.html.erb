@@ -240,8 +240,7 @@
                                 <th>Modifier</th>
                                 <th>Timestamp</th>
                                 <th>Fields Changed</th>
-                                <th>Old Values</th>
-                                <th>New Values</th>
+                                <th>Values</th>
                                 <th>Action</th>
                                 <th>Status</th>
                             </tr>
@@ -253,8 +252,19 @@
                                         <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
                                         <td><%= log.changes_made.keys.join(", ") %></td>
-                                        <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
-                                        <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
+                                        <td>
+                                            <div class="limited-content">
+                                                <span class="content">
+                                                    <%= log.changes_made.values.map { |change| "#{change[0]} -> #{change[1]}" }.join(", ") %>
+                                                </span>
+                                            </div>
+                                            <% if log.changes_made.values.map { |change| "#{change[0]} -> #{change[1]}" }.join(", ").length > 54 %>
+                                                <a href="javascript:void(0);" class="show-more-link" onclick="showFullContentModal('<%= j log.changes_made.keys.join(", ") %>', '<%= j log.changes_made.values.map { |change| change.join(' -> ') }.join(', ') %>')">
+                                                    show more
+                                                </a>
+                                            <% end %>
+                                            
+                                        </td>
                                         <td><%= log.modification_type %></td>
                                         <td><%= log.status %></td>
                                     </tr>
@@ -264,9 +274,94 @@
                         </table>
                     </div>
                 </div>
+                <div id="fullContentModal" class="modal">
+                    <div class="modal-background" onclick="closeFullContentModal()"></div>
+                    <div class="modal-content">
+                        <div class="box">
+                            <h3 class="title is-5">Detailed Changes</h3>
+                            <table class="table is-fullwidth" id="modalTable">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Old Value</th>
+                                        <th>New Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <button class="modal-close is-large" aria-label="close" onclick="closeFullContentModal()"></button>
+                </div>
             </div>
             </div>
             <% end %>
         </div>
   </div>
 </div>
+
+<script>
+    // Show full content in modal
+    function showFullContentModal(fieldsChanged, values) {
+        const tableBody = document.getElementById('modalTableBody');
+        tableBody.innerHTML = '';
+
+        const fieldsArray = fieldsChanged.split(', ');
+        const valuesArray = values.split(', ').map(item => item.split(' -> '));
+
+        for (let i = 0; i < fieldsArray.length; i++) {
+            const row = document.createElement('tr');
+
+            const fieldCell = document.createElement('td');
+            fieldCell.innerText = fieldsArray[i];
+            row.appendChild(fieldCell);
+
+            const oldValueCell = document.createElement('td');
+            oldValueCell.innerText = valuesArray[i][0] || ''; 
+            row.appendChild(oldValueCell);
+
+            const newValueCell = document.createElement('td');
+            newValueCell.innerText = valuesArray[i][1] || '';
+            row.appendChild(newValueCell);
+            tableBody.appendChild(row);
+        }
+
+        document.getElementById('fullContentModal').classList.add('is-active');
+    }
+
+    // Close modal
+    function closeFullContentModal() {
+        document.getElementById('fullContentModal').classList.remove('is-active');
+    }
+</script>
+
+<style>
+.limited-content {
+    max-height: 4.5em; 
+    overflow: hidden;
+    position: relative;
+}
+
+.content {
+    display: block; 
+    margin-bottom: 0.5em; 
+}
+
+.show-more-link {
+    display: block; 
+    color: blue !important;
+    cursor: pointer;
+    text-decoration: underline;
+    padding-top: 5px; 
+    position: relative; 
+}
+
+.modal {
+    display: none;
+}
+
+.modal.is-active {
+    display: flex;
+}
+</style>
