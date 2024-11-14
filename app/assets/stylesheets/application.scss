@@ -187,3 +187,8 @@ body {
    display: flex;
    flex-direction: column;
  }
+
+.scrollable-container {
+  max-height: 300px; /* Adjust the height as needed */
+  overflow-y: auto;
+}

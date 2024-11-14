@@ -60,6 +60,8 @@ class ContractsController < ApplicationController
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
 
+        @modify = "123"
+
         @decisions = @contract.decisions.order(created_at: :asc)
         # :nocov:
         @modification_logs = @contract.modification_logs.order(created_at: :desc)
@@ -364,8 +366,8 @@ class ContractsController < ApplicationController
                     modified_at: Time.current
                 )
             end
-            flash[:notice] = 'Contract was successfully updated.'
-            redirect_to @contract
+            success_message = 'Contract was successfully updated.'
+            redirect_to contract_url(@contract), notice: success_message
             return
         end
         # :nocov:
@@ -503,19 +505,9 @@ class ContractsController < ApplicationController
                         # so that the value of the dropdowns will not be retained for the next contract creation
                         session[:value_type] = nil
                         session[:vendor_visible_id] = nil
-                        session[:funding_source] = nil 
-
-                        success_message = case source_page
-                                          when 'renew'
-                                              "Renewal request for #{@contract.title} submitted successfully and is pending approval."
-                                          when 'amend'
-                                              "Amendment request for #{@contract.title} submitted successfully and is pending approval"
-                                          else
-                                              'Contract was successfully updated.'
-                                          end
-                        redirect_to send("#{source_page}_contract_path", @contract), notice: success_message
-                    end
+                        redirect_to edit_contract_path(@contract), notice: "Contract was successfully updated."
                     format.json { render :show, status: :ok, location: @contract }
+                    end
                 else
                     format.html do
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
@@ -848,3 +840,4 @@ def get_file
 
         contract_params[:total_amount]
     end
+end

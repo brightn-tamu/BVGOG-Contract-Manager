@@ -37,6 +37,19 @@ module ContractsHelper
         end
     end
 
+    def humanize_field_name(field)
+        field_mappings = {
+          'contract_value' => 'Contract Value',
+          'starts_at' => 'Start Date',
+          'ends_at' => 'End Date',
+          'total_amount' => 'Contract Value',
+          'number' => 'Contract ID',
+          'contract_type' => 'Contract Type'
+          # Add other mappings as needed
+        }
+        field_mappings[field] || field.humanize
+    end
+
     def file_type_icon(file_name)
         file_type = file_name.split('.').last
         case file_type

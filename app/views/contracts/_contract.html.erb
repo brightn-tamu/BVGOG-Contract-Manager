@@ -1,3 +1,43 @@
+<style>
+    .alert {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    }
+
+    .alert-warning {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    }
+</style>
+
+<% if @decisions != nil %>
+<% @decisions.reverse.each do |decision| %>
+<tr>
+    <td>
+    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS]) %>
+        <% case decision.decision %>
+            <% when ContractStatus::REJECTED %>
+                <% if decision.reason.present? %>
+                    <div class="alert alert-warning"> 
+                        Soft Reject Reason: 
+                        <%= decision.reason %><br>
+                    </div>
+                    <% break %>
+                <% end %>
+            <% when ContractStatus::APPROVED %>
+                <% break %>
+        <% end %>
+    <% end %>
+    </td>
+</tr>
+<% end %>
+<% end %>
+
+
 <div id="contract-show">
     <div class="columns is-desktop">
         <div class="column is-6">
@@ -19,7 +59,22 @@
                             </tr>
                             <tr>
                                 <td><strong>Number:</strong></td>
-                                <td><%= @contract.number %></td>
+                                <td>
+                                    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                        <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('number') } %>
+                                        <% if latest_log && latest_log.changes_made['number'].present? %>
+                                            <div class="diff">
+                                                <span class="old-value"><%= latest_log.changes_made['number'][0] %></span>
+                                                <span class="new-value"><%= latest_log.changes_made['number'][1] %></span>
+                                            </div>
+                                        <% else %>
+                                            <%= @contract.number %>
+                                        <% end %>
+                                    <% else %>
+                                        <%= @contract.number %>
+                                    <% end %>
+                                </td>
                             </tr>
                             <tr>
                                 <td><strong>Contract Type:</strong></td>
@@ -49,10 +104,11 @@
                             <tr>
                                 <td><strong>Program:</strong></td>
                                 <td><%= @contract.program.name %></td>
+                            </tr>
                             <tr>
                                 <td><strong>Start Date:</strong></td>
                                 <td>
-                                    <% if @contract.current_type == 'renew' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
                                         <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                         <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('starts_at') } %>
                                         <% if latest_log && latest_log.changes_made['starts_at'].present? %>
@@ -71,13 +127,22 @@
                             <% if @contract.ends_at%>
                                 <tr>
                                     <td><strong>End Date:</strong></td>
-                                    <td><%= @contract.ends_at.strftime("%B %d, %Y") %></td>
-                                </tr>
-                            <% end %>
-                            <% if @contract.ends_at_final%>
-                                <tr>
-                                    <td><strong>Final End Date:</strong></td>
-                                    <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
+                                    <td>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                            <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('ends_at') } %>
+                                            <% if latest_log && latest_log.changes_made['ends_at'].present? %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= Date.parse(latest_log.changes_made['ends_at'][0]).strftime("%B %d, %Y") %></span>
+                                                    <span class="new-value"><%= Date.parse(latest_log.changes_made['ends_at'][1]).strftime("%B %d, %Y") %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= @contract.ends_at.strftime("%B %d, %Y") %>
+                                            <% end %>
+                                        <% else %>
+                                            <%= @contract.ends_at.strftime("%B %d, %Y") %>
+                                        <% end %>
+                                    </td>
                                 </tr>
                             <% end %>
                              <tr>
@@ -86,7 +151,7 @@
                                     <td>Not Applicable</td>
                                 <% else %>
                                     <td>
-                                        <% if @contract.current_type == 'amend' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
                                             <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                             <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('total_amount') } %>
                                             <% if latest_log && latest_log.changes_made['total_amount'].present? %>
@@ -156,14 +221,13 @@
                             <span class="icon">
                                 <i class="fas fa-info-circle"></i>
                             </span>
-                            Description
+                            Summary
                         </p>
                     </header>
                     <div class="card-content is-paddingless">
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <tbody>
                                 <tr>
-                                    <td><strong>Description:</strong></td>
                                     <td><%= @contract.description %></td>
                                 </tr>
                             </tbody>
@@ -192,6 +256,7 @@
                     <header class="card-header">
                         <p class="card-header-title">Contract Decision History</p>
                     </header>
+                  <div class="card-content is-paddingless scrollable-container">
                     <table class="table is-striped is-hoverable is-fullwidth">
                         <tbody>
                             <% @decisions.each do |decision| %>
@@ -221,6 +286,7 @@
                             <% end %>
                         </tbody>
                     </table>
+                  </div>
                 </div>
             </div>
             <% end %>
@@ -236,7 +302,7 @@
                     Modification Logs
                 </p>
                 </header>
-                <div class="card-content is-paddingless">
+                <div class="card-content is-paddingless scrollable-container">
                     <div class="table-container">
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <thead>
@@ -244,9 +310,7 @@
                                 <th>Modifier</th>
                                 <th>Timestamp</th>
                                 <th>Fields Changed</th>
-                                <th>Old Values</th>
-                                <th>New Values</th>
-                                <th>Action</th>
+                                <th>Values</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
@@ -256,10 +320,20 @@
                                     <tr>
                                         <td><%= log.modified_by.full_name %></td>
                                         <td><%= log.created_at.strftime("%B %d, %Y %H:%M") %></td>
-                                        <td><%= log.changes_made.keys.join(", ") %></td>
-                                        <td><%= log.changes_made.values.map { |change| change[0] }.join(", ") %></td>
-                                        <td><%= log.changes_made.values.map { |change| change[1] }.join(", ") %></td>
-                                        <td><%= log.modification_type %></td>
+                                        <td><%= log.changes_made.keys.map { |field| humanize_field_name(field) }.join(", ") %></td>
+                                        <td>
+                                            <div class="limited-content">
+                                                <span class="content">
+                                                    <%= log.changes_made.values.map { |change| "#{change[0]} -> #{change[1]}" }.join(", ") %>
+                                                </span>
+                                            </div>
+                                            <% if log.changes_made.values.map { |change| "#{change[0]} -> #{change[1]}" }.join(", ").length > 54 %>
+                                                <a href="javascript:void(0);" class="show-more-link" onclick="showFullContentModal('<%= j log.changes_made.keys.join(", ") %>', '<%= j log.changes_made.values.map { |change| change.join(' -> ') }.join(', ') %>')">
+                                                    show more
+                                                </a>
+                                            <% end %>
+                                            
+                                        </td>
                                         <td><%= log.status %></td>
                                     </tr>
                                 <% end %>
@@ -268,9 +342,97 @@
                         </table>
                     </div>
                 </div>
+                <div id="fullContentModal" class="modal">
+                    <div class="modal-background" onclick="closeFullContentModal()"></div>
+                    <div class="modal-content">
+                        <div class="box">
+                            <h3 class="title is-5">Detailed Changes</h3>
+                            <table class="table is-fullwidth" id="modalTable">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Old Value</th>
+                                        <th>New Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <button class="modal-close is-large" aria-label="close" onclick="closeFullContentModal()"></button>
+                </div>
             </div>
             </div>
             <% end %>
         </div>
   </div>
 </div>
+
+
+
+
+<script>
+    // Show full content in modal
+    function showFullContentModal(fieldsChanged, values) {
+        const tableBody = document.getElementById('modalTableBody');
+        tableBody.innerHTML = '';
+
+        const fieldsArray = fieldsChanged.split(', ');
+        const valuesArray = values.split(', ').map(item => item.split(' -> '));
+
+        for (let i = 0; i < fieldsArray.length; i++) {
+            const row = document.createElement('tr');
+
+            const fieldCell = document.createElement('td');
+            fieldCell.innerText = fieldsArray[i];
+            row.appendChild(fieldCell);
+
+            const oldValueCell = document.createElement('td');
+            oldValueCell.innerText = valuesArray[i][0] || ''; 
+            row.appendChild(oldValueCell);
+
+            const newValueCell = document.createElement('td');
+            newValueCell.innerText = valuesArray[i][1] || '';
+            row.appendChild(newValueCell);
+            tableBody.appendChild(row);
+        }
+
+        document.getElementById('fullContentModal').classList.add('is-active');
+    }
+
+    // Close modal
+    function closeFullContentModal() {
+        document.getElementById('fullContentModal').classList.remove('is-active');
+    }
+</script>
+
+<style>
+.limited-content {
+    max-height: 4.5em; 
+    overflow: hidden;
+    position: relative;
+}
+
+.content {
+    display: block; 
+    margin-bottom: 0.5em; 
+}
+
+.show-more-link {
+    display: block; 
+    color: blue !important;
+    cursor: pointer;
+    text-decoration: underline;
+    padding-top: 5px; 
+    position: relative; 
+}
+
+.modal {
+    display: none;
+}
+
+.modal.is-active {
+    display: flex;
+}
+</style>
