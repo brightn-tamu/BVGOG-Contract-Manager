@@ -19,7 +19,22 @@
                             </tr>
                             <tr>
                                 <td><strong>Number:</strong></td>
-                                <td><%= @contract.number %></td>
+                                <td>
+                                    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                        <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('number') } %>
+                                        <% if latest_log && latest_log.changes_made['number'].present? %>
+                                            <div class="diff">
+                                                <span class="old-value"><%= latest_log.changes_made['number'][0] %></span>
+                                                <span class="new-value"><%= latest_log.changes_made['number'][1] %></span>
+                                            </div>
+                                        <% else %>
+                                            <%= @contract.number %>
+                                        <% end %>
+                                    <% else %>
+                                        <%= @contract.number %>
+                                    <% end %>
+                                </td>
                             </tr>
                             <tr>
                                 <td><strong>Contract Type:</strong></td>
@@ -44,10 +59,11 @@
                             <tr>
                                 <td><strong>Program:</strong></td>
                                 <td><%= @contract.program.name %></td>
+                            </tr>
                             <tr>
                                 <td><strong>Start Date:</strong></td>
                                 <td>
-                                    <% if @contract.current_type == 'renew' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                    <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
                                         <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                         <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('starts_at') } %>
                                         <% if latest_log && latest_log.changes_made['starts_at'].present? %>
@@ -66,22 +82,31 @@
                             <% if @contract.ends_at%>
                                 <tr>
                                     <td><strong>End Date:</strong></td>
-                                    <td><%= @contract.ends_at.strftime("%B %d, %Y") %></td>
+                                    <td>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                            <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('ends_at') } %>
+                                            <% if latest_log && latest_log.changes_made['ends_at'].present? %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= Date.parse(latest_log.changes_made['ends_at'][0]).strftime("%B %d, %Y") %></span>
+                                                    <span class="new-value"><%= Date.parse(latest_log.changes_made['ends_at'][1]).strftime("%B %d, %Y") %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= @contract.ends_at.strftime("%B %d, %Y") %>
+                                            <% end %>
+                                        <% else %>
+                                            <%= @contract.ends_at.strftime("%B %d, %Y") %>
+                                        <% end %>
+                                    </td>
                                 </tr>
                             <% end %>
-                            <% if @contract.ends_at_final%>
-                                <tr>
-                                    <td><strong>Final End Date:</strong></td>
-                                    <td><%= @contract.ends_at_final.strftime("%B %d, %Y") %></td>
-                                </tr>
-                            <% end %>
-                             <tr>
+                            <tr>
                                 <td><strong>Total Amount:</strong></td>
                                 <% if @contract.total_amount == 0 && @contract.value_type == "Not Applicable" %>
                                     <td>Not Applicable</td>
                                 <% else %>
                                     <td>
-                                        <% if @contract.current_type == 'amend' && @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
                                             <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
                                             <% latest_log = @modification_logs.order(updated_at: :desc).find { |log| log.changes_made.key?('total_amount') } %>
                                             <% if latest_log && latest_log.changes_made['total_amount'].present? %>
