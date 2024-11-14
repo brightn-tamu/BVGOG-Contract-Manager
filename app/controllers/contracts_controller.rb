@@ -44,7 +44,7 @@ class ContractsController < ApplicationController
         @contracts = @contracts.where(contract_status: ContractStatus::APPROVED)
         # Search contracts
         @contracts = search_contracts(@contracts) if params[:search].present?
-        @contracts = @contracts.where.not(id: @contracts.select(&:hard_rejected?).map(&:id))  # dirty code
+        @contracts = @contracts.where.not(id: @contracts.select(&:hard_rejected?).map(&:id)) # dirty code
         @contracts = @contracts.page(params[:page])
         Rails.logger.debug params[:search].inspect
     end
@@ -62,7 +62,7 @@ class ContractsController < ApplicationController
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
 
-        @modify = "123"
+        @modify = '123'
 
         @decisions = @contract.decisions.order(created_at: :asc)
         # :nocov:
@@ -115,8 +115,8 @@ class ContractsController < ApplicationController
             @hidden_funding_source = ''
         when 'amend'
             render 'amend'
-        # when 'renew'
-        #     render 'renew'
+            # when 'renew'
+            #     render 'renew'
         end
     end
 
@@ -507,15 +507,15 @@ class ContractsController < ApplicationController
                         # so that the value of the dropdowns will not be retained for the next contract creation
                         session[:value_type] = nil
                         session[:vendor_visible_id] = nil
-                        redirect_to edit_contract_path(@contract), notice: "Contract was successfully updated."
-                    format.json { render :show, status: :ok, location: @contract }
+                        redirect_to edit_contract_path(@contract), notice: 'Contract was successfully updated.'
+                        format.json { render :show, status: :ok, location: @contract }
                     end
                 else
                     format.html do
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
                         session[:value_type] = value_type_selected
                         session[:vendor_visible_id] = vendor_selection
-                        session[:funding_source] = funding_source_selected 
+                        session[:funding_source] = funding_source_selected
                         @vendor_visible_id = session[:vendor_visible_id] || ''
                         @value_type = session[:value_type] || ''
                         @funding_source_selected = session[:funding_source] || ''
@@ -578,7 +578,6 @@ class ContractsController < ApplicationController
         end
     end
 
-
     def log_rejection
         @contract = Contract.find(params[:contract_id])
         ActiveRecord::Base.transaction do
@@ -625,14 +624,12 @@ class ContractsController < ApplicationController
                 message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
 
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
-                pp latest_log
+                Rails.logger.debug latest_log
                 # apply latest modification log
                 latest_log.changes_made.each do |key, value|
-
                     # runs validation on every key
                     # format [old value, new value]
                     @contract.update!(key => value[1])
-
                 end
                 # update contract status and current type
                 @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
@@ -708,7 +705,7 @@ class ContractsController < ApplicationController
             vendor_visible_id
             contract_value
             current_type
-            funding_source 
+            funding_source
             new_funding_source
         ]
         params.require(:contract).permit(allowed)
@@ -783,7 +780,7 @@ class ContractsController < ApplicationController
             if params[:contract][:new_funding_source].present?
                 @contract.funding_source = params[:contract][:new_funding_source]
             else
-                @contract.errors.add(:funding_source, "New funding source cannot be empty")
+                @contract.errors.add(:funding_source, 'New funding source cannot be empty')
             end
         else
             # If not a new funding source, set the selected value
@@ -791,8 +788,6 @@ class ContractsController < ApplicationController
         end
         params[:contract].delete(:new_funding_source)
     end
-    
-      
 
     # TODO: This is a temporary solution
     # File upload is a seperate issue that will be handled with a dropzone
@@ -825,21 +820,5 @@ class ContractsController < ApplicationController
             @contract.contract_documents << contract_document
         end
         # :nocov:
-    end
-end
-
-__END__
-def get_file
-
-    def handle_total_amount_value(contract_params, value_type)
-        if value_type == "Not Applicable"
-          contract_params[:total_amount] = 0
-          contract_params[:value_type] = "Not Applicable"
-        elsif value_type == "Calculated Value"
-            contract_params[:total_amount]= get_calculated_value(contract_params)
-            contract_params[:value_type] = "Calculated Value"
-        end
-
-        contract_params[:total_amount]
     end
 end

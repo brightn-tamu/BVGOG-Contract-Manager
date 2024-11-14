@@ -56,6 +56,7 @@ RSpec.describe Report, type: :model do
             # Assertion to check if the file name contains title and random uuid
             expect(report.file_name).to match(/^abc-[a-f0-9]{8}\.pdf$/)
         end
+
         it 'sets the full path of the report' do
             user = create(:user, id: 1, level: UserLevel::ONE)
             entity_one = create(:entity, name: 'Entity 1')

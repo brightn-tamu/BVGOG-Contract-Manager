@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
-      <change beforePath="$PROJECT_DIR$/app/helpers/contracts_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers/contracts_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/contracts/_amendform.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/contracts/_amendform.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +40,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;credentialsType org.jetbrains.plugins.ruby.remote.impl.RubyCreateRemoteInterpreterDialog$RubyCreateRemoteSdkForm&quot;: &quot;WSL&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
@@ -52,6 +55,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RbsLanguageSettings" isCollectionManagementEnabled="true" />
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\brigh\OneDrive\Documents\GitHub\BVGOG-Contract-Manager\spec\factories" />
@@ -281,7 +285,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-RM-242.23726.97" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-RM-243.21565.197" />
       </set>
     </attachedChunks>
   </component>
@@ -308,6 +312,9 @@
       <workItem from="1730929758272" duration="4358000" />
       <workItem from="1731438109883" duration="1651000" />
       <workItem from="1731535662615" duration="5828000" />
+      <workItem from="1731596360708" duration="41000" />
+      <workItem from="1731596407734" duration="19000" />
+      <workItem from="1731606493046" duration="4583000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />

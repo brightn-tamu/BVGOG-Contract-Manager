@@ -39,13 +39,13 @@ module ContractsHelper
 
     def humanize_field_name(field)
         field_mappings = {
-          'contract_value' => 'Contract Value',
-          'starts_at' => 'Start Date',
-          'ends_at' => 'End Date',
-          'total_amount' => 'Contract Value',
-          'number' => 'Contract ID',
-          'contract_type' => 'Contract Type'
-          # Add other mappings as needed
+            'contract_value' => 'Contract Value',
+            'starts_at' => 'Start Date',
+            'ends_at' => 'End Date',
+            'total_amount' => 'Contract Value',
+            'number' => 'Contract ID',
+            'contract_type' => 'Contract Type'
+            # Add other mappings as needed
         }
         field_mappings[field] || field.humanize
     end
@@ -141,14 +141,13 @@ end
 def funding_source_select_options_json
     options = Contract.distinct.pluck(:funding_source).compact.map { |source| { label: source, value: source } }
     options.push({ label: 'New Funding Source', value: 'new' })
-  
+
     options.to_json
 end
-  
+
 def funding_source_select_options
     Contract.distinct.pluck(:funding_source).compact.push(['New Funding Source', 'new'])
 end
-  
 
 def program_select_options
     options = Program.all.map { |program| [program.name, program.id] }

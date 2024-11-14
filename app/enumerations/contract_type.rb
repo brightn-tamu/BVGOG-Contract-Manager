@@ -21,6 +21,6 @@ class ContractType < EnumerateIt::Base
         mou_moa: 'MOU/MOA',
         letter_of_intent: 'Letter of Intent',
         other: 'Other',
-        amendment: "Amendment"
+        amendment: 'Amendment'
     }.freeze
 end
