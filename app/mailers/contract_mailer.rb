@@ -30,10 +30,10 @@ class ContractMailer < ApplicationMailer
         @modification_log = modification_log
         @modified_by = modification_log.modified_by
         @contract = modification_log.contract
-    
+
         mail(
-          to: @modified_by.email,
-          subject: "Contract Amendment Request Rejected"
+            to: @modified_by.email,
+            subject: 'Contract Amendment Request Rejected'
         )
     end
 end

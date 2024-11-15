@@ -122,7 +122,6 @@ class UsersController < ApplicationController
         rescue Oso::Error => e
             format.html { redirect_to user_url(@user), alert: 'You are not authorized to modify users.' }
             format.json { render json: { error: e.message }, status: :forbidden }
-
         end
         # :nocov: end
     end
