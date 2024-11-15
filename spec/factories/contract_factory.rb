@@ -16,7 +16,7 @@ FactoryBot.define do
         number { Faker::Alphanumeric.alphanumeric(number: 10) }
         requires_rebid { false }
 
-        starts_at { Faker::Date.between(from: 2.years.ago, to: Date.today) }
+        starts_at { Faker::Date.between(from: 2.years.ago, to: Time.zone.today) }
         # Set date very far in the future to avoid validation errors
         ends_at { Faker::Date.between(from: 20.years.from_now, to: 30.years.from_now) }
 

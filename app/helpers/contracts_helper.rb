@@ -124,7 +124,7 @@ module ContractsHelper
 end
 
 def user_select_options
-    options = User.all.map { |user| [user.full_name, user.id] }
+    User.all.map { |user| [user.full_name, user.id] }
 end
 
 def vendor_select_options_json
@@ -150,18 +150,18 @@ def funding_source_select_options
 end
 
 def program_select_options
-    options = Program.all.map { |program| [program.name, program.id] }
+    Program.all.map { |program| [program.name, program.id] }
 end
 
 def entity_select_options
-    options = if current_user.nil?
-                  # return empty array
-                  []
-              elsif current_user.level == UserLevel::THREE
-                  current_user.entities.map { |entity| [entity.name, entity.id] }
-              else
-                  options = Entity.all.map { |entity| [entity.name, entity.id] }
-              end
+    if current_user.nil?
+        # return empty array
+        []
+    elsif current_user.level == UserLevel::THREE
+        current_user.entities.map { |entity| [entity.name, entity.id] }
+    else
+        Entity.all.map { |entity| [entity.name, entity.id] }
+    end
 end
 
 def contract_document_filename(contract, file_extension)
@@ -185,7 +185,6 @@ def contract_document_filename(contract, file_extension)
     p = contract.program.name.gsub(' ', '_').slice(0, 3).downcase
 
     # Take the last 5 characters of the contract number or the first 5 characters of the contract title
-    n = ''
     n = if contract.number && contract.number.length >= 5
             contract.number.gsub(' ', '_').slice(-5, 5).downcase
         else

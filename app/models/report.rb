@@ -117,7 +117,7 @@ class Report < ApplicationRecord
             report.program_id.present? ? Program.find(report.program_id).name : 'All',
             report.point_of_contact_id.present? ? "#{poc.first_name} #{poc.last_name}" : 'All',
             report.contract_type.present? ? ContractType::OPTIONS[report.contract_type.to_sym] : 'All',
-            (report.expiring_in_days.presence || 'All'),
+            report.expiring_in_days.presence || 'All',
             if report.show_expired_contracts.present?
                 report.show_expired_contracts ? 'Yes' : 'No'
             else
@@ -164,18 +164,18 @@ class Report < ApplicationRecord
     def generate_contract_expiration_report
         report = self
 
-        report.file_name = "bvcog-auto-contract-expiration-report-#{Date.today.strftime('%Y-%m-%d')}.pdf"
+        report.file_name = "bvcog-auto-contract-expiration-report-#{Time.zone.today.strftime('%Y-%m-%d')}.pdf"
         report.full_path = File.join(BvcogConfig.last.reports_path, report.file_name).to_s
 
         # Collect contracts expiring in the next 30 days
-        contracts_30_days = Contract.where('ends_at >= ? AND ends_at <= ?', Date.today,
-                                           Date.today + 30.days).order(:ends_at)
+        contracts_30_days = Contract.where('ends_at >= ? AND ends_at <= ?', Time.zone.today,
+                                           Time.zone.today + 30.days).order(:ends_at)
         # Collect contracts expiring in the next 31-60 days
-        contracts_31_60_days = Contract.where('ends_at >= ? AND ends_at <= ?', Date.today + 31.days,
-                                              Date.today + 60.days).order(:ends_at)
+        contracts_31_60_days = Contract.where('ends_at >= ? AND ends_at <= ?', Time.zone.today + 31.days,
+                                              Time.zone.today + 60.days).order(:ends_at)
         # Collect contracts expiring in the next 61-90 days
-        contracts_61_90_days = Contract.where('ends_at >= ? AND ends_at <= ?', Date.today + 61.days,
-                                              Date.today + 90.days).order(:ends_at)
+        contracts_61_90_days = Contract.where('ends_at >= ? AND ends_at <= ?', Time.zone.today + 61.days,
+                                              Time.zone.today + 90.days).order(:ends_at)
 
         # Create the PDF
         report_pdf = Prawn::Document.new(page_size: 'A4', page_layout: :landscape)

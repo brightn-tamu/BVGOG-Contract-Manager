@@ -6,7 +6,7 @@ class ContractMailer < ApplicationMailer
         @contract = contract
         # We may have multiple program managers, so we need to get all of their emails
         program_manager_emails = User.where(program: contract.program, is_program_manager: true).pluck(:email)
-        days_remaining = (contract.ends_at.to_datetime - Date.today.to_datetime).to_i
+        days_remaining = (contract.ends_at.to_datetime - Time.zone.today.to_datetime).to_i
 
         emails = [contract.point_of_contact.email, program_manager_emails].flatten
         mail(to: emails,
@@ -19,7 +19,7 @@ class ContractMailer < ApplicationMailer
         BvcogConfig.last.users.each do |user|
             mail(
                 to: user.email,
-                subject: "Contract Expiration Report - #{Date.today.strftime('%m/%d/%Y')}"
+                subject: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}"
             ) do |format|
                 format.html { render 'expiration_report', locals: { name: user.full_name } }
             end

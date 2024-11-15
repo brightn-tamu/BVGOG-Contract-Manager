@@ -130,7 +130,7 @@ class ContractsController < ApplicationController
         value_type_selected = params[:contract][:value_type]
         vendor_selection = params[:vendor_visible_id]
         funding_source_selected = params[:contract][:funding_source]
-        new_funding_source_input = params[:contract][:new_funding_source]
+        params[:contract][:new_funding_source]
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
         params[:contract].delete(:contract_documents)
@@ -289,7 +289,7 @@ class ContractsController < ApplicationController
         vendor_selection = params[:vendor_visible_id]
         value_type_selected = params[:contract][:value_type]
         funding_source_selected = params[:contract][:funding_source]
-        new_funding_source_input = params[:contract][:new_funding_source]
+        params[:contract][:new_funding_source]
 
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
@@ -442,7 +442,7 @@ class ContractsController < ApplicationController
                         changes_made[key] = [old_value, new_value]
                     end
 
-                    changes_made_json = changes_made.to_json
+                    changes_made.to_json
                     log_attributes = {
                         contract_id: @contract.id,
                         modified_by_id: current_user.id,
@@ -591,7 +591,7 @@ class ContractsController < ApplicationController
         # :nocov:
     end
 
-    #Helpers
+    # Helpers
     def handle_if_new_vendor
         # Check if the vendor is new
         if params[:contract][:vendor_id] == 'new'
@@ -647,10 +647,10 @@ class ContractsController < ApplicationController
             document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
             # Create a new contract_document
             contract_document = ContractDocument.new(
-              orig_file_name: doc.original_filename,
-              file_name: official_file_name,
-              full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
-              document_type:
+                orig_file_name: doc.original_filename,
+                file_name: official_file_name,
+                full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
+                document_type:
             )
             # Add the contract_document to the contract
             @contract.contract_documents << contract_document
@@ -658,7 +658,7 @@ class ContractsController < ApplicationController
         # :nocov:
     end
 
-    #Logging
+    # Logging
     def reject
         @contract = Contract.find(params[:id])
         add_breadcrumb 'Contracts', contracts_path
