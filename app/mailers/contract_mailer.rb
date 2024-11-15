@@ -25,4 +25,15 @@ class ContractMailer < ApplicationMailer
             end
         end
     end
+
+    def amend_failure_notification(modification_log)
+        @modification_log = modification_log
+        @modified_by = modification_log.modified_by
+        @contract = modification_log.contract
+    
+        mail(
+          to: @modified_by.email,
+          subject: "Contract Amendment Request Rejected"
+        )
+    end
 end

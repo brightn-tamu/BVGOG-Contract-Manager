@@ -672,7 +672,8 @@ class ContractsController < ApplicationController
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
             latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
-            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.update(status: 'approved', remarks: 'Hard rejection', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.send_failure_notification
             # TODO: modify contract.current_type
             @decision = @contract.decisions.build(reason: "#{message_text} request was Hard rejected", decision: ContractStatus::APPROVED, user: current_user)
 
@@ -700,6 +701,7 @@ class ContractsController < ApplicationController
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
                 # update latest modification log's status
                 latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
+                latest_log.send_failure_notification
                 @decision = @contract.decisions.build(reason: "#{message_text} request rejected: #{@reason}", decision: ContractStatus::REJECTED, user: current_user)
                 @decision.save
                 if @decision.save
