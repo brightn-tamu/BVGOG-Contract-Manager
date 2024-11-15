@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
+      <change beforePath="$PROJECT_DIR$/.idea/BVGOG-Contract-Manager.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BVGOG-Contract-Manager.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/contracts_controller.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -313,7 +317,7 @@
       <workItem from="1731535662615" duration="5828000" />
       <workItem from="1731596360708" duration="41000" />
       <workItem from="1731596407734" duration="19000" />
-      <workItem from="1731606493046" duration="5994000" />
+      <workItem from="1731606493046" duration="13884000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />

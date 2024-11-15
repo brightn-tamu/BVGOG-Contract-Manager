@@ -151,8 +151,11 @@ The application requires the `ENV['MAIL_PASSWORD']` environment variable to be s
 This is set in the [`config/credentials.yml.enc`](./config/credentials.yml.enc) file.  
 This file is encrypted and can only be decrypted by the `config/master.key` file.  
 The `master.key` file is not included in the repository for security reasons.  
-If you need access to the `master.key` file, please contact BVCOG's IT Department.  
+To retrieve the key please contact the professor or a member of the Fall 2024 team. 
+In the case they are unable to retrieve it, BVCOG's IT team can also access the key. 
 You will need BVCOG's `master.key` you **CAN NOT** generate your own.
+
+The key is critical to deployment so ensure to retrieve this as early as possible.
 
 ### RuboCop
 This project uses RuboCop to ensure consistent coding standards and style across the codebase.  
@@ -177,6 +180,19 @@ Note: the [Fall 2023](#fall-2023) team deprecated this script, if you have quest
 
 ## Contacting the Team
 Please contact the most recent team.
+
+
+### Fall 2024
+| Team member         | Email                        |
+|---------------------|------------------------------|
+| Chi-Ming Lee        | chiminglee831@tamu.edu       |
+| Xinyi Zhao          | xinyi929@tamu.edu            |
+| Jingrui Mao         | vivinmao@tamu.edu            |
+| Kumaran Gowrisankar | kumaran.gowrisankar@tamu.edu |
+| Zicheng Chen        | chenzc2001@tamu.edu          |
+| Jingyuan Mu         | mjy333@tamu.edu              |
+| Zhaoming Xu         | zhaoming0812@tamu.edu        |
+| Nathaniel Bright    | brightn@tamu.edu             |
 
 ### Fall 2023
 | Team member          | Email                 |

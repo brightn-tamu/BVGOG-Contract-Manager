@@ -591,7 +591,7 @@ class ContractsController < ApplicationController
         # :nocov:
     end
 
-    #Helpers
+    # Helpers
     def handle_if_new_vendor
         # Check if the vendor is new
         if params[:contract][:vendor_id] == 'new'
@@ -647,10 +647,10 @@ class ContractsController < ApplicationController
             document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
             # Create a new contract_document
             contract_document = ContractDocument.new(
-              orig_file_name: doc.original_filename,
-              file_name: official_file_name,
-              full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
-              document_type:
+                orig_file_name: doc.original_filename,
+                file_name: official_file_name,
+                full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
+                document_type:
             )
             # Add the contract_document to the contract
             @contract.contract_documents << contract_document
@@ -658,7 +658,7 @@ class ContractsController < ApplicationController
         # :nocov:
     end
 
-    #Logging
+    # Logging
     def reject
         @contract = Contract.find(params[:id])
         add_breadcrumb 'Contracts', contracts_path
