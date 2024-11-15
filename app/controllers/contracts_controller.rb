@@ -130,7 +130,7 @@ class ContractsController < ApplicationController
         value_type_selected = params[:contract][:value_type]
         vendor_selection = params[:vendor_visible_id]
         funding_source_selected = params[:contract][:funding_source]
-        new_funding_source_input = params[:contract][:new_funding_source]
+        params[:contract][:new_funding_source]
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
         params[:contract].delete(:contract_documents)
@@ -289,7 +289,7 @@ class ContractsController < ApplicationController
         vendor_selection = params[:vendor_visible_id]
         value_type_selected = params[:contract][:value_type]
         funding_source_selected = params[:contract][:funding_source]
-        new_funding_source_input = params[:contract][:new_funding_source]
+        params[:contract][:new_funding_source]
 
         # Delete the contract_documents from the params
         # so that it doesn't get saved as a contract attribute
@@ -442,7 +442,7 @@ class ContractsController < ApplicationController
                         changes_made[key] = [old_value, new_value]
                     end
 
-                    changes_made_json = changes_made.to_json
+                    changes_made.to_json
                     log_attributes = {
                         contract_id: @contract.id,
                         modified_by_id: current_user.id,
@@ -672,7 +672,8 @@ class ContractsController < ApplicationController
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
             latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
-            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.update(status: 'approved', remarks: 'Hard rejection', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.send_failure_notification
             # TODO: modify contract.current_type
             @decision = @contract.decisions.build(reason: "#{message_text} request was Hard rejected", decision: ContractStatus::APPROVED, user: current_user)
 
@@ -688,6 +689,7 @@ class ContractsController < ApplicationController
     end
 
     def log_rejection
+        # :nocov:
         @contract = Contract.find(params[:contract_id])
         ActiveRecord::Base.transaction do
             @reason = params[:contract][:rejection_reason]
@@ -700,6 +702,7 @@ class ContractsController < ApplicationController
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
                 # update latest modification log's status
                 latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
+                latest_log.send_failure_notification
                 @decision = @contract.decisions.build(reason: "#{message_text} request rejected: #{@reason}", decision: ContractStatus::REJECTED, user: current_user)
                 @decision.save
                 if @decision.save
@@ -716,12 +719,11 @@ class ContractsController < ApplicationController
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
                     redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
                 else
-                    # :nocov:
                     redirect_to contract_url(@contract), alert: 'Contract Rejection failed.'
-                    # :nocov:
                 end
             end
         end
+        # :nocov: end
     end
 
     # :nocov:

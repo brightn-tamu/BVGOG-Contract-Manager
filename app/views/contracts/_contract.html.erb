@@ -30,6 +30,8 @@
                 <% end %>
             <% when ContractStatus::APPROVED %>
                 <% break %>
+            <% when ContractStatus::IN_REVIEW %>
+                <% break %>
         <% end %>
     <% end %>
     </td>
@@ -220,7 +222,7 @@
                             <%= link_to 'Set to "Rejected"', reject_contract_path(@contract), class: "card-footer-item common-button" %>
                             <% if @contract.current_type == 'amend' || @contract.current_type == 'renew' %>
                                 <%= form_with url: contract_log_hard_rejection_path(@contract), method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
-                                    <%= form.submit 'Set to "Hard rejected"', class: "card-footer-item common-button" %>
+                                    <%= form.submit 'Set to "Void Amendment"', class: "card-footer-item common-button" %>
                                 <% end %>
                             <% end %>
                         <% elsif @contract.contract_status == ContractStatus::REJECTED %>

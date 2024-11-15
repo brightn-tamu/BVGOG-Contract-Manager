@@ -89,7 +89,7 @@ RSpec.describe '/vendors', type: :request do
             it 'does not create a new Vendor' do
                 expect do
                     post vendors_url, params: { vendor: invalid_attributes }
-                end.to change(Vendor, :count).by(0)
+                end.not_to change(Vendor, :count)
             end
 
             it "renders a successful response (i.e. to display the 'new' template)" do

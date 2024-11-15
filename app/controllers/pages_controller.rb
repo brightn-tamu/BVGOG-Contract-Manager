@@ -65,7 +65,7 @@ class PagesController < ApplicationController
                 if File.directory?(bvcog_config_params[:contracts_path]) && File.writable?(bvcog_config_params[:contracts_path])
                     @bvcog_config.contracts_path = bvcog_config_params[:contracts_path]
                     # Update all contract documents with new path
-                    ContractDocument.all.each do |contract_document|
+                    ContractDocument.all.find_each do |contract_document|
                         full_path = File.join(@bvcog_config.contracts_path, contract_document.file_name).to_s
                         contract_document.update(full_path:)
                     end
@@ -80,7 +80,7 @@ class PagesController < ApplicationController
                 if File.directory?(bvcog_config_params[:reports_path]) && File.writable?(bvcog_config_params[:reports_path])
                     @bvcog_config.reports_path = bvcog_config_params[:reports_path]
                     # Update all report documents with new path
-                    Report.all.each do |report|
+                    Report.all.find_each do |report|
                         full_path = File.join(@bvcog_config.reports_path, report.file_name).to_s
                         report.update(full_path:)
                     end

@@ -84,7 +84,7 @@
     // Auto-set the end date to 1-year after start date
     function setupDateFields() {
         const effectiveDateField = document.getElementById('contract_starts_at');
-        const endDateField = document.getElementById('contract_ends_at');
+        const endDateField = document.getElementById('contract_ends_at_add');
         console.log('Effective Date Field:', effectiveDateField);
         console.log('End Date Field:', endDateField);
         if (effectiveDateField && endDateField) {
@@ -285,7 +285,6 @@
                       </div>
                     <% end %>
                     <%= form.date_field :starts_at, class: "input", id: "contract_starts_at" %>
-                    <%= form.hidden_field :ends_at, id: "hidden_contract_ends_at_add" %>
                   </div>
                 </div>
 
@@ -303,6 +302,7 @@
                       </div>
                     <% end %>
                     <%= form.date_field :ends_at, class: "input", id: "contract_ends_at_add" %>
+                    <%= form.hidden_field :ends_at, id: "hidden_contract_ends_at_add" %>
                   </div>
                 </div>
               </div>
@@ -442,7 +442,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const continuousCheckbox = document.getElementById("contract_continuous_add");
-    const endDateField = document.getElementById("contract_ends_at_amend");
+    const endDateField = document.getElementById("contract_ends_at_add");
     const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_add");
 
     // Function to update the end date field based on the checkbox status
@@ -466,7 +466,7 @@
   });
   document.addEventListener("turbo:load", function() { 
     const continuousCheckbox = document.getElementById("contract_continuous_add");
-    const endDateField = document.getElementById("contract_ends_at_amend");
+    const endDateField = document.getElementById("contract_ends_at_add");
     const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_add");
 
     // Function to update the end date field based on the checkbox status

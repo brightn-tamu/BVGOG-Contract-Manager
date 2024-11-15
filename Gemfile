@@ -90,7 +90,6 @@ group :test do
     gem 'webdrivers'
 end
 
-
 gem 'rubocop-capybara'
 gem 'rubocop-rails', '~> 2.17'
 gem 'rubocop-rspec'

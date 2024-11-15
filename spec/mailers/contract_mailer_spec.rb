@@ -6,7 +6,7 @@ RSpec.describe ContractMailer, type: :mailer do
     describe '#expiry_reminder' do
         let(:program_manager) { create(:user, program: contract.program, is_program_manager: true) }
         let(:point_of_contact) { create(:user, email: 'contact@example.com') }
-        let(:contract) { create(:contract, point_of_contact:, ends_at: Date.today + 10) }
+        let(:contract) { create(:contract, point_of_contact:, ends_at: Time.zone.today + 10) }
 
         before do
             program_manager
@@ -22,12 +22,12 @@ RSpec.describe ContractMailer, type: :mailer do
         end
 
         it 'sends email with the correct subject' do
-            days_remaining = (contract.ends_at.to_datetime - Date.today.to_datetime).to_i
+            days_remaining = (contract.ends_at.to_datetime - Time.zone.today.to_datetime).to_i
             expect(@mail.subject).to eq("REMINDER: Contract expiring in #{days_remaining} days ")
         end
 
         it 'sends email with the correct template' do
-            expect(@mail.html_part.decoded).to match(/This is a friendly reminder that your contract, #{contract.title}, with #{contract.vendor.name} will be expiring on #{contract.ends_at.strftime("%B %d, %Y")}/)
+            expect(@mail.html_part.decoded).to match(/This is a friendly reminder that your contract, #{contract.title}, with #{contract.vendor.name} will be expiring on #{contract.ends_at.strftime('%B %d, %Y')}/)
         end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe ContractMailer, type: :mailer do
 
         before do
             allow(BvcogConfig).to receive_message_chain(:last, :users).and_return([user1])
-            allow(File).to receive(:read).with("#{Rails.root}/app/assets/images/bvcog-logo.png").and_return('file contents')
+            allow(File).to receive(:read).with(Rails.root.join('app/assets/images/bvcog-logo.png').to_s).and_return('file contents')
             allow(File).to receive(:read).with(report.full_path).and_return('file contents')
             @mail = described_class.expiration_report(report).deliver_now
         end
@@ -53,14 +53,14 @@ RSpec.describe ContractMailer, type: :mailer do
         end
 
         it 'sends emails with the subject' do
-            expect(@mail.subject).to eq("Contract Expiration Report - #{Date.today.strftime('%m/%d/%Y')}")
+            expect(@mail.subject).to eq("Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}")
         end
 
         it 'sends emails and attaches the report file' do
             expect(@mail.attachments[report.file_name].body.raw_source).to eq('file contents')
         end
 
-        it 'sends email with the correct template ' do
+        it 'sends email with the correct template' do
             expect(@mail.html_part.decoded).to match(/You have been assigned to receive a monthly report of upcoming expiring contracts for the Brazos Valley Council of Governments./)
         end
     end

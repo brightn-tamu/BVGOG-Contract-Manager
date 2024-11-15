@@ -102,7 +102,7 @@ RSpec.describe '/contracts', type: :request do
             it 'does not create a new Contract' do
                 expect do
                     post contracts_url, params: { contract: invalid_attributes }
-                end.to change(Contract, :count).by(0)
+                end.not_to change(Contract, :count)
             end
 
             it 're-renders the new template with validation errors' do

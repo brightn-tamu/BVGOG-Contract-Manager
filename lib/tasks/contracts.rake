@@ -5,7 +5,7 @@ namespace :contracts do
     task send_expiration_reminders: :environment do
         [10, 30, 60, 90].each do |days_to_expiration|
             # Get contracts that are due to expire in exactly days_to_expiration days
-            contracts = Contract.where('DATE(ends_at) = ?', Date.today + days_to_expiration.days)
+            contracts = Contract.where('DATE(ends_at) = ?', Time.zone.today + days_to_expiration.days)
             contracts.each(&:send_expiry_reminder)
         end
     end
@@ -13,7 +13,7 @@ namespace :contracts do
     desc 'Send automated expiration reports for contracts'
     task send_expiration_reports: :environment do
         # Create a new report
-        report = Report.new(title: "Contract Expiration Report - #{Date.today.strftime('%m/%d/%Y')}",
+        report = Report.new(title: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}",
                             report_type: ReportType::CONTRACTS)
         # Use the admin user as the user who generated the report
         report.user_id = User.find_by(email: Rails.env.production? ? 'admin@bvcogdev.com' : 'admin@example.com').id
@@ -75,7 +75,7 @@ namespace :contracts do
                 ]
             end
         end
-        file_name = "bvcog-auto-contracts-export-#{Date.today.strftime('%m-%d-%Y')}.csv"
+        file_name = "bvcog-auto-contracts-export-#{Time.zone.today.strftime('%m-%d-%Y')}.csv"
         File.write(File.join(BvcogConfig.last.reports_path, file_name), csv_data)
     end
 
@@ -96,8 +96,8 @@ namespace :contracts do
             program_id: Program.all.sample.id,
             point_of_contact_id: User.where(email: 'admin@bvcogdev.com').first.id,
             vendor_id: Vendor.all.sample.id,
-            starts_at: Date.today,
-            ends_at: Date.today + 1.year,
+            starts_at: Time.zone.today,
+            ends_at: Time.zone.today + 1.year,
             amount_dollar: 100,
             amount_duration: TimePeriod::MONTH,
             initial_term_amount: 100,
@@ -105,8 +105,8 @@ namespace :contracts do
             contract_type: ContractType::GRANT,
             contract_status: ContractStatus::IN_PROGRESS,
             end_trigger: EndTrigger::LIMITED_TERM,
-            created_at: Date.today,
-            updated_at: Date.today
+            created_at: Time.zone.today,
+            updated_at: Time.zone.today
         )
         contract.save
         # Send an expiry reminder to test email

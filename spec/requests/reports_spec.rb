@@ -99,7 +99,7 @@ RSpec.describe '/reports', type: :request do
                 login_user
                 expect do
                     post reports_url, params: { report: invalid_attributes }
-                end.to change(Report, :count).by(0)
+                end.not_to change(Report, :count)
             end
 
             it "renders a successful response (i.e. to display the 'new' template)" do
