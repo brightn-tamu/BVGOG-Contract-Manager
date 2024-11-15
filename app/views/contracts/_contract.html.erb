@@ -30,6 +30,8 @@
                 <% end %>
             <% when ContractStatus::APPROVED %>
                 <% break %>
+            <% when ContractStatus::IN_REVIEW %>
+                <% break %>
         <% end %>
     <% end %>
     </td>
