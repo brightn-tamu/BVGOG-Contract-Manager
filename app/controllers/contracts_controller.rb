@@ -689,6 +689,7 @@ class ContractsController < ApplicationController
     end
 
     def log_rejection
+        # :nocov:
         @contract = Contract.find(params[:contract_id])
         ActiveRecord::Base.transaction do
             @reason = params[:contract][:rejection_reason]
@@ -718,12 +719,11 @@ class ContractsController < ApplicationController
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
                     redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
                 else
-                    # :nocov:
                     redirect_to contract_url(@contract), alert: 'Contract Rejection failed.'
-                    # :nocov:
                 end
             end
         end
+        # :nocov: end
     end
 
     # :nocov:

@@ -195,5 +195,5 @@ Please contact the most recent team.
 | Hanrui Chen      | No Email Given        |
 
 ### Sprint 3 Code Climate and  Deployment (Fall 2024)
-![image](app/assets/images/rubycritic.png)
+![image](app/assets/images/code_climate.png)
 [Heroku deployment](https://bvcog-2024-fall-702c30e5a327.herokuapp.com) for Fall 2024
