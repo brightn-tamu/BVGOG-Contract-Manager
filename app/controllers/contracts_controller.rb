@@ -807,6 +807,7 @@ class ContractsController < ApplicationController
                     end
                 end
 
+                @contract.contract_documents.update_all(status: 'approved')
                 # Update contract status and current type
                 @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
 
@@ -822,6 +823,7 @@ class ContractsController < ApplicationController
                     redirect_to contract_url(@contract), alert: "#{message_text} approval failed"
                 end
             else
+                @contract.contract_documents.update_all(status: 'approved')
                 @contract.update(contract_status: ContractStatus::APPROVED)
                 @decision = @contract.decisions.build(reason: nil, decision: ContractStatus::APPROVED, user: current_user)
                 @decision.save
