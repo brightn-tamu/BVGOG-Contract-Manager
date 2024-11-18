@@ -326,13 +326,12 @@ class ContractsController < ApplicationController
                 old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
                 new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
                 changes_made[key] = [old_value, new_value]
-
             end
 
             if contract_documents_upload.present?
                 # Save documents immediately to the contract (contracts are removed on the rejection process)
                 documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
-                changes_made["Document Added"] = [nil, documents_added] if documents_added.any?
+                changes_made['Document Added'] = [nil, documents_added] if documents_added.any?
             end
 
             if changes_made.empty?
@@ -455,7 +454,7 @@ class ContractsController < ApplicationController
                     if contract_documents_upload.present?
                         # Save documents immediately to the contract (contracts are removed on the rejection process)
                         documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
-                        changes_made["Document Added"] = [nil, documents_added] if documents_added.any?
+                        changes_made['Document Added'] = [nil, documents_added] if documents_added.any?
                     end
 
                     changes_made.to_json
@@ -671,7 +670,6 @@ class ContractsController < ApplicationController
             # Get document type
             document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
 
-
             source_page = if request.referer&.include?('renew')
                               'renew'
                           elsif request.referer&.include?('amend')
@@ -680,11 +678,11 @@ class ContractsController < ApplicationController
 
             # Create a new contract_document
             contract_document = ContractDocument.new(
-              orig_file_name: doc.original_filename,
-              file_name: official_file_name,
-              full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
-              document_type:,
-              status: initial_status # Set status based on contract type
+                orig_file_name: doc.original_filename,
+                file_name: official_file_name,
+                full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
+                document_type:,
+                status: initial_status # Set status based on contract type
             )
 
             # Add the contract_document to the contract
@@ -709,14 +707,13 @@ class ContractsController < ApplicationController
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
             latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
 
-            if latest_log.changes_made["Document Added"].present?
-                latest_log.changes_made["Document Added"].each do |filename|
+            if latest_log.changes_made['Document Added'].present?
+                latest_log.changes_made['Document Added'].each do |filename|
                     doc = @contract.contract_documents.find_by(orig_file_name: filename)
                     doc&.destroy
                 end
                 Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
             end
-
 
             latest_log.update(status: 'approved', remarks: 'Hard rejection', approved_by: current_user.full_name, modified_at: Time.current)
             latest_log.send_failure_notification
@@ -748,8 +745,8 @@ class ContractsController < ApplicationController
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
 
                 # Remove documents added during this amendment/renewal
-                if latest_log&.changes_made&.dig("Document Added").present?
-                    latest_log.changes_made["Document Added"].each do |filename|
+                if latest_log&.changes_made&.dig('Document Added').present?
+                    latest_log.changes_made['Document Added'].each do |filename|
                         doc = @contract.contract_documents.find_by(orig_file_name: filename)
                         doc&.destroy
                     end

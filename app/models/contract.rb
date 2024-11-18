@@ -33,7 +33,6 @@ class Contract < ApplicationRecord
 
     serialize :documents_added, Array # Optional, depending on DB adapter
 
-
     # Enums
     has_enumeration_for :contract_type, with: ContractType, create_helpers: true
     has_enumeration_for :contract_status, with: ContractStatus, create_helpers: true

@@ -18,5 +18,4 @@ class ContractDocument < ApplicationRecord
     def approved?
         status == 'approved'
     end
-
 end
