@@ -326,6 +326,13 @@ class ContractsController < ApplicationController
                 old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
                 new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
                 changes_made[key] = [old_value, new_value]
+
+            end
+
+            if contract_documents_upload.present?
+                # Save documents immediately to the contract (contracts are removed on the rejection process)
+                documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
+                changes_made["Document Added"] = [nil, documents_added] if documents_added.any?
             end
 
             if changes_made.empty?
