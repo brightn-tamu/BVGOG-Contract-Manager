@@ -131,8 +131,8 @@ class ContractsController < ApplicationController
         vendor_selection = params[:vendor_visible_id]
         funding_source_selected = params[:contract][:funding_source]
         params[:contract][:new_funding_source]
-        # Delete the contract_documents from the params
-        # so that it doesn't get saved as a contract attribute
+        # Delete thcontract_documents from the params
+        #         # so that ie t doesn't get saved as a contract attribute
         params[:contract].delete(:contract_documents)
         params[:contract].delete(:contract_documents_attributes)
         params[:contract].delete(:contract_document_type_hidden)
@@ -215,7 +215,7 @@ class ContractsController < ApplicationController
                         if contract_documents_upload.present?
                             # :nocov:
                             handle_contract_documents(contract_documents_upload,
-                                                      contract_documents_attributes)
+                                                      contract_documents_attributes, 'approved')
                             # :nocov:
                         end
                         format.html do
@@ -442,6 +442,15 @@ class ContractsController < ApplicationController
                         changes_made[key] = [old_value, new_value]
                     end
 
+                    # Initialize documents_added as an empty array
+                    documents_added = []
+
+                    if contract_documents_upload.present?
+                        # Save documents immediately to the contract (contracts are removed on the rejection process)
+                        documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
+                        changes_made["Document Added"] = [nil, documents_added] if documents_added.any?
+                    end
+
                     changes_made.to_json
                     log_attributes = {
                         contract_id: @contract.id,
@@ -452,7 +461,10 @@ class ContractsController < ApplicationController
                         modified_at: Time.current
                     }
 
+                    Rails.logger.info "Log attributes: #{log_attributes.inspect}"
+
                     if ModificationLog.create(log_attributes)
+
                         @contract.update(contract_status: ContractStatus::IN_PROGRESS)
                         @contract.update(current_type: source_page)
                         format.html do
@@ -482,7 +494,11 @@ class ContractsController < ApplicationController
                     if contract_documents_upload.present?
                         # :nocov:
                         handle_contract_documents(contract_documents_upload,
-                                                  contract_documents_attributes)
+                                                  contract_documents_attributes, 'approved')
+
+                        # Log document additions in changes_made
+                        added_documents = contract_documents_upload.reject(&:blank?).map(&:original_filename)
+                        changes_made['Document Added'] = [nil, added_documents] unless added_documents.empty?
                         # :nocov:
                     end
                     format.html do
@@ -627,35 +643,48 @@ class ContractsController < ApplicationController
 
     # TODO: This is a temporary solution
     # File upload is a seperate issue that will be handled with a dropzone
-    def handle_contract_documents(contract_documents_upload, contract_documents_attributes)
-        # :nocov:
+    def handle_contract_documents(contract_documents_upload, contract_documents_attributes, initial_status)
+        documents_added = [] # Collect added document names
+
         contract_documents_upload.each do |doc|
             next if doc.blank?
 
             # Create a file name for the official file
             official_file_name = contract_document_filename(@contract, File.extname(doc.original_filename))
-            # Write the file to the if the contract does not have
-            # a contract_document with the same orig_file_name
+
+            # Avoid duplicates
             next if @contract.contract_documents.find_by(orig_file_name: doc.original_filename)
 
-            # Write the file to the filesystem
+            # Save the file to the filesystem
             bvcog_config = BvcogConfig.last
             File.open(File.join(bvcog_config.contracts_path, official_file_name), 'wb') do |file|
                 file.write(doc.read)
             end
+
             # Get document type
             document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
+
+
+            source_page = if request.referer&.include?('renew')
+                              'renew'
+                          elsif request.referer&.include?('amend')
+                              'amend'
+                          end
+
             # Create a new contract_document
             contract_document = ContractDocument.new(
-                orig_file_name: doc.original_filename,
-                file_name: official_file_name,
-                full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
-                document_type:
+              orig_file_name: doc.original_filename,
+              file_name: official_file_name,
+              full_path: File.join(bvcog_config.contracts_path, official_file_name).to_s,
+              document_type:,
+              status: initial_status # Set status based on contract type
             )
+
             # Add the contract_document to the contract
             @contract.contract_documents << contract_document
+            documents_added << doc.original_filename
         end
-        # :nocov:
+        documents_added
     end
 
     # Logging
@@ -672,6 +701,16 @@ class ContractsController < ApplicationController
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
             latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+
+            if latest_log.changes_made["Document Added"].present?
+                latest_log.changes_made["Document Added"].each do |filename|
+                    doc = @contract.contract_documents.find_by(orig_file_name: filename)
+                    doc&.destroy
+                end
+                Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
+            end
+
+
             latest_log.update(status: 'approved', remarks: 'Hard rejection', approved_by: current_user.full_name, modified_at: Time.current)
             latest_log.send_failure_notification
             # TODO: modify contract.current_type
@@ -700,6 +739,16 @@ class ContractsController < ApplicationController
                 # update contract status and current type
                 @contract.update(contract_status: ContractStatus::IN_PROGRESS)
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+
+                # Remove documents added during this amendment/renewal
+                if latest_log&.changes_made&.dig("Document Added").present?
+                    latest_log.changes_made["Document Added"].each do |filename|
+                        doc = @contract.contract_documents.find_by(orig_file_name: filename)
+                        doc&.destroy
+                    end
+                    Rails.logger.info "Removed documents associated with rejected changes: #{latest_log.changes_made['Document Added']}"
+                end
+
                 # update latest modification log's status
                 latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
                 latest_log.send_failure_notification
@@ -736,16 +785,27 @@ class ContractsController < ApplicationController
 
                 latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
                 Rails.logger.debug latest_log
-                # apply latest modification log
+
+                # Apply latest modification log
                 latest_log.changes_made.each do |key, value|
-                    # runs validation on every key
-                    # format [old value, new value]
-                    @contract.update!(key => value[1])
+                    if key == 'Document Added'
+                        # Update status of approved documents
+                        value[1].each do |filename|
+                            doc = @contract.contract_documents.find_by(orig_file_name: filename)
+                            doc&.update(status: 'approved') # Mark as approved
+                        end
+                        Rails.logger.info "Documents approved: #{value[1]}"
+                    else
+                        @contract.update!(key => value[1])
+                    end
                 end
-                # update contract status and current type
+
+                # Update contract status and current type
                 @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
-                # update latest modification log's status
+
+                # Update latest modification log's status
                 latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+
                 @decision = @contract.decisions.build(reason: "#{message_text} request was Approved", decision: ContractStatus::APPROVED, user: current_user)
                 @decision.save
                 if @decision.save

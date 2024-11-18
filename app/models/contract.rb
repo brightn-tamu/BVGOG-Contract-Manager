@@ -31,6 +31,9 @@ class Contract < ApplicationRecord
     has_many :decisions, class_name: 'ContractDecision'
     has_many :modification_logs, class_name: 'ModificationLog'
 
+    serialize :documents_added, Array # Optional, depending on DB adapter
+
+
     # Enums
     has_enumeration_for :contract_type, with: ContractType, create_helpers: true
     has_enumeration_for :contract_status, with: ContractStatus, create_helpers: true
