@@ -271,4 +271,5 @@ class Report < ApplicationRecord
         # Save the PDF
         report_pdf.render_file report.full_path
     end
+
 end
