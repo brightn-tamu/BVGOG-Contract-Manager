@@ -88,6 +88,7 @@ group :test do
     gem 'selenium-webdriver'
     gem 'simplecov', require: false
     gem 'webdrivers'
+    gem 'pdf-reader'
 end
 
 gem 'rubocop-capybara'
