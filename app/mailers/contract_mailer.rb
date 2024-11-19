@@ -16,6 +16,7 @@ class ContractMailer < ApplicationMailer
     def expiration_report(report)
         @report = report
         attachments[report.file_name] = File.read(report.full_path)
+        Rails.logger.debug "Users to send report: #{BvcogConfig.last.users.map(&:email).join(', ')}"
         BvcogConfig.last.users.each do |user|
             mail(
                 to: user.email,
