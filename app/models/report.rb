@@ -197,7 +197,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                contract.contract_value,
+                contract.total_amount,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
@@ -226,7 +226,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                contract.contract_value,
+                contract.total_amount,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
@@ -255,7 +255,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                contract.contract_value,
+                contract.total_amount,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
