@@ -715,8 +715,8 @@ class ContractsController < ApplicationController
                 Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
             end
 
-            latest_log.update(status: 'approved', remarks: 'Hard rejection', approved_by: current_user.full_name, modified_at: Time.current)
-            latest_log.send_failure_notification
+            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.void_amend_notification
             # TODO: modify contract.current_type
             @decision = @contract.decisions.build(reason: "#{message_text} request was Hard rejected", decision: ContractStatus::APPROVED, user: current_user)
 
@@ -755,7 +755,7 @@ class ContractsController < ApplicationController
 
                 # update latest modification log's status
                 latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
-                latest_log.send_failure_notification
+                latest_log.reject_amend_notification
                 @decision = @contract.decisions.build(reason: "#{message_text} request rejected: #{@reason}", decision: ContractStatus::REJECTED, user: current_user)
                 @decision.save
                 if @decision.save
