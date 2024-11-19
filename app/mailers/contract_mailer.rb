@@ -15,15 +15,17 @@ class ContractMailer < ApplicationMailer
 
     def expiration_report(report)
         @report = report
-        attachments[report.file_name] = File.read(report.full_path)
         Rails.logger.debug "Users to send report: #{BvcogConfig.last.users.map(&:email).join(', ')}"
         BvcogConfig.last.users.each do |user|
-            mail(
-                to: user.email,
+            @user = user
+            attachments[report.file_name] = File.read(report.full_path)
+            mail = mail(
+                to: @user.email,
                 subject: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}"
             ) do |format|
-                format.html { render 'expiration_report', locals: { name: user.full_name } }
+                format.html { render 'expiration_report', locals: { name: @user.full_name } }
             end
+            mail.deliver_now
         end
     end
 
