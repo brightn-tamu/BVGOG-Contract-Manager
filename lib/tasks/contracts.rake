@@ -12,8 +12,6 @@ namespace :contracts do
 
     desc 'Send automated expiration reports for contracts'
     task send_expiration_reports: :environment do
-        Rails.logger.debug "Executing send_expiration_reports task"
-        Rails.logger.debug "Users to send report: #{BvcogConfig.last.users.map(&:email).join(', ')}"
         # Create a new report
         report = Report.new(title: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}",
                             report_type: ReportType::CONTRACTS)
@@ -23,7 +21,6 @@ namespace :contracts do
         report.save
         BvcogConfig.last.users.each do |user|
             begin
-              Rails.logger.debug "Preparing to send report to: #{user.email}"
               ContractMailer.expiration_report(user, report).deliver_now
               Rails.logger.debug "Successfully sent report to: #{user.email}"
             rescue => e
