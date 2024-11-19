@@ -20,14 +20,12 @@ class ContractsController < ApplicationController
     def modify
         add_breadcrumb 'Contracts', modify_contracts_path
         # Sort contracts
-        @contracts = sort_contracts
+        @contracts = sort_contracts.page params[:page]
         # Filter contracts based on allowed entities if user is level 3
         @contracts = @contracts.where(entity_id: current_user.entities.pluck(:id)) if current_user.level != UserLevel::ONE
         @contracts = @contracts.where(contract_status: ContractStatus::APPROVED)
         # Search contracts
         @contracts = search_contracts(@contracts) if params[:search].present?
-        @contracts = @contracts.where.not(id: @contracts.select(&:hard_rejected?).map(&:id)) # dirty code
-        @contracts = @contracts.page(params[:page])
         Rails.logger.debug params[:search].inspect
     end
 
