@@ -135,8 +135,8 @@ class Report < ApplicationRecord
         report_pdf.text 'Contracts', align: :center, size: 18, style: :bold
         report_pdf.move_down 10
         table_data = []
-        table_data << ['Entity', 'Program', 'Contract Title', 'Contract Number', 'Vendor', 'Contract Type',
-                       'Contract Amount', 'Expiration Date']
+        table_data << ['Entity', 'Program', 'Contract Title', 'Contract ID', 'Vendor', 'Contract Type',
+                       'Contract Value', 'Expiration Date']
         contracts.each do |contract|
             table_data << [
                 contract.entity.name,
@@ -187,7 +187,7 @@ class Report < ApplicationRecord
         report_pdf.move_down 10
         # Create table
         table_data = []
-        table_data << ['Entity', 'Program', 'Contract Title', 'Contract Number', 'Vendor', 'Contract Type',
+        table_data << ['Entity', 'Program', 'Contract Title', 'Contract ID', 'Vendor', 'Contract Type',
                        'Contract Value', 'Expiration Date']
         contracts_30_days.each do |contract|
             table_data << [
@@ -197,7 +197,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                contract.contract_value,
+                contract.total_amount,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
@@ -216,8 +216,8 @@ class Report < ApplicationRecord
         report_pdf.move_down 10
         # Create table
         table_data = []
-        table_data << ['Entity', 'Program', 'Contract Title', 'Contract Number', 'Vendor', 'Contract Type',
-                       'Contract Amount', 'Expiration Date']
+        table_data << ['Entity', 'Program', 'Contract Title', 'Contract ID', 'Vendor', 'Contract Type',
+                       'Contract Value', 'Expiration Date']
         contracts_31_60_days.each do |contract|
             table_data << [
                 contract.entity.name,
@@ -226,7 +226,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                "$#{contract.amount_dollar.round(2)} per #{contract.amount_duration_humanize}",
+                contract.total_amount,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
@@ -245,8 +245,8 @@ class Report < ApplicationRecord
         report_pdf.move_down 10
         # Create table
         table_data = []
-        table_data << ['Entity', 'Program', 'Contract Title', 'Contract Number', 'Vendor', 'Contract Type',
-                       'Contract Amount', 'Expiration Date']
+        table_data << ['Entity', 'Program', 'Contract Title', 'Contract ID', 'Vendor', 'Contract Type',
+                       'Contract Value', 'Expiration Date']
         contracts_61_90_days.each do |contract|
             table_data << [
                 contract.entity.name,
@@ -255,7 +255,7 @@ class Report < ApplicationRecord
                 contract.number,
                 contract.vendor.name,
                 contract.contract_type_humanize,
-                "$#{contract.amount_dollar.round(2)} per #{contract.amount_duration_humanize}",
+                contract.total_amount,
                 contract.ends_at.strftime('%m/%d/%Y')
             ]
         end
@@ -271,4 +271,5 @@ class Report < ApplicationRecord
         # Save the PDF
         report_pdf.render_file report.full_path
     end
+
 end

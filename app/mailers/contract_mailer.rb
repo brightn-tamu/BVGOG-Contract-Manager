@@ -13,20 +13,19 @@ class ContractMailer < ApplicationMailer
              subject: "REMINDER: Contract expiring in #{days_remaining} days ")
     end
 
-    def expiration_report(report)
+    def expiration_report(user, report)
         @report = report
-        attachments[report.file_name] = File.read(report.full_path)
-        BvcogConfig.last.users.each do |user|
-            mail(
-                to: user.email,
-                subject: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}"
-            ) do |format|
-                format.html { render 'expiration_report', locals: { name: user.full_name } }
-            end
+        @user = user
+        attachments[@report.file_name] = File.read(@report.full_path)
+        mail(
+          to: @user.email,
+          subject: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}"
+        ) do |format|
+          format.html { render 'expiration_report', locals: { name: @user.full_name } }
         end
     end
 
-    def amend_failure_notification(modification_log)
+    def email_reject_amend(modification_log)
         @modification_log = modification_log
         @modified_by = modification_log.modified_by
         @contract = modification_log.contract
@@ -36,4 +35,16 @@ class ContractMailer < ApplicationMailer
             subject: 'Contract Amendment Request Rejected'
         )
     end
+
+    def email_void_amend(modification_log)
+        @modification_log = modification_log
+        @modified_by = modification_log.modified_by
+        @contract = modification_log.contract
+
+        mail(
+            to: @modified_by.email,
+            subject: 'Contract Amendment Request Voided'
+        )
+    end
+
 end

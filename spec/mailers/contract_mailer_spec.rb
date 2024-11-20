@@ -41,7 +41,7 @@ RSpec.describe ContractMailer, type: :mailer do
             allow(BvcogConfig).to receive_message_chain(:last, :users).and_return([user1])
             allow(File).to receive(:read).with(Rails.root.join('app/assets/images/bvcog-logo.png').to_s).and_return('file contents')
             allow(File).to receive(:read).with(report.full_path).and_return('file contents')
-            @mail = described_class.expiration_report(report).deliver_now
+            @mail = described_class.expiration_report(user1, report).deliver_now
         end
 
         it 'sends emails' do

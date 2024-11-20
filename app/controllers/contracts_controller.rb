@@ -70,7 +70,15 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
-        if current_user.level == UserLevel::TWO
+        action = case
+            when request.path == amend_contract_path(@contract)
+                "amend"
+            else
+                "edit"
+            end
+        begin
+            OSO.authorize(current_user, action, @contract)
+        rescue Oso::Error
             # :nocov:
             redirect_to root_path, alert: 'You do not have permission to access this page.'
             return
@@ -284,7 +292,11 @@ class ContractsController < ApplicationController
         # Only for 'contract' current_type
         unless @contract.current_type == 'contract'
             # Find changes and save them
-            changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
+if key == 'ends_at'
+                    if !old_value.is_a?(Time) && !new_value.is_a?(Time)
+                        next
+                    end
+                end            changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
 
             latest_log = @contract.modification_logs.order(updated_at: :desc).first
 
@@ -312,7 +324,7 @@ class ContractsController < ApplicationController
 
         respond_to do |format|
             ActiveRecord::Base.transaction do
-                OSO.authorize(current_user, 'edit', @contract)
+                OSO.authorize(current_user, source_page, @contract)
                 if @contract[:point_of_contact_id].blank? && contract_params[:point_of_contact_id].blank?
                     # :nocov:
                     @contract.errors.add(:base, 'Point of contact is required')
@@ -668,8 +680,8 @@ class ContractsController < ApplicationController
                 Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
             end
 
-            latest_log.update(status: 'approved', remarks: 'Hard rejection', approved_by: current_user.full_name, modified_at: Time.current)
-            latest_log.send_failure_notification
+            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.void_amend_notification
             # TODO: modify contract.current_type
             @decision = @contract.decisions.build(reason: "#{message_text} request was Hard rejected", decision: ContractStatus::APPROVED, user: current_user)
 
@@ -708,7 +720,7 @@ class ContractsController < ApplicationController
 
                 # update latest modification log's status
                 latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
-                latest_log.send_failure_notification
+                latest_log.reject_amend_notification
                 @decision = @contract.decisions.build(reason: "#{message_text} request rejected: #{@reason}", decision: ContractStatus::REJECTED, user: current_user)
                 @decision.save
                 if @decision.save
