@@ -496,15 +496,15 @@ class ContractsController < ApplicationController
             # Skip if values haven't changed
             next unless old_value != new_value
 
+            # if key == 'ends_at'
+            #     if !old_value.is_a?(Time) && !new_value.is_a?(Time)
+            #         next
+            #     end
+            # end
+
             # Format `Time` values for comparison and display
             old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
             new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
-
-            if key == 'ends_at'
-                if !old_value.is_a?(Time) && !new_value.is_a?(Time)
-                    next
-                end
-            end
 
             changes_made[key] = [old_value, new_value]
         end
