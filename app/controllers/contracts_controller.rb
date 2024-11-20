@@ -131,7 +131,7 @@ class ContractsController < ApplicationController
         vendor_selection = params[:vendor_visible_id]
         funding_source_selected = params[:contract][:funding_source]
         params[:contract][:new_funding_source]
-        # Delete thcontract_documents from the params
+        # Delete the contract_documents from the params
         #         # so that ie t doesn't get saved as a contract attribute
         params[:contract].delete(:contract_documents)
         params[:contract].delete(:contract_documents_attributes)
@@ -157,12 +157,8 @@ class ContractsController < ApplicationController
                         @contract.errors.add(:base, 'Point of contact is required')
                         format.html do
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
-                            session[:value_type] = value_type_selected
-                            session[:vendor_visible_id] = vendor_selection
-                            session[:funding_source] = funding_source_selected
-                            @vendor_visible_id = session[:vendor_visible_id] || ''
-                            @value_type = session[:value_type] || ''
-                            @funding_source_selected = session[:funding_source] || ''
+                            retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                             render :new, status: :unprocessable_entity
                         end
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -178,12 +174,8 @@ class ContractsController < ApplicationController
                         end
                         format.html do
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
-                            session[:value_type] = value_type_selected
-                            session[:vendor_visible_id] = vendor_selection
-                            session[:funding_source] = funding_source_selected
-                            @vendor_visible_id = session[:vendor_visible_id] || ''
-                            @value_type = session[:value_type] || ''
-                            @funding_source_selected = session[:funding_source] || ''
+                            retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                             render :new, status: :unprocessable_entity
                         end
                         # format.html { render :new, status: :unprocessable_entity, session[:value_type] = params[:contract][:value_type] }
@@ -197,12 +189,8 @@ class ContractsController < ApplicationController
                         # format.html { render :new, status: :unprocessable_entity,, session[:value_type] = params[:contract][:value_type] }
                         format.html do
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
-                            session[:value_type] = value_type_selected
-                            session[:vendor_visible_id] = vendor_selection
-                            session[:funding_source] = funding_source_selected
-                            @vendor_visible_id = session[:vendor_visible_id] || ''
-                            @value_type = session[:value_type] || ''
-                            @funding_source_selected = session[:funding_source] || ''
+                            retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                             render :new, status: :unprocessable_entity
                         end
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -231,12 +219,8 @@ class ContractsController < ApplicationController
                         # :nocov:
                         format.html do
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
-                            session[:value_type] = value_type_selected
-                            session[:vendor_visible_id] = vendor_selection
-                            session[:funding_source] = funding_source_selected
-                            @vendor_visible_id = session[:vendor_visible_id] || ''
-                            @value_type = session[:value_type] || ''
-                            @funding_source_selected = session[:funding_source] || ''
+                            retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                             render :new, status: :unprocessable_entity
                         end
                         # format.html { render :new, status: :unprocessable_entity, session[:value_type] = params[:contract][:value_type]}
@@ -267,19 +251,14 @@ class ContractsController < ApplicationController
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
 
-        source_page = if request.referer&.include?('renew')
-                          'renew'
-                      elsif request.referer&.include?('amend')
-                          'amend'
-                      else
-                          'edit'
-                      end
-        # :nocov:
+        # Determine if amendment or contract edit
+        source_page = determine_source_page
 
         add_breadcrumb source_page.capitalize, send("#{source_page}_contract_path", @contract)
 
         handle_if_new_vendor
         handle_if_new_funding_source
+
         # Remove the new vendor from the params
         params[:contract].delete(:new_vendor_name)
         params[:contract].delete(:new_funding_source)
@@ -300,44 +279,12 @@ class ContractsController < ApplicationController
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_funding_source)
 
+
         # :nocov:
-        # Only for contract current_type != contract
+        # Only for 'contract' current_type
         unless @contract.current_type == 'contract'
-            changes_made = {}
-
-            contract_params.each do |key, new_value|
-                old_value = @contract.send(key)
-
-                new_value = case old_value
-                            when Integer
-                                new_value.to_i
-                            when Float
-                                new_value.to_f
-                            when BigDecimal
-                                BigDecimal(new_value)
-                            when Date
-                                new_value.to_date
-                            else
-                                new_value
-                            end
-
-                next unless old_value != new_value
-
-                old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
-                new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
-                changes_made[key] = [old_value, new_value]
-            end
-
-            if contract_documents_upload.present?
-                # Save documents immediately to the contract (contracts are removed on the rejection process)
-                documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
-                changes_made['Document Added'] = [nil, documents_added] if documents_added.any?
-            end
-
-            if changes_made.empty?
-                flash[:alert] = 'No value is edited!'
-                redirect_to edit_contract_path(@contract) and return
-            end
+            # Find changes and save them
+            changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
 
             latest_log = @contract.modification_logs.order(updated_at: :desc).first
 
@@ -370,12 +317,8 @@ class ContractsController < ApplicationController
                     # :nocov:
                     @contract.errors.add(:base, 'Point of contact is required')
                     format.html do
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        session[:funding_source] = funding_source_selected
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @value_type = session[:value_type] || ''
-                        @funding_source_selected = session[:funding_source] || ''
+                        retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -391,12 +334,8 @@ class ContractsController < ApplicationController
                     end
                     format.html do
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        session[:funding_source] = funding_source_selected
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @value_type = session[:value_type] || ''
-                        @funding_source_selected = session[:funding_source] || ''
+                        retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -409,12 +348,8 @@ class ContractsController < ApplicationController
                                          "#{User.find((contract_params[:point_of_contact_id].presence || @contract.point_of_contact_id)).full_name} is not associated with #{Entity.find((contract_params[:entity_id].presence || @contract.entity_id)).name}")
                     format.html do
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        session[:funding_source] = funding_source_selected
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @funding_source_selected = session[:funding_source] || ''
-                        @value_type = session[:value_type] || ''
+                        retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -423,41 +358,10 @@ class ContractsController < ApplicationController
                     # :nocov:
                     @contract = Contract.find(params[:id])
                     # TODO: handle the exception fields of renew/amend
-                    changes_made = {}
 
-                    contract_params.each do |key, new_value|
-                        old_value = @contract.send(key)
-
-                        new_value = case old_value
-                                    when Integer
-                                        new_value.to_i
-                                    when Float
-                                        new_value.to_f
-                                    when BigDecimal
-                                        BigDecimal(new_value)
-                                    when Date
-                                        new_value.to_date
-                                    else
-                                        new_value
-                                    end
-
-                        next unless old_value != new_value
-
-                        old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
-                        new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
-                        changes_made[key] = [old_value, new_value]
-                    end
-
-                    # Initialize documents_added as an empty array
-                    documents_added = []
-
-                    if contract_documents_upload.present?
-                        # Save documents immediately to the contract (contracts are removed on the rejection process)
-                        documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
-                        changes_made['Document Added'] = [nil, documents_added] if documents_added.any?
-                    end
-
+                    changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
                     changes_made.to_json
+
                     log_attributes = {
                         contract_id: @contract.id,
                         modified_by_id: current_user.id,
@@ -466,8 +370,6 @@ class ContractsController < ApplicationController
                         status: 'pending',
                         modified_at: Time.current
                     }
-
-                    Rails.logger.info "Log attributes: #{log_attributes.inspect}"
 
                     if ModificationLog.create(log_attributes)
 
@@ -518,12 +420,7 @@ class ContractsController < ApplicationController
                 else
                     format.html do
                         # to retain the value of the vendor dropdown and value type dropdown after validation error
-                        session[:value_type] = value_type_selected
-                        session[:vendor_visible_id] = vendor_selection
-                        session[:funding_source] = funding_source_selected
-                        @vendor_visible_id = session[:vendor_visible_id] || ''
-                        @value_type = session[:value_type] || ''
-                        @funding_source_selected = session[:funding_source] || ''
+                        retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
@@ -559,6 +456,68 @@ class ContractsController < ApplicationController
             contract_value current_type funding_source new_funding_source
         ]
         params.require(:contract).permit(allowed)
+    end
+
+    def determine_source_page
+        referer = request.referer
+        return 'renew' if referer&.include?('renew')
+        return 'amend' if referer&.include?('amend')
+        'edit'
+    end
+
+    def track_contract_changes(contract, contract_params, contract_documents_upload, contract_documents_attributes)
+        changes_made = {}
+
+        # Iterate over each parameter and compare old vs. new values
+        contract_params.each do |key, new_value|
+            old_value = contract.send(key)
+
+            # Type conversion based on the type of the old value
+            new_value = case old_value
+                        when Integer
+                            new_value.to_i
+                        when Float
+                            new_value.to_f
+                        when BigDecimal
+                            BigDecimal(new_value)
+                        when Date
+                            new_value.to_date
+                        else
+                            new_value
+                        end
+
+            # Skip if values haven't changed
+            next unless old_value != new_value
+
+            # Format `Time` values for comparison and display
+            old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
+            new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
+
+            changes_made[key] = [old_value, new_value]
+        end
+
+        # Handle document uploads and add them to the changes
+        if contract_documents_upload.present?
+            documents_added = handle_contract_documents(contract_documents_upload, contract_documents_attributes, 'pending')
+            changes_made['Document Added'] = [nil, documents_added] if documents_added.any?
+        end
+
+        # Check if any changes were made
+        if changes_made.empty?
+            flash[:alert] = 'No value is edited!'
+            redirect_to edit_contract_path(contract) and return nil
+        end
+
+        changes_made
+    end
+
+    def retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
+        session[:value_type] = value_type_selected
+        session[:vendor_visible_id] = vendor_selection
+        session[:funding_source] = funding_source_selected
+        @vendor_visible_id = session[:vendor_visible_id] || ''
+        @value_type = session[:value_type] || ''
+        @funding_source_selected = session[:funding_source] || ''
     end
 
     # :nocov:
@@ -669,12 +628,6 @@ class ContractsController < ApplicationController
 
             # Get document type
             document_type = contract_documents_attributes[doc.original_filename][:document_type] || ContractDocumentType::OTHER
-
-            source_page = if request.referer&.include?('renew')
-                              'renew'
-                          elsif request.referer&.include?('amend')
-                              'amend'
-                          end
 
             # Create a new contract_document
             contract_document = ContractDocument.new(
