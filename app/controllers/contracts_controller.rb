@@ -70,7 +70,15 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
-        if current_user.level == UserLevel::TWO
+        action = case
+            when request.path == amend_contract_path(@contract)
+                "amend"
+            else
+                "edit"
+            end 
+        begin
+            OSO.authorize(current_user, action, @contract)
+        rescue Oso::Error
             # :nocov:
             redirect_to root_path, alert: 'You do not have permission to access this page.'
             return
