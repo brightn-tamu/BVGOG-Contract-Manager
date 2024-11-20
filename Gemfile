@@ -62,6 +62,7 @@ group :development, :test do
     gem 'sqlite3', '~> 1.4'
 
     gem 'byebug'
+    gem 'rubycritic'
 end
 
 group :development do

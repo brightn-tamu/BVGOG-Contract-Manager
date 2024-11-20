@@ -192,3 +192,13 @@ body {
   max-height: 300px; /* Adjust the height as needed */
   overflow-y: auto;
 }
+
+
+.tag.is-warning {
+  background-color: #48c774; /* Green for approved */
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 0.9em;
+}
+

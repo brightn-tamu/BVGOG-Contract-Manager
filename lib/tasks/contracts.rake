@@ -19,8 +19,12 @@ namespace :contracts do
         report.user_id = User.find_by(email: Rails.env.production? ? 'admin@bvcogdev.com' : 'admin@example.com').id
         report.generate_contract_expiration_report
         report.save
-        ContractMailer.expiration_report(report).deliver_now
-
+        BvcogConfig.last.users.each do |user|
+            ContractMailer.expiration_report(user, report).deliver_now
+            Rails.logger.debug "Successfully sent report to: #{user.email}"
+        rescue StandardError => e
+            Rails.logger.error "Failed to send report to: #{user.email} - Error: #{e.message}"
+        end
         # Delete the report ID to prevent access to the report
         report.delete
     end

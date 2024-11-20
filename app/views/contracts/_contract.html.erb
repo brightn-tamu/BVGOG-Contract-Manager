@@ -205,7 +205,7 @@
                             <%= form_with model: @contract, url: [@contract, :log_submission], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
                                 <% form.submit 'Set to "In Review"', class: "card-footer-item common-button"%>
                             <% end %>
-                        <% elsif @contract.contract_status == ContractStatus::APPROVED  && !@contract.hard_rejected? %>
+                        <% elsif @contract.contract_status == ContractStatus::APPROVED %>
                             <%= link_to amend_contract_path(@contract), class: 'card-footer-item button is-info is-rounded', style: 'display: flex; align-items: center; justify-content: center;' do %>
                                 <span class="icon is-small">
                                     <i class="fas fa-pencil-alt"></i>
@@ -222,7 +222,7 @@
                             <%= link_to 'Set to "Rejected"', reject_contract_path(@contract), class: "card-footer-item common-button" %>
                             <% if @contract.current_type == 'amend' || @contract.current_type == 'renew' %>
                                 <%= form_with url: contract_log_hard_rejection_path(@contract), method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
-                                    <%= form.submit 'Set to "Void Amendment"', class: "card-footer-item common-button" %>
+                                    <%= form.submit 'Void Amendment', class: "card-footer-item common-button" %>
                                 <% end %>
                             <% end %>
                         <% elsif @contract.contract_status == ContractStatus::REJECTED %>
@@ -249,7 +249,22 @@
                         <table class="table is-striped is-hoverable is-fullwidth">
                             <tbody>
                                 <tr>
-                                    <td><%= @contract.description %></td>
+                                    <td>
+                                        <% if @contract.contract_status.in?([ContractStatus::IN_PROGRESS, ContractStatus::IN_REVIEW]) %>
+                                            <% @modification_logs = @contract.modification_logs.order(updated_at: :desc) %>
+                                            <% latest_log = @modification_logs.where(status: 'pending').order(updated_at: :desc).first %>
+                                            <% if latest_log && latest_log.changes_made['description'].present? %>
+                                                <div class="diff">
+                                                    <span class="old-value"><%= (latest_log.changes_made['description'][0]) %></span>
+                                                    <span class="new-value"><%= (latest_log.changes_made['description'][1]) %></span>
+                                                </div>
+                                            <% else %>
+                                                <%= @contract.description %>
+                                            <% end %>
+                                        <% else %>
+                                            <%= @contract.description %>
+                                        <% end %>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -353,7 +368,7 @@
                                                     show more
                                                 </a>
                                             <% end %>
-                                            
+
                                         </td>
                                         <td><%= log.status %></td>
                                     </tr>
