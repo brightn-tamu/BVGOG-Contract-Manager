@@ -70,12 +70,11 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
-        action = case
-            when request.path == amend_contract_path(@contract)
-                "amend"
-            else
-                "edit"
-            end
+        action = if request.path == amend_contract_path(@contract)
+                     'amend'
+                 else
+                     'edit'
+                 end
         begin
             OSO.authorize(current_user, action, @contract)
         rescue Oso::Error
@@ -133,22 +132,13 @@ class ContractsController < ApplicationController
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb 'New Contract', new_contract_path
 
-        contract_documents_upload = params[:contract][:contract_documents]
-        contract_documents_attributes = params[:contract][:contract_documents_attributes]
-        value_type_selected = params[:contract][:value_type]
-        vendor_selection = params[:vendor_visible_id]
-        funding_source_selected = params[:contract][:funding_source]
-        params[:contract][:new_funding_source]
-        # Delete the contract_documents from the params
-        #         # so that ie t doesn't get saved as a contract attribute
-        params[:contract].delete(:contract_documents)
-        params[:contract].delete(:contract_documents_attributes)
-        params[:contract].delete(:contract_document_type_hidden)
-        params[:contract].delete(:vendor_visible_id)
-
-        contract_params_clean = contract_params
-        contract_params_clean.delete(:new_vendor_name)
-        contract_params_clean.delete(:new_funding_source)
+        processed_params = process_contract_params(params)
+        contract_documents_upload = processed_params[:contract_documents_upload]
+        contract_documents_attributes = processed_params[:contract_documents_attributes]
+        value_type_selected = processed_params[:value_type_selected]
+        vendor_selection = processed_params[:vendor_selection]
+        funding_source_selected = processed_params[:funding_source_selected]
+        contract_params_clean = processed_params[:clean_params]
 
         @contract = Contract.new(contract_params_clean.merge(contract_status: ContractStatus::IN_PROGRESS))
 
@@ -267,26 +257,13 @@ class ContractsController < ApplicationController
         handle_if_new_vendor
         handle_if_new_funding_source
 
-        # Remove the new vendor from the params
-        params[:contract].delete(:new_vendor_name)
-        params[:contract].delete(:new_funding_source)
-        contract_documents_upload = params[:contract][:contract_documents]
-        contract_documents_attributes = params[:contract][:contract_documents_attributes]
-
-        vendor_selection = params[:vendor_visible_id]
-        value_type_selected = params[:contract][:value_type]
-        funding_source_selected = params[:contract][:funding_source]
-        params[:contract][:new_funding_source]
-
-        # Delete the contract_documents from the params
-        # so that it doesn't get saved as a contract attribute
-        params[:contract].delete(:contract_documents)
-        params[:contract].delete(:contract_documents_attributes)
-        params[:contract].delete(:contract_document_type_hidden)
-        params[:contract].delete(:vendor_visible_id)
-        contract_params_clean = contract_params
-        contract_params_clean.delete(:new_funding_source)
-
+        # Process and clean contract parameters
+        processed_params = process_contract_params(params)
+        contract_documents_upload = processed_params[:contract_documents_upload]
+        contract_documents_attributes = processed_params[:contract_documents_attributes]
+        value_type_selected = processed_params[:value_type_selected]
+        vendor_selection = processed_params[:vendor_selection]
+        funding_source_selected = processed_params[:funding_source_selected]
 
         # :nocov:
         # Only for 'contract' current_type
@@ -466,10 +443,33 @@ class ContractsController < ApplicationController
         params.require(:contract).permit(allowed)
     end
 
+    def process_contract_params(params)
+        {
+            contract_documents_upload: params[:contract][:contract_documents],
+            contract_documents_attributes: params[:contract][:contract_documents_attributes],
+            value_type_selected: params[:contract][:value_type],
+            vendor_selection: params[:vendor_visible_id],
+            funding_source_selected: params[:contract][:funding_source],
+            clean_params: clean_contract_params(params)
+        }
+    end
+
+    def clean_contract_params(params)
+        params[:contract].tap do |contract|
+            contract.delete(:contract_documents)
+            contract.delete(:contract_documents_attributes)
+            contract.delete(:contract_document_type_hidden)
+            contract.delete(:vendor_visible_id)
+            contract.delete(:new_vendor_name)
+            contract.delete(:new_funding_source)
+        end
+    end
+
     def determine_source_page
         referer = request.referer
         return 'renew' if referer&.include?('renew')
         return 'amend' if referer&.include?('amend')
+
         'edit'
     end
 
@@ -501,11 +501,7 @@ class ContractsController < ApplicationController
             old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
             new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
 
-            if key == 'ends_at'
-                if !old_value.is_a?(Time) && !new_value.is_a?(Time)
-                    next
-                end
-            end
+            next if key == 'ends_at' && (!old_value.is_a?(Time) && !new_value.is_a?(Time))
 
             changes_made[key] = [old_value, new_value]
         end
