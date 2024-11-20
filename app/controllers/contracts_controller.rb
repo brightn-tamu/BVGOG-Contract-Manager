@@ -373,7 +373,7 @@ class ContractsController < ApplicationController
 
         respond_to do |format|
             ActiveRecord::Base.transaction do
-                OSO.authorize(current_user, 'edit', @contract)
+                OSO.authorize(current_user, source_page, @contract)
                 if @contract[:point_of_contact_id].blank? && contract_params[:point_of_contact_id].blank?
                     # :nocov:
                     @contract.errors.add(:base, 'Point of contact is required')
