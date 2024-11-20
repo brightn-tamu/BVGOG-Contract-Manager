@@ -292,11 +292,7 @@ class ContractsController < ApplicationController
         # Only for 'contract' current_type
         unless @contract.current_type == 'contract'
             # Find changes and save them
-if key == 'ends_at'
-                    if !old_value.is_a?(Time) && !new_value.is_a?(Time)
-                        next
-                    end
-                end            changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
+            changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
 
             latest_log = @contract.modification_logs.order(updated_at: :desc).first
 
@@ -504,6 +500,12 @@ if key == 'ends_at'
             # Format `Time` values for comparison and display
             old_value = old_value.strftime('%Y-%m-%d') if old_value.is_a?(Time)
             new_value = new_value.strftime('%Y-%m-%d') if new_value.is_a?(Time)
+
+            if key == 'ends_at'
+                if !old_value.is_a?(Time) && !new_value.is_a?(Time)
+                    next
+                end
+            end
 
             changes_made[key] = [old_value, new_value]
         end
