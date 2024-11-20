@@ -259,10 +259,10 @@
                                                     <span class="new-value"><%= (latest_log.changes_made['description'][1]) %></span>
                                                 </div>
                                             <% else %>
-                                                <%= number_to_currency(@contract.description) %>
+                                                <%= @contract.description %>
                                             <% end %>
                                         <% else %>
-                                            <%= number_to_currency(@contract.description) %>
+                                            <%= @contract.description %>
                                         <% end %>
                                     </td>
                                 </tr>
