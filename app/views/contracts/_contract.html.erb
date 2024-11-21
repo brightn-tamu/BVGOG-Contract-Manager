@@ -221,9 +221,7 @@
                             <% end %>
                             <%= link_to 'Set to "Rejected"', reject_contract_path(@contract), class: "card-footer-item common-button" %>
                             <% if @contract.current_type == 'amend' || @contract.current_type == 'renew' %>
-                                <%= form_with url: contract_log_hard_rejection_path(@contract), method: :post, remote: true, class: "card-footer-item common-button" do |form| %>
-                                    <%= form.submit 'Void Amendment', class: "card-footer-item common-button" %>
-                                <% end %>
+                                <%= link_to 'Void Amendment', void_contract_path(@contract), class: "card-footer-item common-button" %>
                             <% end %>
                         <% elsif @contract.contract_status == ContractStatus::REJECTED %>
                             <%= form_with model: @contract, url: [@contract, :log_return], method: :post, remote: true, class: "card-footer-item common-button" do |form| %>

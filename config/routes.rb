@@ -48,6 +48,9 @@ Rails.application.routes.draw do
 
     get '/contracts/:id/expiry_reminder', to: 'contracts#expiry_reminder', as: 'expiry_reminder_contract'
 
+    # Contract Void Actions
+    get '/contracts/:id/void', to: 'contracts#void', as: 'void_contract'
+
     # Contract Rejections
     get '/contracts/:id/reject', to: 'contracts#reject', as: 'reject_contract'
 

@@ -1,21 +1,19 @@
-<!-- app/views/contracts/void.html.erb -->
-
 <script>
-  document.addEventListener('input', function (event) {
-    if (event.target.classList.contains('auto-expand')) {
-      const minHeight = parseInt(getComputedStyle(event.target).minHeight);
-      event.target.style.height = 'auto';
-      const newHeight = Math.max(event.target.scrollHeight, minHeight);
-      event.target.style.height = newHeight + 'px';
-    }
-  });
+document.addEventListener('input', function (event) {
+  if (event.target.classList.contains('auto-expand')) {
+    const minHeight = parseInt(getComputedStyle(event.target).minHeight);
+    event.target.style.height = 'auto';
+    const newHeight = Math.max(event.target.scrollHeight, minHeight);
+    event.target.style.height = newHeight + 'px';
+  }
+});
 </script>
 
-<div class="modal fade" id="voidModal" tabindex="-1" role="dialog" aria-labelledby="voidModalLabel">
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content" style="overflow-x: hidden;">
       <div class="modal-body" style="padding: 20px;">
-        <%= form_with model: @contract, url: contract_log_hard_rejection_path(@contract), method: :post, remote: true do |f| %>
+        <%= form_with model: @contract, url: [@contract, :log_hard_rejection], method: :post, remote: true do |f| %>
           <div class="form-group">
             <%= f.label :void_reason, 'Void Reason', style: "font-size: 1.5rem; font-weight: 600; color: #555;" %>
             <%= f.text_area :void_reason, 
