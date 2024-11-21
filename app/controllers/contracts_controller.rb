@@ -739,7 +739,7 @@ class ContractsController < ApplicationController
             latest_log.void_amend_notification
         
             @decision = @contract.decisions.build(
-                reason: void_reason,
+                reason: @void_reason,
                 decision: ContractStatus::APPROVED,
                 user: current_user
             )
