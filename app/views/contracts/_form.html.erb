@@ -59,17 +59,14 @@
       const newFundingSourceInput = document.getElementById("new_funding_source");
 
       if (fundingSourceSelectField && newFundingSourceField && hiddenFundingSourceField && newFundingSourceInput) {
-          // 当用户选择 "new" 时，显示输入框
           if (fundingSourceSelectField.value === "new") {
               newFundingSourceField.classList.remove("is-hidden");
-              hiddenFundingSourceField.value = ""; // 清空 hidden field 的值，避免保存为 "new"
+              hiddenFundingSourceField.value = "";
           } else {
-              // 当选择已有的 funding source 时，隐藏输入框并将 hidden field 设置为选定的值
               newFundingSourceField.classList.add("is-hidden");
               hiddenFundingSourceField.value = fundingSourceSelectField.value;
           }
 
-          // 当用户输入新的 Funding Source 时，将 hidden field 设置为输入的值
           newFundingSourceInput.addEventListener('input', () => {
               if (newFundingSourceInput.value.trim() !== "") {
                   hiddenFundingSourceField.value = newFundingSourceInput.value;
