@@ -18,10 +18,10 @@ class ContractMailer < ApplicationMailer
         @user = user
         attachments[@report.file_name] = File.read(@report.full_path)
         mail(
-          to: @user.email,
-          subject: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}"
+            to: @user.email,
+            subject: "Contract Expiration Report - #{Time.zone.today.strftime('%m/%d/%Y')}"
         ) do |format|
-          format.html { render 'expiration_report', locals: { name: @user.full_name } }
+            format.html { render 'expiration_report', locals: { name: @user.full_name } }
         end
     end
 
@@ -46,5 +46,4 @@ class ContractMailer < ApplicationMailer
             subject: 'Contract Amendment Request Voided'
         )
     end
-
 end

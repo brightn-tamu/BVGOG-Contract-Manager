@@ -19,7 +19,6 @@ module ApplicationHelper
         pages << if current_user.level == UserLevel::TWO
                      { title: 'Contracts', subpaths: [
                          { name: 'View Contracts', path: contracts_path, icon: 'file-contract' },
-                         { name: 'Amend Contracts', path: modify_contracts_path, icon: 'pen-to-square' }
                      ] }
                  else
                      { title: 'Contracts', subpaths: [
