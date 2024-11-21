@@ -697,53 +697,45 @@ class ContractsController < ApplicationController
         end
     end
 
-    def log_rejection
-        # :nocov:
-        @contract = Contract.find(params[:contract_id])
+    def void
+        @contract = Contract.find(params[:id])
+      end
+
+    def log_hard_rejection
         ActiveRecord::Base.transaction do
-            @reason = params[:contract][:rejection_reason]
-            if @contract.current_type == 'renew' || @contract.current_type == 'amend'
-
-                message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
-
-                # update contract status and current type
-                @contract.update(contract_status: ContractStatus::IN_PROGRESS)
-                latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
-
-                # Remove documents added during this amendment/renewal
-                if latest_log&.changes_made&.dig('Document Added').present?
-                    latest_log.changes_made['Document Added'].each do |filename|
-                        doc = @contract.contract_documents.find_by(orig_file_name: filename)
-                        doc&.destroy
-                    end
-                    Rails.logger.info "Removed documents associated with rejected changes: #{latest_log.changes_made['Document Added']}"
-                end
-
-                # update latest modification log's status
-                latest_log.update(status: 'rejected', remarks: @reason, approved_by: current_user.full_name, modified_at: Time.current)
-                latest_log.reject_amend_notification
-                @decision = @contract.decisions.build(reason: "#{message_text} request rejected: #{@reason}", decision: ContractStatus::REJECTED, user: current_user)
-                @decision.save
-                if @decision.save
-                    @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
-                    redirect_to contract_url(@contract), notice: "#{message_text} request was rejected."
-                else
-                    redirect_to contract_url(@contract), alert: "#{message_text} rejection failed"
-                end
+            @contract = Contract.find(params[:contract_id] || params[:id]) # 根据路由中的参数名调整
+            void_reason = params[:contract][:void_reason]
+        
+            message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
+            @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
+            latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+        
+            if latest_log.changes_made['Document Added'].present?
+            latest_log.changes_made['Document Added'].each do |filename|
+                doc = @contract.contract_documents.find_by(orig_file_name: filename)
+                doc&.destroy
+            end
+            Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
+            end
+        
+            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.void_amend_notification
+        
+            @decision = @contract.decisions.build(
+            reason: void_reason,
+            decision: ContractStatus::APPROVED,
+            user: current_user
+            )
+        
+            if @decision.save
+            @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+            redirect_to contract_url(@contract), notice: "#{message_text} request was hard rejected."
             else
-                @contract.update(contract_status: ContractStatus::IN_PROGRESS)
-                @decision = @contract.decisions.build(reason: @reason, decision: ContractStatus::REJECTED, user: current_user)
-                @decision_in_prog = @contract.decisions.build(reason: nil, decision: ContractStatus::IN_PROGRESS, user: current_user)
-                if @decision.save && @decision_in_prog.save
-                    @contract.modification_logs.where(status: 'pending').update_all(status: 'rejected')
-                    redirect_to contract_url(@contract), notice: 'Contract was Rejected.'
-                else
-                    redirect_to contract_url(@contract), alert: 'Contract Rejection failed.'
-                end
+            redirect_to contract_url(@contract), alert: "#{message_text} hard rejection failed."
             end
         end
-        # :nocov: end
     end
+      
 
     # :nocov:
     def log_approval
