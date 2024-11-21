@@ -714,44 +714,13 @@ class ContractsController < ApplicationController
         # :nocov: end
     end
 
-    def log_hard_rejection
-        ActiveRecord::Base.transaction do
-            @contract = Contract.find(params[:contract_id])
-            message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
-            @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
-            latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
-
-            if latest_log.changes_made['Document Added'].present?
-                latest_log.changes_made['Document Added'].each do |filename|
-                    doc = @contract.contract_documents.find_by(orig_file_name: filename)
-                    doc&.destroy
-                end
-                Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
-            end
-
-            latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
-            latest_log.void_amend_notification
-            # TODO: modify contract.current_type
-            @decision = @contract.decisions.build(reason: "#{message_text} request was Hard rejected", decision: ContractStatus::APPROVED, user: current_user)
-
-            @decision.save
-            if @decision.save
-                @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
-                redirect_to contract_url(@contract), notice: "#{message_text} request was Hard rejected."
-                # redirect_to contract_url(@contract), notice: params[:contract][:hard_rejection].present? ? "#{message_text} was Hard rejected." : "#{message_text} was Approved."
-            else
-                redirect_to contract_url(@contract), alert: "#{message_text} Hard rejected failed"
-            end
-        end
-    end
-
     def void
         @contract = Contract.find(params[:id])
-      end
+    end
 
     def log_hard_rejection
         ActiveRecord::Base.transaction do
-            @contract = Contract.find(params[:contract_id] || params[:id]) # 根据路由中的参数名调整
+            @contract = Contract.find(params[:contract_id] || params[:id]) 
             void_reason = params[:contract][:void_reason]
         
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
@@ -770,16 +739,16 @@ class ContractsController < ApplicationController
             latest_log.void_amend_notification
         
             @decision = @contract.decisions.build(
-            reason: void_reason,
-            decision: ContractStatus::APPROVED,
-            user: current_user
+                reason: void_reason,
+                decision: ContractStatus::APPROVED,
+                user: current_user
             )
         
             if @decision.save
-            @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
-            redirect_to contract_url(@contract), notice: "#{message_text} request was hard rejected."
+                @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
+                redirect_to contract_url(@contract), notice: "#{message_text} request was hard rejected."
             else
-            redirect_to contract_url(@contract), alert: "#{message_text} hard rejection failed."
+                redirect_to contract_url(@contract), alert: "#{message_text} hard rejection failed."
             end
         end
     end
