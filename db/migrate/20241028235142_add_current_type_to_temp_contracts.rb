@@ -6,7 +6,6 @@ class AddCurrentTypeToTempContracts < ActiveRecord::Migration[7.0]
 
         reversible do |dir|
             dir.up do
-                # 将所有空的 current_type 字段更新为 'contract'
                 execute "UPDATE temp_contracts SET current_type = 'contract' WHERE current_type IS NULL"
             end
         end
