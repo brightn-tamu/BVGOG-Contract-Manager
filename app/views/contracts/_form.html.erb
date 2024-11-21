@@ -59,17 +59,14 @@
       const newFundingSourceInput = document.getElementById("new_funding_source");
 
       if (fundingSourceSelectField && newFundingSourceField && hiddenFundingSourceField && newFundingSourceInput) {
-          // 当用户选择 "new" 时，显示输入框
           if (fundingSourceSelectField.value === "new") {
               newFundingSourceField.classList.remove("is-hidden");
-              hiddenFundingSourceField.value = ""; // 清空 hidden field 的值，避免保存为 "new"
+              hiddenFundingSourceField.value = "";
           } else {
-              // 当选择已有的 funding source 时，隐藏输入框并将 hidden field 设置为选定的值
               newFundingSourceField.classList.add("is-hidden");
               hiddenFundingSourceField.value = fundingSourceSelectField.value;
           }
 
-          // 当用户输入新的 Funding Source 时，将 hidden field 设置为输入的值
           newFundingSourceInput.addEventListener('input', () => {
               if (newFundingSourceInput.value.trim() !== "") {
                   hiddenFundingSourceField.value = newFundingSourceInput.value;
@@ -444,6 +441,7 @@
     const continuousCheckbox = document.getElementById("contract_continuous_add");
     const endDateField = document.getElementById("contract_ends_at_add");
     const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_add");
+    const effectiveDateField = document.getElementById('contract_starts_at');
 
     // Function to update the end date field based on the checkbox status
     function updateEndDateField() {
@@ -451,10 +449,23 @@
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
         hiddenEndDateField.disabled = false;
-        hiddenEndDateField.value = "N/A";
+`        hiddenEndDateField.value = "";
       } else {
         endDateField.disabled = false; // Enable the end date field
         hiddenEndDateField.disabled = true;
+        if (effectiveDateField.value) {
+          const effectiveDateValue = new Date(effectiveDateField.value);
+          if (effectiveDateValue && !isNaN(effectiveDateValue)) {
+            const newEndDate = new Date(effectiveDateValue);
+            newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+
+            const formattedDate = newEndDate.toISOString().split('T')[0];
+
+            endDateField.value = formattedDate;
+          }
+        } else {
+          endDateField.value = "";
+        }
       }
     }
 
@@ -463,11 +474,17 @@
 
     // Add an event listener for changes to the checkbox
     continuousCheckbox.addEventListener("change", updateEndDateField);
+    effectiveDateField.addEventListener('change', function () {
+      if (!continuousCheckbox.checked) {
+        updateEndDateField();
+      }
+    });
   });
   document.addEventListener("turbo:load", function() { 
     const continuousCheckbox = document.getElementById("contract_continuous_add");
     const endDateField = document.getElementById("contract_ends_at_add");
     const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_add");
+    const effectiveDateField = document.getElementById('contract_starts_at');
 
     // Function to update the end date field based on the checkbox status
     function updateEndDateField() {
@@ -475,10 +492,23 @@
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
         hiddenEndDateField.disabled = false;
-        hiddenEndDateField.value = "N/A";
+        hiddenEndDateField.value = "";
       } else {
         endDateField.disabled = false; // Enable the end date field
         hiddenEndDateField.disabled = true;
+        if (effectiveDateField.value) {
+          const effectiveDateValue = new Date(effectiveDateField.value);
+          if (effectiveDateValue && !isNaN(effectiveDateValue)) {
+            const newEndDate = new Date(effectiveDateValue);
+            newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+
+            const formattedDate = newEndDate.toISOString().split('T')[0];
+
+            endDateField.value = formattedDate;
+          }
+        } else {
+          endDateField.value = "";
+        }
       }
     }
 
@@ -487,5 +517,10 @@
 
     // Add an event listener for changes to the checkbox
     continuousCheckbox.addEventListener("change", updateEndDateField);
+    effectiveDateField.addEventListener('change', function () {
+      if (!continuousCheckbox.checked) {
+        updateEndDateField();
+      }
+    });
   });
 </script>

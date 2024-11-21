@@ -369,6 +369,10 @@ class ContractsController < ApplicationController
                     # TODO: handle the exception fields of renew/amend
 
                     changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
+                    if changes_made.nil?
+                        redirect_to amend_contract_path(@contract)
+                        return
+                    end
                     changes_made.to_json
 
                     log_attributes = {
@@ -481,6 +485,9 @@ class ContractsController < ApplicationController
         contract_params.each do |key, new_value|
             old_value = contract.send(key)
 
+            if key == 'ends_at' && new_value == ''
+                new_value = nil
+            end
             # Type conversion based on the type of the old value
             new_value = case old_value
                         when Integer
@@ -520,7 +527,7 @@ class ContractsController < ApplicationController
         # Check if any changes were made
         if changes_made.empty?
             flash[:alert] = 'No value is edited!'
-            redirect_to edit_contract_path(contract) and return nil
+            return nil
         end
 
         changes_made

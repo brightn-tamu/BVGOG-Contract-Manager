@@ -64,6 +64,12 @@
                     endDateField.value = formattedDate;
                 }
             });
+            // Detect if the end date is cleared and set it to "N/A"
+            endDateField.addEventListener('input', function() {
+                if (endDateField.value === '') {
+                    endDateField.placeholder = 'N/A'; // Show 'N/A' in the placeholder
+                }
+            });
         } else {
             console.error("Date fields not found");
         }
@@ -419,6 +425,7 @@
     const continuousCheckbox = document.getElementById("contract_continuous_amend");
     const endDateField = document.getElementById("contract_ends_at_amend");
     const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_amend");
+    const effectiveDateField = document.getElementById('contract_starts_at');
 
     // Function to update the end date field based on the checkbox status
     function updateEndDateField() {
@@ -426,10 +433,23 @@
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
         hiddenEndDateField.disabled = false;
-        hiddenEndDateField.value = "N/A";
+        hiddenEndDateField.value = "";
       } else {
         endDateField.disabled = false; // Enable the end date field
         hiddenEndDateField.disabled = true;
+        if (effectiveDateField.value) {
+          const effectiveDateValue = new Date(effectiveDateField.value);
+          if (effectiveDateValue && !isNaN(effectiveDateValue)) {
+            const newEndDate = new Date(effectiveDateValue);
+            newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+
+            const formattedDate = newEndDate.toISOString().split('T')[0];
+
+            endDateField.value = formattedDate;
+          }
+        } else {
+          endDateField.value = "";
+        }
       }
     }
 
@@ -438,11 +458,17 @@
 
     // Add an event listener for changes to the checkbox
     continuousCheckbox.addEventListener("change", updateEndDateField);
+    effectiveDateField.addEventListener('change', function () {
+      if (!continuousCheckbox.checked) {
+        updateEndDateField();
+      }
+    });
   });
   document.addEventListener("turbo:load", function() { 
     const continuousCheckbox = document.getElementById("contract_continuous_amend");
     const endDateField = document.getElementById("contract_ends_at_amend");
     const hiddenEndDateField = document.getElementById("hidden_contract_ends_at_amend");
+    const effectiveDateField = document.getElementById('contract_starts_at');
 
     // Function to update the end date field based on the checkbox status
     function updateEndDateField() {
@@ -450,10 +476,23 @@
         endDateField.value = ""; // Clear the end date field
         endDateField.disabled = true; // Disable the end date field
         hiddenEndDateField.disabled = false;
-        hiddenEndDateField.value = "N/A";
+        hiddenEndDateField.value = "";
       } else {
         endDateField.disabled = false; // Enable the end date field
         hiddenEndDateField.disabled = true;
+        if (effectiveDateField.value) {
+          const effectiveDateValue = new Date(effectiveDateField.value);
+          if (effectiveDateValue && !isNaN(effectiveDateValue)) {
+            const newEndDate = new Date(effectiveDateValue);
+            newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+
+            const formattedDate = newEndDate.toISOString().split('T')[0];
+
+            endDateField.value = formattedDate;
+          }
+        } else {
+          endDateField.value = "";
+        }
       }
     }
 
@@ -462,5 +501,10 @@
 
     // Add an event listener for changes to the checkbox
     continuousCheckbox.addEventListener("change", updateEndDateField);
+    effectiveDateField.addEventListener('change', function () {
+    if (!continuousCheckbox.checked) {
+        updateEndDateField();
+      }
+    });
   });
 </script>
