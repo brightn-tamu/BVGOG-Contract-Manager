@@ -725,7 +725,7 @@ class ContractsController < ApplicationController
         # :nocov:
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id] || params[:id]) 
-            void_reason = params[:contract][:void_reason]
+            @void_reason = params[:contract][:void_reason]
         
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
@@ -743,7 +743,7 @@ class ContractsController < ApplicationController
             latest_log.void_amend_notification
         
             @decision = @contract.decisions.build(
-                reason: void_reason,
+                reason: @void_reason,
                 decision: ContractStatus::APPROVED,
                 user: current_user
             )
