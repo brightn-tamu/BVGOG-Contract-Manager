@@ -13,7 +13,7 @@ document.addEventListener('input', function (event) {
   <div class="modal-dialog" role="document">
     <div class="modal-content" style="overflow-x: hidden;">
       <div class="modal-body" style="padding: 20px;">
-        <%= form_with model: @contract, url: contract_log_hard_rejection_path(@contract), method: :post, remote: true do |f| %>
+        <%= form_with model: @contract, url: [@contract, :log_hard_rejection], method: :post, remote: true do |f| %>
           <div class="form-group">
             <%= f.label :void_reason, 'Void Reason', style: "font-size: 1.5rem; font-weight: 600; color: #555;" %>
             <%= f.text_area :void_reason, 
