@@ -739,11 +739,11 @@ class ContractsController < ApplicationController
             Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
             end
         
-            latest_log.update(status: 'approved', remarks: @void_reason, approved_by: current_user.full_name, modified_at: Time.current)
+            latest_log.update(status: 'approved', remarks: ["Hard rejected", @void_reason].compact.join(": ").strip, approved_by: current_user.full_name, modified_at: Time.current)
             latest_log.void_amend_notification
         
             @decision = @contract.decisions.build(
-                reason: @void_reason,
+                reason: ["Hard rejected", @void_reason].compact.join(": ").strip,
                 decision: ContractStatus::APPROVED,
                 user: current_user
             )

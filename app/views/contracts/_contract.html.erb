@@ -307,7 +307,11 @@
                                     <% when ContractStatus::REJECTED %>
                                         Rejected
                                     <% when ContractStatus::APPROVED %>
-                                        Approved
+                                        <% if decision.reason.is_a?(String) && decision.reason.include?('Hard rejected') %>
+                                            Hard Rejected
+                                        <% else %>
+                                            Approved
+                                        <% end %>
                                     <% end %>
                                     <br>
                                     <strong>User:</strong> <%= link_to decision.user.full_name, user_path(decision.user) %><br>
@@ -368,7 +372,13 @@
                                             <% end %>
 
                                         </td>
-                                        <td><%= log.status %></td>
+                                        <td>
+                                        <% if log.remarks.is_a?(String) && log.remarks&.include?('Hard rejected') %>
+                                            Hard Rejected
+                                        <% else %>
+                                            <%= log.status %>
+                                        <% end %>
+                                        </td>
                                     </tr>
                                 <% end %>
                             <% end %>
