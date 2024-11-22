@@ -81,6 +81,28 @@ Given('{int} example contracts exist') do |num_contracts|
     end
 end
 
+Given('{int} example amendments exist') do |num_amendments|
+    statuses = ContractStatus.list.reject { |status| status == :created }
+    (1..num_amendments).each do |i|
+      d = Time.zone.today + 1.day * i
+  
+      FactoryBot.create(
+        :contract,
+        id: i + 200, 
+        title: "Amendment #{i}",
+        entity: Entity.all.sample,
+        program: Program.all.sample,
+        point_of_contact: User.all.sample,
+        vendor: Vendor.all.sample,
+        current_type: 'amend',
+        ends_at: d,
+        extension_duration_units: TimePeriod::MONTH,
+        contract_status: statuses[i % statuses.length]
+      )
+    end
+end
+  
+
 Given('{int} example amendments and renewals exist') do |num_amendments|
     # Create amendments and renewals
     contract_types = %w[amend renew]
