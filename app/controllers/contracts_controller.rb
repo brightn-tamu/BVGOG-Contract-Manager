@@ -680,7 +680,10 @@ class ContractsController < ApplicationController
 
                 # update contract status and current type
                 @contract.update(contract_status: ContractStatus::IN_PROGRESS)
-                latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+                logs = @contract.modification_logs.order(updated_at: :desc)
+                latest_log = logs.where(status: 'pending').first
+                # if the amendment is set to review without changes after rejection
+                latest_log ||= logs.where(status: 'rejected').first
 
                 # Remove documents added during this amendment/renewal
                 if latest_log&.changes_made&.dig('Document Added').present?
@@ -729,7 +732,10 @@ class ContractsController < ApplicationController
         
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
-            latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+            logs = @contract.modification_logs.order(updated_at: :desc)
+            latest_log = logs.where(status: 'pending').first
+            # if the amendment is set to review without changes after rejection
+            latest_log ||= logs.where(status: 'rejected').first
         
             if latest_log.changes_made['Document Added'].present?
             latest_log.changes_made['Document Added'].each do |filename|
