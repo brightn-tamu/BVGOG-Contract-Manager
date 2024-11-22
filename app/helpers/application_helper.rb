@@ -61,7 +61,6 @@ module ApplicationHelper
 end
 
 def flash_type_to_bulma_class(type)
-    # :nocov:
     case type
     when 'alert'
         'is-danger'
@@ -70,5 +69,4 @@ def flash_type_to_bulma_class(type)
     else
         'is-info'
     end
-    # :nocov:
 end
