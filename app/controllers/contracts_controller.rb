@@ -29,7 +29,6 @@ class ContractsController < ApplicationController
         Rails.logger.debug params[:search].inspect
     end
 
-
     # GET /contracts/1 or /contracts/1.json
     def show
         begin
@@ -69,12 +68,11 @@ class ContractsController < ApplicationController
 
     # GET /contracts/1/edit
     def edit
-        action = case
-            when request.path == amend_contract_path(@contract)
-                "amend"
-            else
-                "edit"
-            end
+        action = if request.path == amend_contract_path(@contract)
+                     'amend'
+                 else
+                     'edit'
+                 end
         begin
             OSO.authorize(current_user, action, @contract)
         rescue Oso::Error
@@ -286,15 +284,13 @@ class ContractsController < ApplicationController
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_funding_source)
 
-
         # :nocov:
         # Only for 'contract' current_type
         unless @contract.current_type == 'contract'
             # Find changes and save them
             changes_made = track_contract_changes(@contract, contract_params, contract_documents_upload, contract_documents_attributes)
-            if changes_made == nil
-                return
-            end
+            return if changes_made.nil?
+
             latest_log = @contract.modification_logs.order(updated_at: :desc).first
 
             if latest_log&.status == 'rejected' || latest_log&.status != 'pending'
@@ -471,6 +467,7 @@ class ContractsController < ApplicationController
         referer = request.referer
         return 'renew' if referer&.include?('renew')
         return 'amend' if referer&.include?('amend')
+
         'edit'
     end
 
@@ -727,33 +724,33 @@ class ContractsController < ApplicationController
     def log_hard_rejection
         # :nocov:
         ActiveRecord::Base.transaction do
-            @contract = Contract.find(params[:contract_id] || params[:id]) 
+            @contract = Contract.find(params[:contract_id] || params[:id])
             @void_reason = params[:contract][:void_reason]
-        
+
             message_text = @contract.current_type == 'renew' ? 'Renewal' : 'Amendment'
             @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
             logs = @contract.modification_logs.order(updated_at: :desc)
             latest_log = logs.where(status: 'pending').first
             # if the amendment is set to review without changes after rejection
             latest_log ||= logs.where(status: 'rejected').first
-        
+
             if latest_log.changes_made['Document Added'].present?
-            latest_log.changes_made['Document Added'].each do |filename|
-                doc = @contract.contract_documents.find_by(orig_file_name: filename)
-                doc&.destroy
+                latest_log.changes_made['Document Added'].each do |filename|
+                    doc = @contract.contract_documents.find_by(orig_file_name: filename)
+                    doc&.destroy
+                end
+                Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
             end
-            Rails.logger.info "Removed documents associated with hard-rejected changes: #{latest_log.changes_made['Document Added']}"
-            end
-        
-            latest_log.update(status: 'approved', remarks: ["Hard rejected", @void_reason].compact.join(": ").strip, approved_by: current_user.full_name, modified_at: Time.current)
+
+            latest_log.update(status: 'approved', remarks: ['Hard rejected', @void_reason].compact.join(': ').strip, approved_by: current_user.full_name, modified_at: Time.current)
             latest_log.void_amend_notification
-        
+
             @decision = @contract.decisions.build(
-                reason: ["Hard rejected", @void_reason].compact.join(": ").strip,
+                reason: ['Hard rejected', @void_reason].compact.join(': ').strip,
                 decision: ContractStatus::APPROVED,
                 user: current_user
             )
-        
+
             if @decision.save
                 @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
                 redirect_to contract_url(@contract), notice: "#{message_text} request was hard rejected."
@@ -763,7 +760,7 @@ class ContractsController < ApplicationController
         end
         # :nocov:
     end
-      
+
     def log_approval
         # :nocov:
         ActiveRecord::Base.transaction do
@@ -776,18 +773,16 @@ class ContractsController < ApplicationController
                 Rails.logger.debug latest_log
 
                 # Apply latest modification log
-                if latest_log != nil
-                    latest_log.changes_made.each do |key, value|
-                        if key == 'Document Added'
-                            # Update status of approved documents
-                            value[1].each do |filename|
-                                doc = @contract.contract_documents.find_by(orig_file_name: filename)
-                                doc&.update(status: 'approved') # Mark as approved
-                            end
-                            Rails.logger.info "Documents approved: #{value[1]}"
-                        else
-                            @contract.update!(key => value[1])
+                latest_log&.changes_made&.each do |key, value|
+                    if key == 'Document Added'
+                        # Update status of approved documents
+                        value[1].each do |filename|
+                            doc = @contract.contract_documents.find_by(orig_file_name: filename)
+                            doc&.update(status: 'approved') # Mark as approved
                         end
+                        Rails.logger.info "Documents approved: #{value[1]}"
+                    else
+                        @contract.update!(key => value[1])
                     end
                 end
 
@@ -796,15 +791,9 @@ class ContractsController < ApplicationController
                 @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
 
                 # Update latest modification log's status
-                if latest_log != nil
-                    latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
-                end
+                latest_log&.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
 
-                if latest_log == nil
-                    @decision = @contract.decisions.build(reason: "No amendment found. Approved.", decision: ContractStatus::APPROVED, user: current_user)
-                elsif
-                    @decision = @contract.decisions.build(reason: "#{message_text} request was Approved", decision: ContractStatus::APPROVED, user: current_user)
-                end
+                @decision = @contract.decisions.build(reason: 'No amendment found. Approved.', decision: ContractStatus::APPROVED, user: current_user) if latest_log.nil?
                 @decision.save
                 if @decision.save
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
@@ -873,4 +862,3 @@ class ContractsController < ApplicationController
     end
     # :nocov:
 end
-

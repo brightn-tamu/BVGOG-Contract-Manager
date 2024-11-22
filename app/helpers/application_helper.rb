@@ -18,7 +18,7 @@ module ApplicationHelper
         # Level 3 users can only view contracts
         pages << if current_user.level == UserLevel::TWO
                      { title: 'Contracts', subpaths: [
-                         { name: 'View Contracts', path: contracts_path, icon: 'file-contract' },
+                         { name: 'View Contracts', path: contracts_path, icon: 'file-contract' }
                      ] }
                  else
                      { title: 'Contracts', subpaths: [
