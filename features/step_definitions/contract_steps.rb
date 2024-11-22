@@ -98,3 +98,31 @@ end
 Then('{string} should be optional') do |field_name|
     expect(page).to have_no_selector("##{field_name.downcase.tr(' ', '_')}[required]")
 end
+
+Given('the latest modification log exists with status {string}') do |status|
+    contract = FactoryBot.create(:contract, current_type: 'amend')
+    FactoryBot.create(:modification_log,
+                      contract_id: contract.id,
+                      modified_by_id: User.first.id,
+                      modification_type: 'amend',
+                      changes_made: { title: ['Original ID', 'Updated ID'] },
+                      status: status,
+                      modified_at: Time.current)
+end
+  
+Then('a new modification log should be created with status {string}') do |status|
+    latest_log = ModificationLog.order(updated_at: :desc).first
+    expect(latest_log.status).to eq(status)
+    expect(latest_log.modification_type).to eq('amend')
+end
+  
+Then('the changes should include the updated title') do
+    latest_log = ModificationLog.order(updated_at: :desc).first
+    expect(latest_log.changes_made['title']).to eq(['Original Title', 'Updated Contract Title'])
+end
+  
+Then('the latest modification log should be updated with the combined changes') do
+    latest_log = ModificationLog.order(updated_at: :desc).first
+    expect(latest_log.changes_made['id']).to eq(['Original ID', 'Updated ID'])
+end
+  
