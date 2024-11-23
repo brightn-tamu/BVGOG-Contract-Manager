@@ -88,6 +88,93 @@ RSpec.describe '/contracts', type: :request do
         end
     end
 
+    describe 'GET /modify' do
+        before do
+            @user = create(:user)
+            sign_in @user
+        end
+    
+        context 'when user is level 1' do
+            before do
+                @user.update(level: UserLevel::ONE)
+            end
+        
+            it 'returns all approved contracts' do
+                approved_contract = create(:contract, contract_status: ContractStatus::APPROVED)
+                in_progress_contract = create(:contract, contract_status: ContractStatus::IN_PROGRESS)
+        
+                get modify_contracts_url
+        
+                expect(response).to be_successful
+                expect(assigns(:contracts)).to include(approved_contract)
+                expect(assigns(:contracts)).not_to include(in_progress_contract)
+            end
+        end
+    
+        context 'when user is not level 1' do
+            before do
+                @user.update(level: UserLevel::TWO)
+                @entity = create(:entity)
+                @user.entities << @entity
+            end
+    
+            it "returns approved contracts for user's entities" do
+                approved_contract = create(:contract, contract_status: ContractStatus::APPROVED, entity: @entity)
+                other_contract = create(:contract, contract_status: ContractStatus::APPROVED)
+                in_progress_contract = create(:contract, contract_status: ContractStatus::IN_PROGRESS, entity: @entity)
+
+                get modify_contracts_url
+
+                expect(response).to be_successful
+                expect(assigns(:contracts)).to include(approved_contract)
+                expect(assigns(:contracts)).not_to include(other_contract)
+                expect(assigns(:contracts)).not_to include(in_progress_contract)
+            end
+        end
+    
+        context 'with search parameters' do
+            before do
+                @user.update(level: UserLevel::ONE)
+            end
+            it 'returns contracts matching the search query' do
+                matching_contract = create(:contract, contract_status: ContractStatus::APPROVED, title: 'Special Contract')
+                non_matching_contract = create(:contract, contract_status: ContractStatus::APPROVED, title: 'Regular Contract')
+        
+                get modify_contracts_url, params: { search: 'Special' }
+        
+                expect(response).to be_successful
+                expect(assigns(:contracts)).to include(matching_contract)
+                expect(assigns(:contracts)).not_to include(non_matching_contract)
+            end
+        end
+    
+        context 'with pagination' do
+            it 'paginates the contracts' do
+                create_list(:contract, 25, contract_status: ContractStatus::APPROVED)
+        
+                get modify_contracts_url, params: { page: 2 }
+        
+                expect(response).to be_successful
+                expect(assigns(:contracts).current_page).to eq(2)
+            end
+        end
+    
+        context 'with sorting' do
+            before do
+                @user.update(level: UserLevel::ONE)
+            end
+            it 'sorts the contracts' do
+                older_contract = create(:contract, contract_status: ContractStatus::APPROVED, created_at: 1.day.ago)
+                newer_contract = create(:contract, contract_status: ContractStatus::APPROVED, created_at: Time.current)
+        
+                get modify_contracts_url
+        
+                expect(response).to be_successful
+                expect(assigns(:contracts).first).to eq(older_contract)
+            end
+        end
+      end
+
     describe 'GET /new' do
         it 'renders a successful response' do
             get new_contract_url

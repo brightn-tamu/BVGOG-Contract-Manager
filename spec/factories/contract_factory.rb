@@ -9,7 +9,7 @@ FactoryBot.define do
         association :vendor, factory: :vendor
         association :point_of_contact, factory: :user
 
-        id { Faker::Number.positive }
+        # id { Faker::Number.positive }
         title { Faker::Lorem.sentence }
         description { Faker::Lorem.paragraph(sentence_count: 15) }
         total_amount { Faker::Number.between(from: 0, to: 99_000_000) }
