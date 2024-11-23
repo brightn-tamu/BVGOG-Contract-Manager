@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     # GET /admin
     get '/admin', to: 'pages#admin', as: 'admin'
     put '/admin', to: 'pages#update_admin', as: 'update_admin'
+    get '/admin/delete_program', to: 'pages#delete_program', as: 'delete_program'
+    get '/admin/delete_entity', to: 'pages#delete_entity', as: 'delete_entity'
 
     resources :vendors do
         member do
