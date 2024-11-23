@@ -158,7 +158,7 @@ class ContractsController < ApplicationController
 
                     #  Check specific for PoC since we use it down the line to check entity association
                     if contract_params[:point_of_contact_id].blank?
-                        # :nocov:
+                        
                         @contract.errors.add(:base, 'Point of contact is required')
                         format.html do
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
@@ -167,9 +167,9 @@ class ContractsController < ApplicationController
                             render :new, status: :unprocessable_entity
                         end
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
-                        # :nocov:
+                        
                     elsif @contract.point_of_contact_id.present? && !User.find(@contract.point_of_contact_id).is_active
-                        # :nocov:
+                        
                         if User.find(@contract.point_of_contact_id).redirect_user_id.present?
                             @contract.errors.add(:base,
                                                  "#{User.find(@contract.point_of_contact_id).full_name} is not active, use #{User.find(User.find(@contract.point_of_contact_id).redirect_user_id).full_name} instead")
@@ -186,9 +186,9 @@ class ContractsController < ApplicationController
                         # format.html { render :new, status: :unprocessable_entity, session[:value_type] = params[:contract][:value_type] }
 
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
-                        # :nocov:
+                       
                     elsif User.find(@contract.point_of_contact_id).level == UserLevel::THREE && !User.find(@contract.point_of_contact_id).entities.include?(@contract.entity)
-                        # :nocov:
+                        
                         @contract.errors.add(:base,
                                              "#{User.find(@contract.point_of_contact_id).full_name} is not associated with #{@contract.entity.name}")
                         # format.html { render :new, status: :unprocessable_entity,, session[:value_type] = params[:contract][:value_type] }
@@ -199,17 +199,17 @@ class ContractsController < ApplicationController
                             render :new, status: :unprocessable_entity
                         end
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
-                        # :nocov:
+                        
                     elsif @contract.save
                         @decision = @contract.decisions.build(decision: ContractStatus::CREATED, user: current_user)
                         @decision.save
                         @decision = @contract.decisions.build(decision: ContractStatus::IN_PROGRESS, user: current_user)
                         @decision.save
                         if contract_documents_upload.present?
-                            # :nocov:
+                            
                             handle_contract_documents(contract_documents_upload,
                                                       contract_documents_attributes, 'approved')
-                            # :nocov:
+                            
                         end
                         format.html do
                             # erase the session value after successful creation of contract
@@ -221,7 +221,7 @@ class ContractsController < ApplicationController
                         end
                         format.json { render :show, status: :created, location: @contract }
                     else
-                        # :nocov:
+                        
                         format.html do
                             # to retain the value of the vendor dropdown and value type dropdown after validation error
                             retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
@@ -230,11 +230,11 @@ class ContractsController < ApplicationController
                         end
                         # format.html { render :new, status: :unprocessable_entity, session[:value_type] = params[:contract][:value_type]}
                         format.json { render json: @contract.errors, status: :unprocessable_entity }
-                        # :nocov:
+                        
                     end
                 end
             rescue StandardError => e
-                # :nocov:
+                
                 # If error type is Oso::ForbiddenError, then the user is not authorized
                 if e.instance_of?(Oso::ForbiddenError)
                     @contract.errors.add(:base, 'You are not authorized to create a contract')
@@ -244,14 +244,14 @@ class ContractsController < ApplicationController
                     message = e.message
                 end
                 format.html { redirect_to contracts_path, alert: message }
-                # :nocov:
+                
             end
         end
     end
 
     # PATCH/PUT /contracts/1 or /contracts/1.json
     def update
-        # :nocov:
+        
         add_breadcrumb 'Contracts', contracts_path
         add_breadcrumb @contract.title, contract_path(@contract)
         add_breadcrumb 'Edit', edit_contract_path(@contract)
@@ -284,7 +284,7 @@ class ContractsController < ApplicationController
         contract_params_clean = contract_params
         contract_params_clean.delete(:new_funding_source)
 
-        # :nocov:
+        
         # Only for 'contract' current_type
         unless @contract.current_type == 'contract'
             # Find changes and save them
@@ -313,13 +313,13 @@ class ContractsController < ApplicationController
             redirect_to contract_url(@contract), notice: success_message
             return
         end
-        # :nocov:
+        
 
         respond_to do |format|
             ActiveRecord::Base.transaction do
                 OSO.authorize(current_user, source_page, @contract)
                 if @contract[:point_of_contact_id].blank? && contract_params[:point_of_contact_id].blank?
-                    # :nocov:
+                    
                     @contract.errors.add(:base, 'Point of contact is required')
                     format.html do
                         retain_dropdown_values(value_type_selected, vendor_selection, funding_source_selected)
@@ -327,9 +327,9 @@ class ContractsController < ApplicationController
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
-                    # :nocov:
+                    
                 elsif contract_params[:point_of_contact_id].present? && !User.find(contract_params[:point_of_contact_id]).is_active
-                    # :nocov:
+                    
                     if User.find(contract_params[:point_of_contact_id]).redirect_user_id.present?
                         @contract.errors.add(:base,
                                              "#{User.find(contract_params[:point_of_contact_id]).full_name} is not active, use #{User.find(User.find(contract_params[:point_of_contact_id]).redirect_user_id).full_name} instead")
@@ -344,11 +344,11 @@ class ContractsController < ApplicationController
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
-                # :nocov:
+                
                 # Excuse this monster if statement, it's just checking if the user is associated with the entity, and for
                 # some reason nested-if statements don't work here when you use format (ie. UnkownFormat error)
                 elsif contract_params[:point_of_contact_id].present? && User.find(contract_params[:point_of_contact_id]).level == UserLevel::THREE && !User.find(contract_params[:point_of_contact_id]).entities.include?(Entity.find((contract_params[:entity_id].presence || @contract.entity_id)))
-                    # :nocov:
+                    
                     @contract.errors.add(:base,
                                          "#{User.find((contract_params[:point_of_contact_id].presence || @contract.point_of_contact_id)).full_name} is not associated with #{Entity.find((contract_params[:entity_id].presence || @contract.entity_id)).name}")
                     format.html do
@@ -358,9 +358,9 @@ class ContractsController < ApplicationController
                         render source_page, status: :unprocessable_entity
                     end
                     format.json { render json: @contract.errors, status: :unprocessable_entity }
-                    # :nocov:
+                    
                 elsif %w[renew amend].include?(source_page)
-                    # :nocov:
+                    
                     @contract = Contract.find(params[:id])
                     # TODO: handle the exception fields of renew/amend
 
@@ -402,17 +402,17 @@ class ContractsController < ApplicationController
                     else
                         render source_page, alert: 'Failed to update TempContract.'
                     end
-                    # :nocov:
+                   
                 elsif @contract.update(contract_params)
                     if contract_documents_upload.present?
-                        # :nocov:
+                        
                         handle_contract_documents(contract_documents_upload,
                                                   contract_documents_attributes, 'approved')
 
                         # Log document additions in changes_made
                         added_documents = contract_documents_upload.reject(&:blank?).map(&:original_filename)
                         changes_made['Document Added'] = [nil, added_documents] unless added_documents.empty?
-                        # :nocov:
+                        
                     end
                     format.html do
                         # erase the session value after successful creation of contract
@@ -432,7 +432,7 @@ class ContractsController < ApplicationController
                 end
             end
         rescue StandardError => e
-            # :nocov:
+            
             @contract.reload
             # If error type is Oso::ForbiddenError, then the user is not authorized
             if e.instance_of?(Oso::ForbiddenError)
@@ -446,7 +446,7 @@ class ContractsController < ApplicationController
             # Rollback the transaction
 
             format.html { redirect_to contract_url(@contract), alert: message }
-            # :nocov:
+            
         end
     end
 
@@ -576,12 +576,12 @@ class ContractsController < ApplicationController
     end
 
     def search_contracts(contracts)
-        # :nocov:
+        
         # Search by the query string parameter "search"
         # Search in "title", "description", and "key_words"
         contracts.where('title LIKE ? OR description LIKE ? OR key_words LIKE ?', "%#{params[:search]}%",
                         "%#{params[:search]}%", "%#{params[:search]}%")
-        # :nocov:
+        
     end
 
     # Helpers
@@ -656,7 +656,7 @@ class ContractsController < ApplicationController
         end
         documents_added
     end
-    # :nocov:
+    
 
     # Logging
     def reject
@@ -667,7 +667,7 @@ class ContractsController < ApplicationController
     end
 
     def log_rejection
-        # :nocov:
+        
         @contract = Contract.find(params[:contract_id])
         ActiveRecord::Base.transaction do
             @reason = params[:contract][:rejection_reason]
@@ -714,7 +714,7 @@ class ContractsController < ApplicationController
                 end
             end
         end
-        # :nocov:
+        
     end
 
     def void
@@ -722,7 +722,7 @@ class ContractsController < ApplicationController
     end
 
     def log_hard_rejection
-        # :nocov:
+        
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id] || params[:id])
             @void_reason = params[:contract][:void_reason]
@@ -758,11 +758,11 @@ class ContractsController < ApplicationController
                 redirect_to contract_url(@contract), alert: "#{message_text} hard rejection failed."
             end
         end
-        # :nocov:
+       
     end
 
     def log_approval
-        # :nocov:
+        Rails.logger.debug "Current user in log_approval: #{current_user.inspect}"
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id])
             if @contract.current_type == 'renew' || @contract.current_type == 'amend'
@@ -791,9 +791,15 @@ class ContractsController < ApplicationController
                 @contract.update(contract_status: ContractStatus::APPROVED, current_type: 'contract')
 
                 # Update latest modification log's status
-                latest_log&.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+                if latest_log != nil
+                    latest_log.update(status: 'approved', approved_by: current_user.full_name, modified_at: Time.current)
+                end
 
-                @decision = @contract.decisions.build(reason: 'No amendment found. Approved.', decision: ContractStatus::APPROVED, user: current_user) if latest_log.nil?
+                if latest_log == nil
+                    @decision = @contract.decisions.build(reason: "No amendment found. Approved.", decision: ContractStatus::APPROVED, user: current_user)
+                elsif
+                    @decision = @contract.decisions.build(reason: "#{message_text} request was Approved", decision: ContractStatus::APPROVED, user: current_user)
+                end
                 @decision.save
                 if @decision.save
                     @contract.modification_logs.where(status: 'pending').update_all(status: 'approved')
@@ -814,11 +820,11 @@ class ContractsController < ApplicationController
                 end
             end
         end
-        # :nocov:
+        
     end
 
     def log_return
-        # :nocov:
+        
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id])
             @contract.update(contract_status: ContractStatus::IN_PROGRESS)
@@ -827,11 +833,11 @@ class ContractsController < ApplicationController
             @decision.save
             redirect_to contract_url(@contract), notice: 'Contract was returned to In Progress.'
         end
-        # :nocov:
+        
     end
 
     def log_submission
-        # :nocov:
+       
         ActiveRecord::Base.transaction do
             @contract = Contract.find(params[:contract_id])
             @contract.update(contract_status: ContractStatus::IN_REVIEW)
@@ -839,11 +845,11 @@ class ContractsController < ApplicationController
             @decision.save
             redirect_to contract_url(@contract), notice: 'Contract was Submitted.'
         end
-        # :nocov:
+        
     end
 
     # Deprecated
-    # :nocov:
+   
     def expiry_reminder
         @contract = Contract.find(params[:id])
         respond_to do |format|
@@ -860,5 +866,5 @@ class ContractsController < ApplicationController
             end
         end
     end
-    # :nocov:
+    
 end
