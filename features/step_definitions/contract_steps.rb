@@ -126,3 +126,87 @@ Then('the latest modification log should be updated with the combined changes') 
     expect(latest_log.changes_made['id']).to eq(['Original ID', 'Updated ID'])
 end
   
+Then('the latest modification log should have status {string}') do |status|
+    latest_log = ModificationLog.order(updated_at: :desc).first
+    expect(latest_log.status).to eq(status)
+end
+  
+Then('the latest modification log should have remarks {string}') do |remarks|
+    latest_log = ModificationLog.order(updated_at: :desc).first
+    expect(latest_log.remarks).to eq(remarks)
+end
+
+Given('the amendment has associated documents') do
+    contract = Contract.find_by(id: 207)
+    raise "Contract with ID 207 not found" if contract.nil?
+  
+    document = FactoryBot.create(:contract_document, contract_id: contract.id, orig_file_name: 'test_doc.pdf')
+  
+    changes_made = { 'Document Added' => [nil, document.orig_file_name] }
+  
+    modification_log = FactoryBot.create(
+      :modification_log,
+      contract_id: contract.id,
+      changes_made: changes_made, 
+      status: 'pending',
+      modification_type: 'amend',
+      modified_by_id: User.first.id, 
+      remarks: "Document added",
+      modified_at: Time.current
+    )
+end
+  
+Then('the documents added during the amendment should be removed') do
+    contract = Contract.find_by(current_type: 'amend')
+    doc = contract.contract_documents.find_by(orig_file_name: 'test_doc.pdf')
+    expect(doc).to be_nil
+end
+  
+Given(/^the contract "([^"]*)" has a modification log$/) do |contract_title|
+    contract = Contract.find_by(title: contract_title)
+    user = User.first 
+    changes_made = {
+        "title" => [contract.title, "Updated Title"],
+    }
+    contract.modification_logs.create!(
+      status: "pending",
+      remarks: "Initial review",
+      approved_by: user.full_name,
+      modified_at: Time.current,
+      modification_type: "amend",
+      changes_made: changes_made,
+      modified_by_id: user.id
+    )
+  end
+
+    
+Given(/^the contract "([^"]*)" has a pending modification log$/) do |contract_title|
+    contract = Contract.find_by(title: contract_title)
+    user = User.first 
+    changes_made = {
+        "funding_source" => [contract.funding_source, "State"],
+    }
+    contract.modification_logs.create!(
+      status: "pending",
+      remarks: "Initial review",
+      contract_id: contract.id,
+      approved_by: user.full_name,
+      modified_at: Time.current,
+      modification_type: "amend",
+      changes_made: changes_made,
+      modified_by_id: user.id
+    )
+end
+  
+
+ 
+  Then('the changes in the modification log should be applied to the contract') do
+    latest_log = ModificationLog.order(updated_at: :desc).first
+    @contract ||= Contract.find_by(id: latest_log.contract_id)
+    expect(latest_log.status).to eq('approved')
+    latest_log.changes_made.each do |key, (_, new_value)|
+      expect(@contract.reload.attributes[key]).to eq(new_value)
+    end
+  end
+
+  
