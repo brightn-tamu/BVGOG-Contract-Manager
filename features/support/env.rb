@@ -12,7 +12,13 @@ require 'cucumber/rails'
 require 'action_view'
 World(ActionView::Helpers::NumberHelper)
 
-SimpleCov.coverage_dir 'coverage/cucumber'
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/app/channels/'
+  add_filter '/app/jobs/'
+  add_filter '/app/mailers/'
+  coverage_dir 'coverage/cucumber'
+end
 # features/support/env.rb
 
 # frozen_string_literal: true
