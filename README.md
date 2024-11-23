@@ -122,6 +122,9 @@ or
 make rspec
 ```
 
+## Testing Coverage
+After run `make cucumber` or `make rspec`, you can see test report in `coverage/cucumber/index.html` or `coverage/rspec/index.html` respectively. If you want to view the combined coverage of RSpec and Cucumber tests, please run `ruby script/combined_coverage.rb` first, and then check `coverage/merged/index.html`.
+
 ## Login Credentials
 We have different user account to be able to log into the local and production environment for testing.  
 These can be found in [seeds.rb](./db/seeds.rb) but are included here as well for convenience.
