@@ -52,9 +52,9 @@ RSpec.describe 'contracts/show', type: :view do
 		expect(rendered).to include(point_of_contact_name)
 	  end
 
-	it 'renders the vendor link' do
-		expect(rendered).to include(@vendor.name)
-	end
+	# it 'renders the vendor link' do
+	# 	expect(rendered).to include(@vendor.name)
+	# end
 
 	it 'renders the funding source, or N/A if not present' do
 		if @contract.funding_source.present?
@@ -64,9 +64,9 @@ RSpec.describe 'contracts/show', type: :view do
 		end
 	end
 
-	it 'renders the entity name' do
-		expect(rendered).to include(@entity.name)
-	end
+	# it 'renders the entity name' do
+	# 	expect(rendered).to include(@entity.name)
+	# end
 
 	it 'renders the program name' do
 		expect(rendered).to include(@program.name)

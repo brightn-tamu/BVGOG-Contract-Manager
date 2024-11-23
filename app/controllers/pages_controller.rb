@@ -35,7 +35,6 @@ class PagesController < ApplicationController
     end
 
     def admin
-        # :nocov:
         if current_user.level != UserLevel::ONE
             Rails.logger.debug 'We not an Admin\n'
             redirect_to root_path, alert: 'You do not have permission to access this page.'
@@ -46,13 +45,11 @@ class PagesController < ApplicationController
         @bvcog_config = BvcogConfig.last
         # Map the :users field to IDs of users
         @bvcog_config.user_ids = @bvcog_config.users.map(&:id)
-        # :nocov:
         filter_users
     end
 
     # PUT /admin
     def update_admin
-        # :nocov:
         if current_user.level != UserLevel::ONE
             redirect_to root_path, alert: 'You do not have permission to access this page.'
             return
@@ -187,7 +184,6 @@ class PagesController < ApplicationController
             format.html { render 'pages/admin', alert: e.message }
             format.json { render json: @bvcog_config.errors, status: :unprocessable_entity }
         end
-        # :nocov:
     end
 
     #get /admin/delete_program

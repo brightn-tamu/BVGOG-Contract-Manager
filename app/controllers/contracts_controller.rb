@@ -107,23 +107,23 @@ class ContractsController < ApplicationController
         end
     end
 
-    # GET /contracts/1/renew
-    def renew
-        if current_user.level == UserLevel::TWO
-            # :nocov:
-            redirect_to root_path, alert: 'You do not have permission to access this page.'
-            return
-            # :nocov:
-        end
-        add_breadcrumb 'Contracts', contracts_path
-        add_breadcrumb @contract.title, contract_path(@contract)
-        vendor = Vendor.find_by(id: @contract.vendor_id)
-        vendor_name = vendor.name if vendor.present? || ''
+    # # GET /contracts/1/renew
+    # def renew
+    #     if current_user.level == UserLevel::TWO
+    #         # :nocov:
+    #         redirect_to root_path, alert: 'You do not have permission to access this page.'
+    #         return
+    #         # :nocov:
+    #     end
+    #     add_breadcrumb 'Contracts', contracts_path
+    #     add_breadcrumb @contract.title, contract_path(@contract)
+    #     vendor = Vendor.find_by(id: @contract.vendor_id)
+    #     vendor_name = vendor.name if vendor.present? || ''
 
-        @vendor_visible_id = vendor_name || ''
-        add_breadcrumb 'Renew', edit_contract_path(@contract)
-        @value_type = @contract.value_type
-    end
+    #     @vendor_visible_id = vendor_name || ''
+    #     add_breadcrumb 'Renew', edit_contract_path(@contract)
+    #     @value_type = @contract.value_type
+    # end
 
     # POST /contracts or /contracts.json
     def create
