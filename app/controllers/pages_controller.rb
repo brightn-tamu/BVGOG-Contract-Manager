@@ -47,6 +47,7 @@ class PagesController < ApplicationController
         # Map the :users field to IDs of users
         @bvcog_config.user_ids = @bvcog_config.users.map(&:id)
         # :nocov:
+        filter_users
     end
 
     # PUT /admin
@@ -174,6 +175,7 @@ class PagesController < ApplicationController
                 format.html { redirect_to admin_path, notice: 'Configuration was successfully updated.' }
                 format.json { render :show, status: :ok, location: @bvcog_config }
             else
+                filter_users
                 format.html do
                     render 'pages/admin',
                            alert: 'Could not save configuration. Please check your settings and try again.'
@@ -181,10 +183,77 @@ class PagesController < ApplicationController
                 format.json { render json: @bvcog_config.errors, status: :unprocessable_entity }
             end
         rescue StandardError => e
+            filter_users
             format.html { render 'pages/admin', alert: e.message }
             format.json { render json: @bvcog_config.errors, status: :unprocessable_entity }
         end
         # :nocov:
+    end
+
+    #get /admin/delete_program
+    def delete_program
+      program = params[:program_id]
+      if not program.present? 
+        redirect_to admin_path, alert: 'program_id not found in params.'
+        return;
+      end
+      @bvcog_config = nil
+      respond_to do |format|
+        # Check no users are associated with program
+        if User.where(program_id: program).count.positive?
+          @bvcog_config ||= BvcogConfig.last
+          @bvcog_config.errors.add('Attempted to delete program with associated users.',
+                                   "program: #{Program.find(program).name}")
+          # Check no contracts are associated with program
+        elsif Contract.where(program_id: program).count.positive?
+          @bvcog_config ||= BvcogConfig.last
+          @bvcog_config.errors.add('Attempted to delete program with associated contracts.',
+                                   "program: #{Program.find(program).name}")
+        else
+          Program.find(program).destroy
+        end
+        raise StandardError if (not @bvcog_config.nil? and @bvcog_config.errors.any?)
+        format.html { redirect_to admin_path, notice: 'Configuration was successfully updated.' }
+        format.json { render :show, status: :ok}
+      rescue StandardError => e
+        @bvcog_config ||= BvcogConfig.last
+        filter_users
+        format.html { render 'pages/admin', alert: e.message }
+        format.json { render json: @bvcog_config.errors, status: :unprocessable_entity }
+      end
+    end
+
+    # /admin/delete_entity
+    def delete_entity
+      entity = params[:entity_id]
+      if not entity.present? 
+        redirect_to admin_path, alert: 'entity_id not found in params.'
+        return;
+      end
+      @bvcog_config = nil
+      respond_to do |format|
+        # Check no users have this entity in their list of entities
+        if Entity.find(entity).users.count.positive?
+          @bvcog_config ||= BvcogConfig.last
+          @bvcog_config.errors.add('Attempted to delete entity with associated users.',
+                                   "entity: #{Entity.find(entity).name}")
+          # Check no contracts are associated with entity
+        elsif Contract.where(entity_id: entity).count.positive?
+          @bvcog_config ||= BvcogConfig.last
+          @bvcog_config.errors.add('Attempted to delete entity with associated contracts.',
+                                   "entity: #{Entity.find(entity).name}")
+        else
+          Entity.find(entity).destroy
+        end
+        raise StandardError if (not @bvcog_config.nil? and @bvcog_config.errors.any?)
+        format.html { redirect_to admin_path, notice: 'Configuration was successfully updated.' }
+        format.json { render :show, status: :ok}
+      rescue StandardError => e
+        @bvcog_config ||= BvcogConfig.last
+        filter_users
+        format.html { render 'pages/admin', alert: e.message }
+        format.json { render json: @bvcog_config.errors, status: :unprocessable_entity }
+      end
     end
 
     private
@@ -198,5 +267,30 @@ class PagesController < ApplicationController
             new_entities
         ]
         params.require(:bvcog_config).permit(allowed, delete_programs: [], delete_entities: [], user_ids: [])
+    end
+
+    def filter_users
+        @flter_entity_id = params[:flter_entity_id]
+        @flter_program_id = params[:flter_program_id]
+        if @flter_entity_id.present?
+          @flter_entity_id = @flter_entity_id.to_i
+          entity_a = Entity.where(id: @flter_entity_id)
+          if entity_a.any?
+            @selected_users = entity_a[0].users
+            if @flter_program_id.present?
+              @flter_program_id = @flter_program_id.to_i
+              @selected_users = @selected_users.where(program_id: @flter_program_id)
+            end
+          else
+            @selected_users = []
+          end
+        else
+          if @flter_program_id.present?
+            @flter_program_id = @flter_program_id.to_i
+            @selected_users = User.where(program_id: @flter_program_id)
+          else
+            @selected_users = User.all
+          end
+        end
     end
 end
