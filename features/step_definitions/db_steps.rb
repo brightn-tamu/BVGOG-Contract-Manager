@@ -68,7 +68,7 @@ Given('{int} example contracts exist') do |num_contracts|
         d = Time.zone.today + 1.day * i
         FactoryBot.create(
             :contract,
-            id: i,
+            number: i.to_s.rjust(5, '0'),
             title: "Contract #{i}",
             entity: Entity.all.sample,
             program: Program.all.sample,

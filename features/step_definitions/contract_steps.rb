@@ -201,12 +201,105 @@ end
 
  
   Then('the changes in the modification log should be applied to the contract') do
-    latest_log = ModificationLog.order(updated_at: :desc).first
-    @contract ||= Contract.find_by(id: latest_log.contract_id)
-    expect(latest_log.status).to eq('approved')
-    latest_log.changes_made.each do |key, (_, new_value)|
-      expect(@contract.reload.attributes[key]).to eq(new_value)
-    end
+        latest_log = ModificationLog.order(updated_at: :desc).first
+        @contract ||= Contract.find_by(id: latest_log.contract_id)
+        expect(latest_log.status).to eq('approved')
+        latest_log.changes_made.each do |key, (_, new_value)|
+            expect(@contract.reload.attributes[key]).to eq(new_value)
+        end
   end
 
+  
+  
+def contract_status_constant(status_str)
+    status_map = {
+        'CREATED' => ContractStatus::CREATED,
+        'IN_PROGRESS' => ContractStatus::IN_PROGRESS,
+        'IN_REVIEW' => ContractStatus::IN_REVIEW,
+        'APPROVED' => ContractStatus::APPROVED,
+        'REJECTED' => ContractStatus::REJECTED
+    }
+  
+    status_constant = status_map[status_str.upcase]
+    raise "Invalid contract status: #{status_str}" unless status_constant
+  
+    status_constant
+end
+
+Given('I have a contract with attributes:') do |table|
+    attributes = table.hashes.map { |row| [row['field'], row['value']] }.to_h
+    attributes.transform_keys!(&:to_sym)
+  
+    if attributes[:contract_status]
+      attributes[:contract_status] = contract_status_constant(attributes[:contract_status])
+    end
+  
+    defaults = {
+      starts_at: Date.parse('2023-01-01'),
+      ends_at: Date.parse('2023-12-31'),
+      total_amount: 10_000,
+      description: 'Default Contract Description',
+      current_type: 'contract',
+      point_of_contact: User.first || FactoryBot.create(:user),
+      vendor: Vendor.first || FactoryBot.create(:vendor),
+      entity: Entity.first || FactoryBot.create(:entity),
+      program: Program.first || FactoryBot.create(:program)
+    }
+  
+    @contract = FactoryBot.create(:contract, defaults.merge(attributes))
+end
+
+  
+Given('the contract has a pending modification log with changes:') do |table|
+    changes_made = table.hashes.each_with_object({}) do |row, changes|
+      changes[row['field']] = [row['old_value'], row['new_value']]
+    end
+  
+    modification_log = FactoryBot.create(
+      :modification_log,
+      remarks: "Inital review",
+      contract: @contract,
+      status: 'pending',
+      changes_made: changes_made,
+      modified_by_id: User.first.id,
+      modification_type: 'amend',
+      modified_at: Time.current
+    )
+end
+
+When('I visit the contract page for contract {string}') do |number|
+    contract = Contract.find_by(number: number)
+    visit contract_path(contract)
+end
+
+Then('I should see the differences for:') do |table|
+    latest_log = @contract.modification_logs.where(status: 'pending').order(updated_at: :desc).first
+  
+    raise "No pending modification log found for the contract" unless latest_log
+  
+    fields = table.hashes.map { |row| row['field'] } if table.headers.include?('field')
+    fields ||= table.raw.flatten
+  
+    fields.each do |field|
+      case field
+      when 'Contract ID'
+        expect(page).to have_css('.diff .old-value', text: latest_log.changes_made['number'][0])
+        expect(page).to have_css('.diff .new-value', text: latest_log.changes_made['number'][1])
+      when 'Start Date'
+        expect(page).to have_css('.diff .old-value', text: Date.parse(latest_log.changes_made['starts_at'][0]).strftime("%B %d, %Y"))
+        expect(page).to have_css('.diff .new-value', text: Date.parse(latest_log.changes_made['starts_at'][1]).strftime("%B %d, %Y"))
+      when 'End Date'
+        expect(page).to have_css('.diff .old-value', text: Date.parse(latest_log.changes_made['ends_at'][0]).strftime("%B %d, %Y"))
+        expect(page).to have_css('.diff .new-value', text: Date.parse(latest_log.changes_made['ends_at'][1]).strftime("%B %d, %Y"))
+      when 'Contract Value'
+        expect(page).to have_css('.diff .old-value', text: number_to_currency(latest_log.changes_made['total_amount'][0]))
+        expect(page).to have_css('.diff .new-value', text: number_to_currency(latest_log.changes_made['total_amount'][1]))
+      when 'Summary'
+        expect(page).to have_css('.diff .old-value', text: latest_log.changes_made['description'][0])
+        expect(page).to have_css('.diff .new-value', text: latest_log.changes_made['description'][1])
+      else
+        raise "Unknown field: #{field}"
+      end
+    end
+  end
   

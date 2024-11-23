@@ -9,6 +9,8 @@
 require 'simplecov'
 SimpleCov.start 'rails'
 require 'cucumber/rails'
+require 'action_view'
+World(ActionView::Helpers::NumberHelper)
 
 SimpleCov.coverage_dir 'coverage/cucumber'
 # features/support/env.rb
