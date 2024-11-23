@@ -127,7 +127,7 @@ make rspec
 ```
 
 ## Testing Coverage
-After running `make all_tests`, you can view the combined coverage of all tests in `coverage/merged/index.html`. Alternatively, after running `make cucumber` or `make rspec`, you can see the test reports in `coverage/cucumber/index.html` or `coverage/rspec/index.html`, respectively.
+After running `make all_tests`, you can view the cumulative coverage of all tests in `coverage/merged/index.html`. Alternatively, after running `make cucumber` or `make rspec`, you can see the test reports in `coverage/cucumber/index.html` or `coverage/rspec/index.html`, respectively.
 
 ## Login Credentials
 We have different user account to be able to log into the local and production environment for testing.  
