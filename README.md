@@ -104,6 +104,10 @@ Please contact the [Spring 2023](#spring-2023) team or the Professor to be added
 
 ## Testing
 This project has both `cucumber` and `rspec` tests.
+```bash
+make all_tests
+```
+
 ### Cucumber
 ```bash
 bundle exec cucumber --profile default --out ./out.log
@@ -123,7 +127,7 @@ make rspec
 ```
 
 ## Testing Coverage
-After run `make cucumber` or `make rspec`, you can see test report in `coverage/cucumber/index.html` or `coverage/rspec/index.html` respectively. If you want to view the combined coverage of RSpec and Cucumber tests, please run `ruby script/combined_coverage.rb` first, and then check `coverage/merged/index.html`.
+After running `make all_tests`, you can view the combined coverage of all tests in `coverage/merged/index.html`. Alternatively, after running `make cucumber` or `make rspec`, you can see the test reports in `coverage/cucumber/index.html` or `coverage/rspec/index.html`, respectively.
 
 ## Login Credentials
 We have different user account to be able to log into the local and production environment for testing.  

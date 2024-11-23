@@ -23,6 +23,9 @@ heroku_db:
 deploy:
 	./script/deploy/deploy.sh
 
+all_tests: rspec cucumber
+	ruby script/combined_coverage.rb
+
 cucumber: clean bundle
 	bundle exec cucumber --publish-quiet --profile default --format json --out ./log.json
 
