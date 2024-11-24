@@ -484,7 +484,7 @@ class ContractsController < ApplicationController
         # Iterate over each parameter and compare old vs. new values
         contract_params.each do |key, new_value|
             old_value = contract.send(key)
-            if key == 'ends_at' && new_value == 'N/A'
+            if key == 'ends_at' && (new_value == 'N/A' || new_value == '')
                 new_value = nil
             end
             # Type conversion based on the type of the old value
