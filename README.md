@@ -196,7 +196,7 @@ Please contact the most recent team.
 | Xinyi Zhao          | xinyi929@tamu.edu            |
 | Jingrui Mao         | vivinmao@tamu.edu            |
 | Kumaran Gowrisankar | kumaran.gowrisankar@tamu.edu |
-| Zhicheng Chen        | chenzc2001@tamu.edu          |
+| Zhicheng Chen       | chenzc2001@tamu.edu          |
 | Jingyuan Mu         | mjy333@tamu.edu              |
 | Zhaoming Xu         | zhaoming0812@tamu.edu        |
 | Nathaniel Bright    | brightn@tamu.edu             |
