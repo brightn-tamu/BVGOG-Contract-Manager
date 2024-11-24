@@ -56,10 +56,10 @@
                 <td><%= contract.point_of_contact.first_name %> <%= contract.point_of_contact.last_name %></td>
                 <td><%= contract.starts_at.strftime("%B %d, %Y") %></td>
                 <td>
-                    <% if contract.end_trigger == "limited_term"  && contract.ends_at.present? %>
-                        <%= contract.ends_at.strftime("%B %d, %Y") %>
+                    <% if contract.ends_at.present? && contract.end_trigger == "limited_term" %>
+                    <%= contract.ends_at.strftime("%B %d, %Y") %>
                     <% else %>
-                        N/A
+                    N/A
                     <% end %>
                 </td>
                 <td><%= number_to_currency(contract.total_amount) %></td>
