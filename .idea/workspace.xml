@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start" />
+    <list default="true" id="30576682-b3c5-4a0c-80b9-3bddab952b75" name="Changes" comment="start">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/enumerations/report_type.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/enumerations/report_type.rb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -312,7 +315,10 @@
       <workItem from="1731596407734" duration="19000" />
       <workItem from="1731606493046" duration="14318000" />
       <workItem from="1731943984035" duration="10668000" />
-      <workItem from="1732111969408" duration="6303000" />
+      <workItem from="1732111969408" duration="6351000" />
+      <workItem from="1732571324700" duration="13000" />
+      <workItem from="1733797136663" duration="54000" />
+      <workItem from="1733797202803" duration="950000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />
